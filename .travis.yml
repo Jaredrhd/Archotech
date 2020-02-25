@@ -1,0 +1,14 @@
+sude: false
+
+language: node_js
+node_js:
+  - node
+
+cache: npm
+
+install:
+  - npm install coveralls --save-dev
+  - npm install --save-dev jest
+
+script:
+  - npm run coveralls
