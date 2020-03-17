@@ -1,0 +1,17 @@
+s:1375:"<p>The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, drop-down menu, text area, URL, picture and uploaded file.</p>
+
+<p>The visual layout of information when listing, viewing or editing database entries may be controlled by database templates. Database activities may be shared between courses as presets and a teacher may also import and export database entries.</p>
+
+<p>If the database auto-linking filter is enabled, any entries in a database will be automatically linked where the words or phrases appear within the course.</p>
+
+<p>A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings can be aggregated to form a final grade which is recorded in the gradebook.</p>
+
+<p>Database activities have many uses, such as</p>
+
+<ul>
+<li>A collaborative collection of web links, books, book reviews, journal references etc</li>
+<li>For displaying student-created photos, posters, websites or poems for peer comment and review.</li>
+</ul>
+
+<div class="helpdoclink"><a href="https://docs.moodle.org/37/en/mod/data/view" class="helplinkpopup"><i class="icon fa fa-info-circle fa-fw iconhelp icon-pre"></i>More help</a></div>
+";

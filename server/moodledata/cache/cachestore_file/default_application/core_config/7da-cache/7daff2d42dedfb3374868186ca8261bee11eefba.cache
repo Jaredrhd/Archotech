@@ -1,0 +1,12 @@
+a:3:{s:17:"autosavefrequency";s:2:"60";s:7:"toolbar";s:345:"collapse = collapse
+style1 = title, bold, italic
+list = unorderedlist, orderedlist
+links = link
+files = image, media, recordrtc, managefiles
+style2 = underline, strike, subscript, superscript
+align = align
+indent = indent
+insert = equation, charmap, table, clear
+undo = undo
+accessibility = accessibilitychecker, accessibilityhelper
+other = html";s:7:"version";s:10:"2019052000";}

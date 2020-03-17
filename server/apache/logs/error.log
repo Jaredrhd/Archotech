@@ -1,0 +1,13 @@
+[Tue Mar 17 10:49:35.702166 2020] [ssl:warn] [pid 4028:tid 620] AH01909: www.example.com:443:0 server certificate does NOT include an ID which matches the server name
+[Tue Mar 17 10:49:35.733415 2020] [ssl:warn] [pid 4028:tid 620] AH01909: www.example.com:443:0 server certificate does NOT include an ID which matches the server name
+PHP Warning:  Module 'openssl' already loaded in Unknown on line 0
+[Tue Mar 17 10:49:35.983353 2020] [mpm_winnt:notice] [pid 4028:tid 620] AH00455: Apache/2.4.41 (Win64) OpenSSL/1.1.1c PHP/7.3.11 configured -- resuming normal operations
+[Tue Mar 17 10:49:35.983353 2020] [mpm_winnt:notice] [pid 4028:tid 620] AH00456: Apache Lounge VC15 Server built: Aug 11 2019 12:20:04
+[Tue Mar 17 10:49:35.983353 2020] [core:notice] [pid 4028:tid 620] AH00094: Command line: 'apache\\bin\\httpd.exe -d C:/Users/LENOVO LEGION/Desktop/University 3/Software Design/Moodle/server/apache -f conf\\httpd.conf'
+[Tue Mar 17 10:49:35.983353 2020] [mpm_winnt:notice] [pid 4028:tid 620] AH00418: Parent: Created child process 16480
+[Tue Mar 17 10:49:36.295744 2020] [ssl:warn] [pid 16480:tid 608] AH01909: www.example.com:443:0 server certificate does NOT include an ID which matches the server name
+[Tue Mar 17 10:49:36.326988 2020] [ssl:warn] [pid 16480:tid 608] AH01909: www.example.com:443:0 server certificate does NOT include an ID which matches the server name
+PHP Warning:  Module 'openssl' already loaded in Unknown on line 0
+[Tue Mar 17 10:49:36.342609 2020] [mpm_winnt:notice] [pid 16480:tid 608] AH00354: Child: Starting 150 worker threads.
+[Tue Mar 17 10:55:06.851908 2020] [php7:warn] [pid 16480:tid 1928] [client ::1:50418] PHP Warning:  mysqli::__construct(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in C:\\Users\\LENOVO LEGION\\Desktop\\University 3\\Software Design\\Moodle\\server\\moodle\\lib\\dml\\mysqli_native_moodle_database.php on line 79, referer: http://localhost/install.php
+[Tue Mar 17 10:55:18.864537 2020] [php7:warn] [pid 16480:tid 1928] [client ::1:50422] PHP Warning:  mysqli::__construct(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in C:\\Users\\LENOVO LEGION\\Desktop\\University 3\\Software Design\\Moodle\\server\\moodle\\lib\\dml\\mysqli_native_moodle_database.php on line 79, referer: http://localhost/install.php
