@@ -19,7 +19,7 @@
  *
  * @package    qtype
  * @subpackage logicgate
- * @copyright  THEYEAR YOURNAME (YOURCONTACTINFO)
+ * @copyright  2020 Archotech
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/type/logicgate/question.php');
 /**
  * The logicgate question type.
  *
- * @copyright  THEYEAR YOURNAME (YOURCONTACTINFO)
+ * @copyright  2020 Archotech
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

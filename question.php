@@ -19,7 +19,7 @@
  *
  * @package    qtype
  * @subpackage logicgate
- * @copyright  THEYEAR YOURNAME (YOURCONTACTINFO)
+ * @copyright  2020 Archotech
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Represents a logicgate question.
  *
- * @copyright  THEYEAR YOURNAME (YOURCONTACTINFO)
+ * @copyright  2020 Archotech
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

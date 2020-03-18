@@ -57,6 +57,6 @@ be ignored.
 * Copy or rename the module directory to logicgate.
 * Replace all occurances of logicgate in files with the new name for your question type.
 * Rename files that have logicgate replacing logicgate with the new name for your question type.
-* Replace '@copyright  THEYEAR YOURNAME (YOURCONTACTINFO)' with something like @copyright  2013 Jamie Pratt (me@jamiep.org)
+* Replace '@copyright  2020 Archotech' with something like @copyright  2013 Jamie Pratt (me@jamiep.org)
 * See http://docs.moodle.org/dev/Question_types for more info on how to create a question type plug in. Please add to it where
  you can.
