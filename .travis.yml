@@ -113,3 +113,6 @@ script:
 #   - The suite option allows you to set the theme to use for behat test. If
 #     not specified, the default theme is used, EG usage: --suite boost
   - moodle-plugin-ci behat
+
+after_success:
+  - moodle-plugin-ci coveralls-upload
