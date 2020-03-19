@@ -56,8 +56,9 @@ class qtype_logicgate extends question_type {
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
-        // TODO.
         parent::initialise_question_instance($question, $questiondata);
+        $this->initialise_question_answers($question, $questiondata);
+
     }
 
     public function get_random_guess_score($questiondata) {

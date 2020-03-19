@@ -58,13 +58,18 @@ class qtype_logicgate_renderer extends qtype_renderer
         $inputname = $qa->get_qt_field_name('answer');
 
         $inputattributes = array(
-            'type' => 'text',
+            'type' => 'hidden',
             'name' => $inputname,
             'value' => $currentanswer,
             'id' => $inputname,
             'size' => 80,
-            'class' => 'form-control d-inline',
+            'class' => 'answer',
         );
+
+        //If the input box is read only
+        if ($options->readonly) {
+            $inputattributes['readonly'] = 'readonly';
+        }
 
         //Displays the red x or tick
         $feedbackimg = '';
@@ -80,40 +85,20 @@ class qtype_logicgate_renderer extends qtype_renderer
             $feedbackimg = $this->feedback_image($fraction);
         }
 
-        //If the input box is read only
-        if ($options->readonly) {
-            $inputattributes['readonly'] = 'readonly';
-        }
+        //Get the file
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/Lab.html')) . $feedbackimg;
 
-        //Make an input field and add the cross if wrong
-        $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
-
-        //If placeholder (Should be no)
-        if ($placeholder) 
-        {
-            $inputinplace = html_writer::tag('label', get_string('answer'), array('for' => $inputattributes['id'], 'class' => 'accesshide'));
-            $inputinplace .= $input;
-            $questiontext = substr_replace($questiontext, $inputinplace, strpos($questiontext, $placeholder), strlen($placeholder));
-        }
-
+        //Add the question text
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
-        //This is probably what we want to display
+        //This is probably what we want to display since we dont have placeholder
         if (!$placeholder) {
-            $result .= html_writer::start_tag('div', array('class' => 'ablock form-inline'));
-            $result .= html_writer::tag('label', get_string('answer', 'qtype_shortanswer', html_writer::tag('span', $input, array('class' => 'answer'))),
-                        array('for' => $inputattributes['id']));
-            $result .= html_writer::end_tag('div');
+            $result .= html_writer::tag('span', $input, array('class' => 'answer'));
         }
 
-        //If correct is in invalid state. no idea
-        if ($qa->get_state() == question_state::$invalid) {
-            $result .= html_writer::nonempty_tag('div',
-                    $question->get_validation_error(array('answer' => $currentanswer)),
-                    array('class' => 'validationerror'));
-        }
+        //TODO get the input field form and edit its name attribute to $inputname
 
-        //return resultw
+        //return result
         return $result;
     }
 

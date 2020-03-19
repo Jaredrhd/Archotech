@@ -37,19 +37,26 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_logicgate_question extends question_graded_automatically_with_countback {
 
-    public function get_expected_data() {
-        // TODO.
-        return array();
+    //Saves the data by getting input controls onscreen
+    public function get_expected_data() 
+    {
+        return array('answer' => PARAM_RAW);
     }
 
     public function summarise_response(array $response) {
-        // TODO.
-        return null;
+        if (isset($response['answer'])) 
+        {
+            return $response['answer'];
+        } 
+        else 
+        {
+            return null;
+        }
     }
 
-    public function is_complete_response(array $response) {
-        // TODO.
-        return true;
+    public function is_complete_response(array $response) 
+    {
+        return array_key_exists('answer', $response) && ($response['answer'] || $response['answer'] === '0');
     }
 
     public function get_validation_error(array $response) {
