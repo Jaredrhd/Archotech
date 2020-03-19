@@ -35,29 +35,86 @@ defined('MOODLE_INTERNAL') || die();
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_logicgate_renderer extends qtype_renderer {
+class qtype_logicgate_renderer extends qtype_renderer 
+{
 
+    //Handles displaying  of question and rendering of answer
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) 
     {
+        //Get the whole question with everything (hints, penalties, length, feedback, etc)
         $question = $qa->get_question();
 
+        //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
+
+        //Check for reg expr placeholder (possibly remove)
         $placeholder = false;
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
         }
-        $input = '**subq controls go in here**';
 
-        if ($placeholder) {
-            $questiontext = substr_replace($questiontext, $input,
-                    strpos($questiontext, $placeholder), strlen($placeholder));
+        //TODO insert ans save
+        $currentanswer = $qa->get_last_qt_var('answer');
+        $inputname = $qa->get_qt_field_name('answer');
+
+        $inputattributes = array(
+            'type' => 'text',
+            'name' => $inputname,
+            'value' => $currentanswer,
+            'id' => $inputname,
+            'size' => 80,
+            'class' => 'form-control d-inline',
+        );
+
+        //Displays the red x or tick
+        $feedbackimg = '';
+
+        //If we are showing their mark
+        if ($options->correctness) {
+            //Get the answer
+            $answer = $question->grade_response(array('answer' => $currentanswer));
+            $fraction = $answer[0];
+
+            //Set input field diabled and set tick or cross
+            $inputattributes['class'] .= ' ' . $this->feedback_class($fraction);
+            $feedbackimg = $this->feedback_image($fraction);
+        }
+
+        //If the input box is read only
+        if ($options->readonly) {
+            $inputattributes['readonly'] = 'readonly';
+        }
+
+        //Make an input field and add the cross if wrong
+        $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+
+        //If placeholder (Should be no)
+        if ($placeholder) 
+        {
+            $inputinplace = html_writer::tag('label', get_string('answer'), array('for' => $inputattributes['id'], 'class' => 'accesshide'));
+            $inputinplace .= $input;
+            $questiontext = substr_replace($questiontext, $inputinplace, strpos($questiontext, $placeholder), strlen($placeholder));
         }
 
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
-        return $result;
+        //This is probably what we want to display
+        if (!$placeholder) {
+            $result .= html_writer::start_tag('div', array('class' => 'ablock form-inline'));
+            $result .= html_writer::tag('label', get_string('answer', 'qtype_shortanswer', html_writer::tag('span', $input, array('class' => 'answer'))),
+                        array('for' => $inputattributes['id']));
+            $result .= html_writer::end_tag('div');
+        }
 
-        return '<img  height="300" width="250" src = "https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg">';
+        //If correct is in invalid state. no idea
+        if ($qa->get_state() == question_state::$invalid) {
+            $result .= html_writer::nonempty_tag('div',
+                    $question->get_validation_error(array('answer' => $currentanswer)),
+                    array('class' => 'validationerror'));
+        }
+
+        //return resultw
+        return $result;
     }
 
     public function specific_feedback(question_attempt $qa) {

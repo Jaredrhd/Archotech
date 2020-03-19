@@ -86,8 +86,6 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         //TODO This should grade the question.
         //Make some dummy cgv cases and attempt to mark them.
 
-        // TODO.
-
         $fraction = 0;
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
