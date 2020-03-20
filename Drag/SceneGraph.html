@@ -27,6 +27,7 @@
 
     //If mouse down
     var isMouseDown;
+    var selectedObject = null;
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -38,7 +39,10 @@
         // TODO: Create objects and add them to the scene graph.
         rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
         rotatingRect.setScale(2,2).setColor("red"); 
+        rotatingRect2 = new TransformedObject(filledRect);
+        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);
         world.add(rotatingRect);
+        world.add(rotatingRect2);
     }
     
     /**
@@ -318,12 +322,37 @@
             if (event.which){
                 isMouseDown = true;
                 var mousePos = getMousePos(canvas, event);
+                world.subobjects.forEach(function(item, index){
+                    if (selectedObject == null) {
+                        var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
+                        if (mouseDistanceToObject <= 1) {
+                            selectedObject = item;
+                        }
+                        
+                    } else {
+                        var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
+                        if (mouseDistanceToObject <= 1 && mouseDistanceToObject < Math.sqrt(Math.pow((mousePos.x - selectedObject.translateX), 2) + Math.pow((mousePos.y - selectedObject.translateY), 2))) {
+                            selectedObject = item;
+                        }
+                        
+                    }
+                });
                 console.log(mousePos.x + ',' + mousePos.y);
             }
         }, true);
         
         //Mouse up
-        document.addEventListener('mouseup', function(event) { if (event.which){isMouseDown = false;}}, true);  
+        document.addEventListener('mouseup', function(event) { if (event.which){isMouseDown = false; selectedObject = null;}}, true);  
+
+        //Mouse movement
+        document.addEventListener('mousemove', function(event) {
+            if (event.which) {
+                if (selectedObject != null) {
+                    var mousePos = getMousePos(canvas, event);
+                    selectedObject.setTranslation(mousePos.x, mousePos.y);
+                }
+            }
+        }, true);
     }
 
     //Get Mouse Position based on coordinate sysetm we are using
