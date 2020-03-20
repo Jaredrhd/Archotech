@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<!--
+   This web page does the minimal setup for using mouse events along
+   with 2D canvas graphics.
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>CS424, Lab 2, Exercise 2</title>
+    <style>
+        /* This style section is here to make the canvas more obvious on the
+       page.  It is white on a light gray page background, with a thin
+       black border.  Also, turn off text selection to avoid having
+       selection interfere with mouse action. */
+        body {
+            background-color: #DDDDDD;
+            -webkit-user-select: none;
+            /* turn off text selection  / Webkit */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* IE 10  */
+            -o-user-select: none;
+            /* Opera */
+            user-select: none;
+        }
+
+        canvas {
+            background-color: white;
+            display: block;
+        }
+
+        #canvasholder {
+            border: 2px solid black;
+            float: left;
+            /* This makes the border exactly fit the canvas. */
+        }
+    </style>
+    <script>
+
+        "use strict";  // gives improved error-checking in scripts.
+
+        var canvas;    // The canvas element on which we will draw.
+        var graphics;  // A 2D graphics context for drawing on the canvas.
+
+        /**
+         * This function returns a string representing a random RGB color.
+         * The returned string can be assigned as the value of graphics.fillStyle
+         * or graphics.strokeStyle.
+         */
+        function randomColorString() {
+            var r = Math.floor(256 * Math.random());
+            var g = Math.floor(256 * Math.random());
+            var b = Math.floor(256 * Math.random());
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+        /**
+         * This function is called in init() to set up mouse event handling
+         * on the canvas.  You can modify the nested functions doMouseDown,
+         * doMouseDrag, and possibly doMouseUp to change the reponse to
+         * mouse events.  As an example, this program does some simple drawing.
+         */
+        function installMouseHandler() {
+
+            var dragging = false;  // set to true when a drag action is in progress.
+            var startX, startY;    // coordinates of mouse at start of drag.
+            var prevX, prevY;      // previous mouse position during a drag.
+            var size = 1;
+
+            var colorChoice;  // Integer code for the selected color in the "colorChoide"
+            var toolChoice;  // Integer code for the selected color in the "colorChoide"
+            var sizeChoice;  // Integer code for the selected color in the "colorChoide"
+
+            // popup menu.  The value is assigned in doMouseDown.
+
+            function doMouseDown(evt) {
+                // This function is called when the user presses a button on the mouse.
+                // Only the main mouse button will start a drag.
+                if (dragging) {
+                    return;  // if a drag is in progress, don't start another.
+                }
+                if (evt.button != 0) {
+                    return;  // don't respond unless the button is the main (left) mouse button.
+                }
+                var x, y;  // mouse position in canvas coordinates
+                var r = canvas.getBoundingClientRect();
+                x = Math.round(evt.clientX - r.left);  // translate mouse position from screen coords to canvas coords.
+                y = Math.round(evt.clientY - r.top);   // round to integer values; some browsers would give non-integers.
+                dragging = true;  // (this won't be the case for all mousedowns in all programs)
+                if (dragging) {
+                    startX = prevX = x;
+                    startY = prevY = y;
+                    document.addEventListener("mousemove", doMouseMove, false);
+                    document.addEventListener("mouseup", doMouseUp, false);
+                }
+                colorChoice = Number(document.getElementById("colorChoice").value);
+                toolChoice = Number(document.getElementById("toolChoice").value);
+                sizeChoice = Number(document.getElementById("sizeChoice").value);
+                // TODO: Anything else to do when mouse is first pressed?
+            }
+
+            function doMouseMove(evt) {
+                // This function is called when the user moves the mouse during a drag.
+                if (!dragging) {
+                    return;  // (shouldn't be possible)
+                }
+                var x, y;  // mouse position in canvas coordinates
+                var r = canvas.getBoundingClientRect();
+                x = Math.round(evt.clientX - r.left);
+                y = Math.round(evt.clientY - r.top);
+
+                if (toolChoice != 2 && Math.abs(x - prevX) + Math.abs(y - prevY) < 3) {
+                    return;  // don't draw squares too close together
+                }
+
+                //Set Colours, size and Tools to use
+                //----------------------------------------------------    
+                SetColour();
+                //----------------------------------------------------    
+                SetSize();
+                //----------------------------------------------------    
+                SetTool(x, y, prevX, prevY);
+                //----------------------------------------------------    
+
+                prevX = x;  // update prevX,prevY to prepare for next call to doMouseMove
+                prevY = y;
+            }
+
+            //Main Control Functions
+            //--------------------------------------------------------------------------------------------------------    
+            function SetColour() {
+                if (colorChoice == 0)
+                    graphics.fillStyle = randomColorString();
+                else if (colorChoice == 1)
+                    graphics.fillStyle = "red";
+                else if (colorChoice == 2)
+                    graphics.fillStyle = "green";
+                else if (colorChoice == 3)
+                    graphics.fillStyle = "blue";
+                else if (colorChoice == 4)
+                    graphics.fillStyle = "aqua";
+                else if (colorChoice == 5)
+                    graphics.fillStyle = "maroon";
+                else if (colorChoice == 6)
+                    graphics.fillStyle = "goldenrod";
+                else if (colorChoice == 7)
+                    graphics.fillStyle = "saddlebrown";
+                else if (colorChoice == 8)
+                    graphics.fillStyle = "black";
+                else if (colorChoice == 9)
+                    graphics.fillStyle = "darkslategray";
+                else if (colorChoice == 10)
+                    graphics.fillStyle = "mediumvioletred";
+                else if (colorChoice == 11)
+                    graphics.fillStyle = "darkblue";
+            }
+
+            //Set Size
+            function SetSize() {
+                if (sizeChoice == 0)
+                    size = 1;
+                else if (sizeChoice == 1)
+                    size = 2;
+                else if (sizeChoice == 2)
+                    size = 4;
+                else if (sizeChoice == 3)
+                    size = 8;
+                else if (sizeChoice == 4)
+                    size = 16;
+                else if (sizeChoice == 5)
+                    size = 32;
+                else if (sizeChoice == 6)
+                    size = 64;
+                else if (sizeChoice == 7)
+                    size = 128;
+            }
+
+            function SetTool(x, y, prevX, prevY) {
+                //Squares
+                if (toolChoice == 0) {
+                    graphics.fillRect(x - 20, y - 20, 40, 40);
+                    graphics.strokeRect(x - 20, y - 20, 40, 40);
+                }
+                //Heart
+                else if (toolChoice == 1) {
+                    DrawHeart(x, y);
+                }
+                //Circles
+                else if (toolChoice == 2) {
+                    DrawCircle(x, y);
+                }
+                //Circle From Point
+                else if (toolChoice == 3) {
+                    DrawCircleFromPoint(x, y);
+                }
+                //Lines From Point
+                else if (toolChoice == 4) {
+                    DrawLinesFromPoint(x, y);
+                }
+                //Curve
+                else if (toolChoice == 5) {
+                    DrawLines(x, y);
+                }
+                //Erase
+                else if (toolChoice == 6) {
+                    graphics.fillStyle = "White";
+                    DrawLines(x, y);
+                }
+            }
+
+            //Draw Functions
+            //--------------------------------------------------------------------------------------------------------
+            function DrawHeart(x, y) {
+                graphics.translate(0, 95);
+
+                //Draw Left side of heart and fill it
+                graphics.beginPath();
+                graphics.moveTo(x, y);
+                graphics.bezierCurveTo(x - 225, y - 155, x - 125, y - 330, x, y - 190);
+                graphics.stroke();
+                graphics.fill();
+
+                //Draw Right side of heart and fill it
+                graphics.beginPath();
+                graphics.moveTo(x, y);
+                graphics.bezierCurveTo(x + 225, y - 155, x + 125, y - 330, x, y - 190);
+                graphics.stroke();
+                graphics.fill();
+
+
+                graphics.translate(0, -95);
+            }
+
+            function DrawCircle(x, y) {
+                //For reverting
+                let strokestyle = graphics.strokeStyle;
+
+                //Set style
+                graphics.strokeStyle = graphics.fillStyle;
+                graphics.strokeCircle(x, y, size);
+
+                //Reset
+                graphics.strokeStyle = strokestyle;
+            }
+
+            //Creates circles around where you clicked
+            function DrawCircleFromPoint(x, y) {
+                //For reverting
+                let strokestyle = graphics.strokeStyle;
+                let lineWidth = graphics.lineWidth;
+
+                //Set style
+                graphics.strokeStyle = graphics.fillStyle;
+                graphics.lineWidth = size;
+                let distance = Math.pow(Math.pow(x - startX, 2) + Math.pow(y - startY, 2), 1 / 2);
+                graphics.strokeCircle(startX, startY, distance);
+
+                //Reset
+                graphics.strokeStyle = strokestyle;
+                graphics.lineWidth = lineWidth;
+            }
+
+            //Creates circles around where you clicked
+            function DrawLinesFromPoint(x, y) {
+
+                //Used to reset the old settings after applying
+                let oldWidth = graphics.lineWidth;
+                let lineCap = graphics.lineCap;
+                let strokeStyle = graphics.strokeStyle;
+
+                //Set line to current style
+                graphics.strokeStyle = graphics.fillStyle;
+
+                //Set line properties
+                graphics.lineCap = "round";
+                graphics.lineWidth = size;
+
+                //Create the line from the click point to the current mouse pos
+                graphics.beginPath();
+                graphics.moveTo(startX, startY);
+                graphics.lineTo(x, y);
+                graphics.stroke();
+
+                //Reset everything
+                graphics.strokeStyle = strokeStyle;
+                graphics.lineCap = lineCap;
+                graphics.lineWidth = oldWidth;
+            }
+
+            //Draw Line Feature Tool
+            function DrawLines(x, y) {
+
+                //Used to reset the old settings after applying
+                let oldWidth = graphics.lineWidth;
+                let lineCap = graphics.lineCap;
+                let strokeStyle = graphics.strokeStyle;
+
+                //Set line to current style
+                graphics.strokeStyle = graphics.fillStyle;
+
+                //Set line properties
+                graphics.lineCap = "round";
+                graphics.lineWidth = size;
+
+                //Create the line from the previous point to the current mouses position
+                graphics.beginPath();
+                graphics.moveTo(prevX, prevY);
+                graphics.lineTo(x, y);
+                graphics.stroke();
+
+                //Reset everything
+                graphics.strokeStyle = strokeStyle;
+                graphics.lineCap = lineCap;
+                graphics.lineWidth = oldWidth;
+            }
+
+            //--------------------------------------------------------------------------------------------------------
+
+
+            function doMouseUp(evt) {
+                // This function is called when the user releases a mouse button during a drag.
+                if (!dragging) {
+                    return;  // (shouldn't be possible)
+                }
+                dragging = false;
+                document.removeEventListener("mousemove", doMouseMove, false);
+                document.removeEventListener("mouseup", doMouseMove, false);
+            }
+
+            canvas.addEventListener("mousedown", doMouseDown, false);
+
+        } // end installMouseHandler
+
+
+        /**
+          * This function can be called to add a collection of extra drawing function to
+          * a graphics context, to make it easier to draw basic shapes with that context.
+          * The parameter, graphics, must be a canvas 2d graphics context.
+          *
+          * The following new functions are added to the graphics context:
+          *
+          *    graphics.strokeLine(x1,y1,x2,y2) -- stroke the line from (x1,y1) to (x2,y2).
+          *    graphics.fillCircle(x,y,r) -- fill the circle with center (x,y) and radius r.
+          *    graphics.strokeCircle(x,y,r) -- stroke the circle.
+          *    graphics.fillOval(x,y,r1,r2) -- fill oval with center (x,y) and radii r1 and r2.
+          *    graphics.stokeOval(x,y,r1,r2) -- stroke the oval
+          *    graphics.fillPoly(x1,y1,x2,y2,...) -- fill polygon with vertices (x1,y1), (x2,y2), ...
+          *    graphics.strokePoly(x1,y1,x2,y2,...) -- stroke the polygon.
+          *    graphics.getRGB(x,y) -- returns the color components of pixel at (x,y) as an array of
+          *         four integers in the range 0 to 255, in the order red, green, blue, alpha.
+          *
+          * (Note that "this" in a function that is called as a member of an object refers to that
+          * object.  Here, this will refer to the graphics context.)
+          */
+        function addGraphicsContextExtras(graphics) {
+            graphics.strokeLine = function (x1, y1, x2, y2) {
+                this.beginPath();
+                this.moveTo(x1, y1);
+                this.lineTo(x2, y2);
+                this.stroke();
+            }
+            graphics.fillCircle = function (x, y, r) {
+                this.beginPath();
+                this.arc(x, y, r, 0, 2 * Math.PI, false);
+                this.fill();
+            }
+            graphics.strokeCircle = function (x, y, radius) {
+                this.beginPath();
+                this.arc(x, y, radius, 0, 2 * Math.PI, false);
+                this.stroke();
+            }
+            graphics.fillPoly = function () {
+                if (arguments.length < 6)
+                    return;
+                this.beginPath();
+                this.moveTo(arguments[0], arguments[1]);
+                for (var i = 2; i + 1 < arguments.length; i = i + 2) {
+                    this.lineTo(arguments[i], arguments[i + 1]);
+                }
+                this.closePath();
+                this.fill();
+            }
+            graphics.strokePoly = function () {
+                if (arguments.length < 4)
+                    return;
+                this.beginPath();
+                this.moveTo(arguments[0], arguments[1]);
+                for (var i = 2; i + 1 < arguments.length; i = i + 2) {
+                    this.lineTo(arguments[i], arguments[i + 1]);
+                }
+                this.closePath();
+                this.stroke();
+            }
+            graphics.fillOval = function (x, y, horizontalRadius, verticalRadius) {
+                this.save();
+                this.translate(x, y);
+                this.scale(horizontalRadius, verticalRadius);
+                this.beginPath();
+                this.arc(0, 0, 1, 0, 2 * Math.PI, false);
+                this.restore();
+                this.fill();
+            }
+            graphics.strokeOval = function (x, y, horizontalRadius, verticalRadius) {
+                this.save();
+                this.translate(x, y);
+                this.scale(horizontalRadius, verticalRadius);
+                this.beginPath();
+                this.arc(0, 0, 1, 0, 2 * Math.PI, false);
+                this.restore();
+                this.stroke();
+            }
+            graphics.getRGB = function (x, y) {
+                var color = this.getImageData(x, y, 1, 1);
+                return color.data;
+            }
+        }    // end of addGraphicsContextExtras()
+
+
+        /**
+         * The init() function is called after the page has been
+         * loaded.  It initializes the canvas and graphics variables,
+         * and it installs mouse and key listeners.  If an error
+         * occurs, a message is displayed in place of the canvas.
+         */
+        function init() {
+            try {
+                canvas = document.getElementById("canvas");
+                graphics = canvas.getContext("2d");
+            } catch (e) {
+                document.getElementById("canvasholder").innerHTML =
+                    "<p>Canvas graphics is not supported.<br>" +
+                    "An error occurred while initializing graphics.</p>";
+                return;
+            }
+            addGraphicsContextExtras(graphics);
+            installMouseHandler();
+            graphics.fillStyle = "white";
+            graphics.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("clearButton").onclick = doClear;
+        }
+
+        //Clear the canvis
+        function doClear() {
+            graphics.clearRect(0, 0, 800, 600);
+        }
+
+    </script>
+</head>
+
+<body onload="init()">
+    <!-- the onload attribute here is what calls the init() function -->
+
+    <h2>Lab 2, Exercise 2: Mousing</h2>
+
+    <noscript>
+        <!-- This message will be shown in the page if JavaScript is not available. -->
+        <p>JavaScript is required to use this page.</p>
+    </noscript>
+
+    <!-- Selects a colour-->
+    <p><b>Color:</b>
+        <select id="colorChoice">
+            <option value="0">Random</option>
+            <option value="1">Red</option>
+            <option value="2">Green</option>
+            <option value="3">Blue</option>
+            <option value="4">Aqua</option>
+            <option value="5">Maroon</option>
+            <option value="6">Golden rod</option>
+            <option value="7">Saddle brown</option>
+            <option value="8">Black</option>
+            <option value="9">Dark slate gray</option>
+            <option value="10">Medium violet red</option>
+            <option value="11">Dark blue</option>
+        </select>
+    </p>
+
+    <!-- Selects a tool-->
+    <p><b>Tool:</b>
+        <select id="toolChoice">
+            <option value="0">Squares</option>
+            <option value="1">Draw Hearts</option>
+            <option value="2">Circles</option>
+            <option value="3">Circles From Point</option>
+            <option value="4">Lines From Point</option>
+            <option value="5">Curve</option>
+            <option value="6">Erase</option>
+        </select>
+    </p>
+
+    <!-- Sets the size of lines drawn on screen-->
+    <p><b>Size:</b>
+        <select id="sizeChoice">
+            <option value="0">1</option>
+            <option value="1">2</option>
+            <option value="2">4</option>
+            <option value="3">8</option>
+            <option value="4">16</option>
+            <option value="5">32</option>
+            <option value="6">64</option>
+            <option value="7">128</option>
+        </select>
+        (Only works on some tools)
+    </p>
+    <p><button id="clearButton">Clear</button></p>
+
+    <div id="canvasholder">
+        <canvas id="canvas" width="800" height="600">
+            <!-- This message is shown on the page if the browser doesn't support the canvas element. -->
+            Canvas not supported.
+        </canvas>
+    </div>
+
+    <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
+
+</body>
+
+</html>
