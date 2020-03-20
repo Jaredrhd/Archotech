@@ -9,7 +9,7 @@
     var canvas;   // The canvas that is used as the drawing surface
     var graphics; // The 2D graphics context for drawing on the canvas.
 
-    var X_LEFT = -4;    // The xy limits for the coordinate system.
+    var X_LEFT = -4;  // The xy limits for the coordinate system.
     var X_RIGHT = 4;
     var Y_BOTTOM = -3;
     var Y_TOP = 3;
@@ -37,12 +37,30 @@
         world = new CompoundObject();  // Root node for the scene graph.
 
         // TODO: Create objects and add them to the scene graph.
-        rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
+        /*rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
         rotatingRect.setScale(2,2).setColor("red"); 
         rotatingRect2 = new TransformedObject(filledRect);
-        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);
-        world.add(rotatingRect);
-        world.add(rotatingRect2);
+        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);*/
+
+        var buffer_gate = new TransformedObject(bufferGate);
+        var not_gate = new TransformedObject(notGate);
+        var and_gate = new TransformedObject(andGate);
+        var nand_gate = new TransformedObject(nandGate);
+        var or_gate = new TransformedObject(orGate);
+        var nor_gate = new TransformedObject(norGate);
+        var xor_gate = new TransformedObject(xorGate);
+        var xnor_gate = new TransformedObject(xnorGate);
+
+        world.add(buffer_gate);
+        world.add(not_gate);
+        world.add(and_gate);
+        world.add(nand_gate);
+        world.add(or_gate);
+        world.add(nor_gate);
+        world.add(xnor_gate);
+        world.add(xor_gate);
+        // world.add(rotatingRect);
+        // world.add(rotatingRect2);
     }
     
     /**
@@ -228,9 +246,229 @@
         g.lineTo(0,1);
         g.closePath();
         g.fill();
-    }   
+    }
+
+    var bufferGate = new SceneGraphNode();
+    bufferGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.5, 0);
+        g.lineTo(0, 0);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+        
+        g.rotate(-Math.PI/2);
+        g.fillStyle = "white";
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.stroke();
+    }
+
+    var notGate = new SceneGraphNode();
+    notGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.5, 0);
+        g.lineTo(0, 0);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.135, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+        
+        g.rotate(-Math.PI/2);
+        g.fillStyle = "white";
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.stroke();
+    }
+
+    var andGate = new SceneGraphNode();
+    andGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.5, 0.25);
+        g.lineTo(0, 0.25);
+        g.moveTo(-0.5, -0.25);
+        g.lineTo(0, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.lineTo(0.5, 0.5);
+        g.stroke();
     
-   
+        g.save();
+        g.beginPath();
+        g.rotate(-Math.PI/2);
+        g.arc(0, 0.5, 0.5, 0, Math.PI);
+        g.stroke();
+        g.restore();
+
+        g.beginPath();
+        g.moveTo(0.5, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.51);
+        g.stroke();
+    }
+
+    var nandGate = new SceneGraphNode();
+    nandGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.5, 0.25);
+        g.lineTo(0, 0.25);
+        g.moveTo(-0.5, -0.25);
+        g.lineTo(0, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.lineTo(0.5, 0.5);
+        g.stroke();
+    
+        g.save();
+        g.beginPath();
+        g.rotate(-Math.PI/2);
+        g.arc(0, 0.5, 0.5, 0, Math.PI);
+        g.stroke();
+        g.restore();
+
+        g.beginPath();
+        g.moveTo(0.5, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.51);
+        g.stroke();
+    }
+
+    var orGate = new SceneGraphNode();
+    orGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.stroke();
+    }
+
+    var norGate = new SceneGraphNode();
+    norGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.stroke();
+    }
+
+    var xorGate = new SceneGraphNode();
+    xorGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.moveTo(-0.1, -0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5);
+        g.stroke();
+    }
+
+    var xnorGate = new SceneGraphNode();
+    xnorGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.moveTo(-0.1, -0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5);
+        g.stroke();
+    }
     
     // ------------------------------- graphics support functions --------------------------
     
@@ -312,10 +550,11 @@
         }
 
         graphics = canvas.getContext("2d");
-        document.getElementById("animateCheck").checked = false; 
+        document.getElementById("animateCheck").checked = true; 
         document.getElementById("animateCheck").onchange = doAnimationCheckbox;
         createWorld();
         draw();
+        doAnimationCheckbox();
 
         //Add mouse down and up handlers
         document.addEventListener('mousedown', function(event) { 
