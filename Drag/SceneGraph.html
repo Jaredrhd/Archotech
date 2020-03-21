@@ -521,24 +521,11 @@
     
     //------------------ Animation framework ------------------------------
     
-    var running = false;  // This is set to true when animation is running
-    
     function frame() {
-        if (running) {
-               // Draw one frame of the animation, and schedule the next frame.
+            // Draw one frame of the animation, and schedule the next frame.
             updateFrame();
             draw();
             requestAnimationFrame(frame);
-        }
-    }
-    
-    function doAnimationCheckbox() { 
-        var shouldRun = document.getElementById("animateCheck").checked;
-        if ( shouldRun != running ) {
-            running = shouldRun;
-            if (running)
-                requestAnimationFrame(frame);
-        }
     }
     
     //----------------------- initialization -------------------------------
@@ -550,11 +537,9 @@
         }
 
         graphics = canvas.getContext("2d");
-        document.getElementById("animateCheck").checked = true; 
-        document.getElementById("animateCheck").onchange = doAnimationCheckbox;
+        
         createWorld();
-        draw();
-        doAnimationCheckbox();
+        frame();
 
         //Add mouse down and up handlers
         document.addEventListener('mousedown', function(event) { 
@@ -625,8 +610,6 @@
 <noscript>
    <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
-
-<p id="message"><label><input type="checkbox" id="animateCheck"><b>Run the Animation</b></label></p>
 
 <div style="float:left; border: 2px solid black">
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
