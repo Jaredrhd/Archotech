@@ -248,17 +248,25 @@
         g.fill();
     }
 
-    var bufferGate = new SceneGraphNode();
+    // ------------------------------- Logic Gates --------------------------
+    /**
+     * All gates are 1 unit in height and centered at (0, 0).
+     * All input and output lines are 0.5 units in length.
+     */
+
+    var bufferGate = new SceneGraphNode(); // Stroked triangle and two line segments. One input, one output.
     bufferGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Two line segments
         g.beginPath();
         g.moveTo(-0.5, 0);
         g.lineTo(0, 0);
         g.moveTo(1, 0);
         g.lineTo(1.5, 0);
         g.stroke();
-        
+
+        // Stroked triangle facing to the right
         g.rotate(-Math.PI/2);
         g.fillStyle = "white";
         g.beginPath();
@@ -269,10 +277,11 @@
         g.stroke();
     }
 
-    var notGate = new SceneGraphNode();
+    var notGate = new SceneGraphNode(); // Stroked triangle, two line segments and a stroked circle. One input, one output.
     notGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Two line segments
         g.beginPath();
         g.moveTo(-0.5, 0);
         g.lineTo(0, 0);
@@ -280,12 +289,14 @@
         g.lineTo(1.5, 0);
         g.stroke();
 
+        // Stroked circle at the tip of the triangle
         g.fillStyle = "white";
         g.beginPath();
         g.arc(1.135, 0, 0.1, 0, 2*Math.PI);
         g.fill();
         g.stroke();
         
+        // Stroked triangle facing to the right
         g.rotate(-Math.PI/2);
         g.fillStyle = "white";
         g.beginPath();
@@ -296,10 +307,11 @@
         g.stroke();
     }
 
-    var andGate = new SceneGraphNode();
+    var andGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides and three line segments. Two inputs, one output.
     andGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Three line segments
         g.beginPath();
         g.moveTo(-0.5, 0.25);
         g.lineTo(0, 0.25);
@@ -309,11 +321,13 @@
         g.lineTo(1.5, 0);
         g.stroke();
 
+        // Rectangular base
         g.beginPath();
         g.moveTo(0, 0.5);
         g.lineTo(0.5, 0.5);
         g.stroke();
     
+        // Connecting arc
         g.save();
         g.beginPath();
         g.rotate(-Math.PI/2);
@@ -321,6 +335,7 @@
         g.stroke();
         g.restore();
 
+        // Rectangular base
         g.beginPath();
         g.moveTo(0.5, -0.5);
         g.lineTo(0, -0.5);
@@ -328,10 +343,11 @@
         g.stroke();
     }
 
-    var nandGate = new SceneGraphNode();
+    var nandGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides, a stroked circle and three line segments. Two inputs, one output.
     nandGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Tree line segments
         g.beginPath();
         g.moveTo(-0.5, 0.25);
         g.lineTo(0, 0.25);
@@ -341,17 +357,20 @@
         g.lineTo(1.5, 0);
         g.stroke();
 
+        // Stroked circle at the center of the arc
         g.fillStyle = "white";
         g.beginPath();
         g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
         g.fill();
         g.stroke();
 
+        // Rectangular base
         g.beginPath();
         g.moveTo(0, 0.5);
         g.lineTo(0.5, 0.5);
         g.stroke();
     
+        // Connecting arc
         g.save();
         g.beginPath();
         g.rotate(-Math.PI/2);
@@ -359,6 +378,7 @@
         g.stroke();
         g.restore();
 
+        // Rectangular base
         g.beginPath();
         g.moveTo(0.5, -0.5);
         g.lineTo(0, -0.5);
@@ -366,10 +386,11 @@
         g.stroke();
     }
 
-    var orGate = new SceneGraphNode();
+    var orGate = new SceneGraphNode(); // Three bezier curves and three line segments. Two inputs, one output.
     orGate.doDraw = function(g) {
         g.lineWidth = 0.025;
-
+        
+        // Three line segments
         g.beginPath();
         g.moveTo(-0.375, 0.25);
         g.lineTo(0.125, 0.25);
@@ -381,17 +402,18 @@
 
         g.beginPath();
         g.moveTo(0, 0.5);
-        g.quadraticCurveTo(0.8, 0.5, 1, 0);
-        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
-        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.stroke();
     }
 
-    var norGate = new SceneGraphNode();
+    var norGate = new SceneGraphNode(); // Three bezier curves, a stroked circle and three line segments. Two inputs, one output.
     norGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Three line segments
         g.beginPath();
         g.moveTo(-0.375, 0.25);
         g.lineTo(0.125, 0.25);
@@ -401,6 +423,7 @@
         g.lineTo(1.5, 0);
         g.stroke();
 
+        // Stroked circle at the intersection of the two bezier curves
         g.fillStyle = "white";
         g.beginPath();
         g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
@@ -409,17 +432,18 @@
 
         g.beginPath();
         g.moveTo(0, 0.5);
-        g.quadraticCurveTo(0.8, 0.5, 1, 0);
-        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
-        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.stroke();
     }
 
-    var xorGate = new SceneGraphNode();
+    var xorGate = new SceneGraphNode(); // Four bezier curves and three line segments. Two inputs, one output.
     xorGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Three line segments
         g.beginPath();
         g.moveTo(-0.375, 0.25);
         g.lineTo(0.125, 0.25);
@@ -431,19 +455,20 @@
 
         g.beginPath();
         g.moveTo(0, 0.5);
-        g.quadraticCurveTo(0.8, 0.5, 1, 0);
-        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
-        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.moveTo(-0.1, -0.5);
-        g.quadraticCurveTo(0.25, 0, -0.1, 0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
         g.stroke();
     }
 
-    var xnorGate = new SceneGraphNode();
+    var xnorGate = new SceneGraphNode(); // Four bezier curves, a stroked circle and three line segments. Two inputs, one output.
     xnorGate.doDraw = function(g) {
         g.lineWidth = 0.025;
 
+        // Three line segments
         g.beginPath();
         g.moveTo(-0.375, 0.25);
         g.lineTo(0.125, 0.25);
@@ -453,6 +478,7 @@
         g.lineTo(1.5, 0);
         g.stroke();
 
+        // Stroked circle at the intersection of the two bezier curves
         g.fillStyle = "white";
         g.beginPath();
         g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
@@ -461,12 +487,12 @@
 
         g.beginPath();
         g.moveTo(0, 0.5);
-        g.quadraticCurveTo(0.8, 0.5, 1, 0);
-        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
-        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.moveTo(-0.1, -0.5);
-        g.quadraticCurveTo(0.25, 0, -0.1, 0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
         g.stroke();
     }
     
