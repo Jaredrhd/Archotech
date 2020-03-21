@@ -66,7 +66,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         $feedbackimg = '';
 
         //Get the file
-        $input = file_get_contents(new moodle_url('/question/type/logicgate/Lab.html')) . $feedbackimg;
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
 
         //Add the question text
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
