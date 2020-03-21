@@ -522,10 +522,10 @@
     //------------------ Animation framework ------------------------------
     
     function frame() {
-            // Draw one frame of the animation, and schedule the next frame.
-            updateFrame();
-            draw();
-            requestAnimationFrame(frame);
+        // Draw one frame of the animation, and schedule the next frame.
+        updateFrame();
+        draw();
+        requestAnimationFrame(frame);
     }
     
     //----------------------- initialization -------------------------------
@@ -538,6 +538,7 @@
 
         graphics = canvas.getContext("2d");
         
+        //Construct world and call frame for animating
         createWorld();
         frame();
 
@@ -604,8 +605,6 @@
 </head>
 
 <body onload="init()" style="background-color:#EEEEEE">
-
-<h3>Scene Graph 2D</h3>
 
 <noscript>
    <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
