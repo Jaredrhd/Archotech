@@ -28,6 +28,7 @@
     //If mouse down
     var isMouseDown;
     var selectedObject = null;
+    var mousePos;
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -572,7 +573,7 @@
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 isMouseDown = true;
-                var mousePos = getMousePos(canvas, event);
+                mousePos = getMousePos(canvas, event);
                 world.subobjects.forEach(function(item, index){
                     if (selectedObject == null) {
                         var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
@@ -599,8 +600,9 @@
         document.addEventListener("mousemove", function(event) {
             if (event.which) {
                 if (selectedObject != null) {
-                    var mousePos = getMousePos(canvas, event);
-                    selectedObject.setTranslation(mousePos.x, mousePos.y);
+                    var oldMousePos = mousePos;
+                    mousePos = getMousePos(canvas, event);
+                    selectedObject.setTranslation(selectedObject.translateX + (mousePos.x - oldMousePos.x), selectedObject.translateY + (mousePos.y - oldMousePos.y));
                 }
             }
         }, true);
