@@ -9,7 +9,7 @@
     var canvas;   // The canvas that is used as the drawing surface
     var graphics; // The 2D graphics context for drawing on the canvas.
 
-    var X_LEFT = -4;    // The xy limits for the coordinate system.
+    var X_LEFT = -4;  // The xy limits for the coordinate system.
     var X_RIGHT = 4;
     var Y_BOTTOM = -3;
     var Y_TOP = 3;
@@ -37,12 +37,30 @@
         world = new CompoundObject();  // Root node for the scene graph.
 
         // TODO: Create objects and add them to the scene graph.
-        rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
+        /*rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
         rotatingRect.setScale(2,2).setColor("red"); 
         rotatingRect2 = new TransformedObject(filledRect);
-        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);
-        world.add(rotatingRect);
-        world.add(rotatingRect2);
+        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);*/
+
+        var buffer_gate = new TransformedObject(bufferGate);
+        var not_gate = new TransformedObject(notGate);
+        var and_gate = new TransformedObject(andGate);
+        var nand_gate = new TransformedObject(nandGate);
+        var or_gate = new TransformedObject(orGate);
+        var nor_gate = new TransformedObject(norGate);
+        var xor_gate = new TransformedObject(xorGate);
+        var xnor_gate = new TransformedObject(xnorGate);
+
+        world.add(buffer_gate);
+        world.add(not_gate);
+        world.add(and_gate);
+        world.add(nand_gate);
+        world.add(or_gate);
+        world.add(nor_gate);
+        world.add(xnor_gate);
+        world.add(xor_gate);
+        // world.add(rotatingRect);
+        // world.add(rotatingRect2);
     }
     
     /**
@@ -228,9 +246,255 @@
         g.lineTo(0,1);
         g.closePath();
         g.fill();
-    }   
+    }
+
+    // ------------------------------- Logic Gates --------------------------
+    /**
+     * All gates are 1 unit in height and centered at (0, 0).
+     * All input and output lines are 0.5 units in length.
+     */
+
+    var bufferGate = new SceneGraphNode(); // Stroked triangle and two line segments. One input, one output.
+    bufferGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Two line segments
+        g.beginPath();
+        g.moveTo(-0.5, 0);
+        g.lineTo(0, 0);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Stroked triangle facing to the right
+        g.rotate(-Math.PI/2);
+        g.fillStyle = "white";
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.stroke();
+    }
+
+    var notGate = new SceneGraphNode(); // Stroked triangle, two line segments and a stroked circle. One input, one output.
+    notGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Two line segments
+        g.beginPath();
+        g.moveTo(-0.5, 0);
+        g.lineTo(0, 0);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Stroked circle at the tip of the triangle
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.135, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+        
+        // Stroked triangle facing to the right
+        g.rotate(-Math.PI/2);
+        g.fillStyle = "white";
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.stroke();
+    }
+
+    var andGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides and three line segments. Two inputs, one output.
+    andGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Three line segments
+        g.beginPath();
+        g.moveTo(-0.5, 0.25);
+        g.lineTo(0, 0.25);
+        g.moveTo(-0.5, -0.25);
+        g.lineTo(0, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Rectangular base
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.lineTo(0.5, 0.5);
+        g.stroke();
     
-   
+        // Connecting arc
+        g.save();
+        g.beginPath();
+        g.rotate(-Math.PI/2);
+        g.arc(0, 0.5, 0.5, 0, Math.PI);
+        g.stroke();
+        g.restore();
+
+        // Rectangular base
+        g.beginPath();
+        g.moveTo(0.5, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.51);
+        g.stroke();
+    }
+
+    var nandGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides, a stroked circle and three line segments. Two inputs, one output.
+    nandGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Tree line segments
+        g.beginPath();
+        g.moveTo(-0.5, 0.25);
+        g.lineTo(0, 0.25);
+        g.moveTo(-0.5, -0.25);
+        g.lineTo(0, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Stroked circle at the center of the arc
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        // Rectangular base
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.lineTo(0.5, 0.5);
+        g.stroke();
+    
+        // Connecting arc
+        g.save();
+        g.beginPath();
+        g.rotate(-Math.PI/2);
+        g.arc(0, 0.5, 0.5, 0, Math.PI);
+        g.stroke();
+        g.restore();
+
+        // Rectangular base
+        g.beginPath();
+        g.moveTo(0.5, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.51);
+        g.stroke();
+    }
+
+    var orGate = new SceneGraphNode(); // Three bezier curves and three line segments. Two inputs, one output.
+    orGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+        
+        // Three line segments
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
+        g.closePath();
+        g.stroke();
+    }
+
+    var norGate = new SceneGraphNode(); // Three bezier curves, a stroked circle and three line segments. Two inputs, one output.
+    norGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Three line segments
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Stroked circle at the intersection of the two bezier curves
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
+        g.closePath();
+        g.stroke();
+    }
+
+    var xorGate = new SceneGraphNode(); // Four bezier curves and three line segments. Two inputs, one output.
+    xorGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Three line segments
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
+        g.closePath();
+        g.moveTo(-0.1, -0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+    }
+
+    var xnorGate = new SceneGraphNode(); // Four bezier curves, a stroked circle and three line segments. Two inputs, one output.
+    xnorGate.doDraw = function(g) {
+        g.lineWidth = 0.025;
+
+        // Three line segments
+        g.beginPath();
+        g.moveTo(-0.375, 0.25);
+        g.lineTo(0.125, 0.25);
+        g.moveTo(-0.375, -0.25);
+        g.lineTo(0.125, -0.25);
+        g.moveTo(1, 0);
+        g.lineTo(1.5, 0);
+        g.stroke();
+
+        // Stroked circle at the intersection of the two bezier curves
+        g.fillStyle = "white";
+        g.beginPath();
+        g.arc(1.1, 0, 0.1, 0, 2*Math.PI);
+        g.fill();
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0); // Left side of body
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
+        g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
+        g.closePath();
+        g.moveTo(-0.1, -0.5);
+        g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+    }
     
     // ------------------------------- graphics support functions --------------------------
     
@@ -283,24 +547,11 @@
     
     //------------------ Animation framework ------------------------------
     
-    var running = false;  // This is set to true when animation is running
-    
     function frame() {
-        if (running) {
-               // Draw one frame of the animation, and schedule the next frame.
-            updateFrame();
-            draw();
-            requestAnimationFrame(frame);
-        }
-    }
-    
-    function doAnimationCheckbox() { 
-        var shouldRun = document.getElementById("animateCheck").checked;
-        if ( shouldRun != running ) {
-            running = shouldRun;
-            if (running)
-                requestAnimationFrame(frame);
-        }
+        // Draw one frame of the animation, and schedule the next frame.
+        updateFrame();
+        draw();
+        requestAnimationFrame(frame);
     }
     
     //----------------------- initialization -------------------------------
@@ -312,13 +563,13 @@
         }
 
         graphics = canvas.getContext("2d");
-        document.getElementById("animateCheck").checked = false; 
-        document.getElementById("animateCheck").onchange = doAnimationCheckbox;
+        
+        //Construct world and call frame for animating
         createWorld();
-        draw();
+        frame();
 
         //Add mouse down and up handlers
-        document.addEventListener('mousedown', function(event) { 
+        document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 isMouseDown = true;
                 var mousePos = getMousePos(canvas, event);
@@ -337,15 +588,15 @@
                         
                     }
                 });
-                console.log(mousePos.x + ',' + mousePos.y);
+                console.log(mousePos.x + "," + mousePos.y);
             }
         }, true);
         
         //Mouse up
-        document.addEventListener('mouseup', function(event) { if (event.which){isMouseDown = false; selectedObject = null;}}, true);  
+        document.addEventListener("mouseup", function(event) { if (event.which){isMouseDown = false; selectedObject = null;}}, true);  
 
         //Mouse movement
-        document.addEventListener('mousemove', function(event) {
+        document.addEventListener("mousemove", function(event) {
             if (event.which) {
                 if (selectedObject != null) {
                     var mousePos = getMousePos(canvas, event);
@@ -381,18 +632,15 @@
 
 <body onload="init()" style="background-color:#EEEEEE">
 
-<h3>Scene Graph 2D</h3>
-
 <noscript>
    <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
-
-<p id="message"><label><input type="checkbox" id="animateCheck"><b>Run the Animation</b></label></p>
 
 <div style="float:left; border: 2px solid black">
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
+<input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
 
 </body>
 </html>
