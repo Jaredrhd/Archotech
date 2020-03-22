@@ -169,6 +169,7 @@
         this.scaleY = 1;
         this.translateX = 0;
         this.translateY = 0;
+        this.dragRadius = 1;
     }
     TransformedObject.prototype = new SceneGraphNode();  // (makes it a subclass!)
     TransformedObject.prototype.setRotation = function(angle) {
@@ -577,13 +578,13 @@
                 world.subobjects.forEach(function(item, index){
                     if (selectedObject == null) {
                         var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
-                        if (mouseDistanceToObject <= 1) {
+                        if (mouseDistanceToObject <= item.dragRadius) {
                             selectedObject = item;
                         }
                         
                     } else {
                         var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
-                        if (mouseDistanceToObject <= 1 && mouseDistanceToObject < Math.sqrt(Math.pow((mousePos.x - selectedObject.translateX), 2) + Math.pow((mousePos.y - selectedObject.translateY), 2))) {
+                        if (mouseDistanceToObject <= item.dragRadius && mouseDistanceToObject < Math.sqrt(Math.pow((mousePos.x - selectedObject.translateX), 2) + Math.pow((mousePos.y - selectedObject.translateY), 2))) {
                             selectedObject = item;
                         }
                         
