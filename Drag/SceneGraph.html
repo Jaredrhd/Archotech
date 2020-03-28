@@ -252,10 +252,11 @@
     /**
      * All gates are 1 unit in height and centered at (0, 0).
      * All input and output lines are 0.5 units in length.
-     */
+    */
 
     var bufferGate = new SceneGraphNode(); // Stroked triangle and two line segments. One input, one output.
     bufferGate.doDraw = function(g) {
+        g.translate(-0.5, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Two line segments
@@ -279,6 +280,7 @@
 
     var notGate = new SceneGraphNode(); // Stroked triangle, two line segments and a stroked circle. One input, one output.
     notGate.doDraw = function(g) {
+        g.translate(-0.5, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Two line segments
@@ -309,6 +311,7 @@
 
     var andGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides and three line segments. Two inputs, one output.
     andGate.doDraw = function(g) {
+        g.translate(-0.5, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Three line segments
@@ -345,6 +348,7 @@
 
     var nandGate = new SceneGraphNode(); // Rectangle with an arc replacing one of the sides, a stroked circle and three line segments. Two inputs, one output.
     nandGate.doDraw = function(g) {
+        g.translate(-0.5, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Tree line segments
@@ -388,6 +392,7 @@
 
     var orGate = new SceneGraphNode(); // Three bezier curves and three line segments. Two inputs, one output.
     orGate.doDraw = function(g) {
+        g.translate(-0.55, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
         
         // Three line segments
@@ -411,6 +416,7 @@
 
     var norGate = new SceneGraphNode(); // Three bezier curves, a stroked circle and three line segments. Two inputs, one output.
     norGate.doDraw = function(g) {
+        g.translate(-0.55, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Three line segments
@@ -441,6 +447,7 @@
 
     var xorGate = new SceneGraphNode(); // Four bezier curves and three line segments. Two inputs, one output.
     xorGate.doDraw = function(g) {
+        g.translate(-0.55, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Three line segments
@@ -466,6 +473,7 @@
 
     var xnorGate = new SceneGraphNode(); // Four bezier curves, a stroked circle and three line segments. Two inputs, one output.
     xnorGate.doDraw = function(g) {
+        g.translate(-0.55, 0); // Centre at (0, 0)
         g.lineWidth = 0.025;
 
         // Three line segments
