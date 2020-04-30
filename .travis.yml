@@ -19,6 +19,25 @@ jobs:
     - language: php
       php: 7.1
       env: DB=pgsql
+
+      # This lists steps that are run before the installation step. 
+      before_install:
+      # This disables XDebug which should speed up the build.
+        - phpenv config-rm xdebug.ini
+      # This installs NodeJS which is used by Grunt, etc.
+        - nvm install 8.9
+        - nvm use 8.9
+      # Currently we are inside of the clone of your repository.  We move up two
+      # directories to build the project.
+        - cd ../..
+      # Install this project into a directory called "ci".
+        - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+      # Update the $PATH so scripts from this project can be called easily.
+        - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+        
+      # This lists steps that are run for installation and setup.
+      install:
+        - moodle-plugin-ci install
       script:
         - moodle-plugin-ci phplint
         - moodle-plugin-ci phpcpd
@@ -34,6 +53,25 @@ jobs:
     - language: php
       php: 7.1
       env: DB=mysqli
+
+      # This lists steps that are run before the installation step. 
+      before_install:
+      # This disables XDebug which should speed up the build.
+        - phpenv config-rm xdebug.ini
+      # This installs NodeJS which is used by Grunt, etc.
+        - nvm install 8.9
+        - nvm use 8.9
+      # Currently we are inside of the clone of your repository.  We move up two
+      # directories to build the project.
+        - cd ../..
+      # Install this project into a directory called "ci".
+        - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+      # Update the $PATH so scripts from this project can be called easily.
+        - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+      # This lists steps that are run for installation and setup.
+      install:
+        - moodle-plugin-ci install
 
       script:
         - moodle-plugin-ci phplint
@@ -51,6 +89,10 @@ jobs:
       node_js:
         - node
 
+      install:
+        - npm install coveralls --save-dev
+        - npm install --save-dev jest
+
       script:
         - npm run coveralls 
 
@@ -59,24 +101,3 @@ cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
-
-# This lists steps that are run before the installation step. 
-before_install:
-# This disables XDebug which should speed up the build.
-  - phpenv config-rm xdebug.ini
-# This installs NodeJS which is used by Grunt, etc.
-  - nvm install 8.9
-  - nvm use 8.9
-# Currently we are inside of the clone of your repository.  We move up two
-# directories to build the project.
-  - cd ../..
-# Install this project into a directory called "ci".
-  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
-# Update the $PATH so scripts from this project can be called easily.
-  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-
-# This lists steps that are run for installation and setup.
-install:
-  - moodle-plugin-ci install
-  - npm install coveralls --save-dev
-  - npm install --save-dev jest

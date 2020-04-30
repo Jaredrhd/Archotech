@@ -2,7 +2,6 @@
     "scripts": {
         "test:coverage": "jest --coverage",
         "test:coveralls": " jest --coverage --coverageReporters=text-lcov | coveralls",
-        "coveralls": "ls && ls ../",
-        "coverallss": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+        "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
       }
 }
