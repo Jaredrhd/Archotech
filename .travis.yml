@@ -1,9 +1,5 @@
 matrix:
   include:
-    - language: python
-
-matrix:
-  include:
     - language: php
       sudo: false
  
