@@ -1,4 +1,4 @@
-matrix:
+jobs:
   include:
     - language: php
       sudo: false
@@ -119,7 +119,10 @@ matrix:
       node_js:
         - node
 
-      cache: npm
+      cache:
+        directories:
+          - $HOME/.composer/cache
+          - $HOME/.npm
 
       install:
         - npm install coveralls --save-dev
