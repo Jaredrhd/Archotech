@@ -13,15 +13,12 @@ env:
  global:
 # This line determines which version branch of Moodle to test against.
   - MOODLE_BRANCH=MOODLE_37_STABLE
- matrix:
-  - DB=pgsql
-  - DB=mysqli
 
 jobs:
   include:
     - language: php
-      php: 7.0
-
+      php: 7.1
+      env: DB=pgsql
       script:
         - moodle-plugin-ci phplint
         - moodle-plugin-ci phpcpd
@@ -36,6 +33,7 @@ jobs:
     
     - language: php
       php: 7.1
+      env: DB=mysqli
 
       script:
         - moodle-plugin-ci phplint
