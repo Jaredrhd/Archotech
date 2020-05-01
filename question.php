@@ -60,7 +60,6 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
     }
 
     public function get_validation_error(array $response) {
-        // TODO.
         return 'get_validation_error';
     }
 
