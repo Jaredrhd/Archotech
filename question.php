@@ -64,14 +64,12 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
-        // TODO.
-        return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
+        //Check if answer is the same as the previous answer attempt
+        return question_utils::arrays_same_at_key_missing_is_blank($prevresponse, $newresponse, 'answer');
     }
 
 
     public function get_correct_response() {
-        // TODO.
         return array();
     }
 
@@ -93,9 +91,4 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
-    //Multiple tries with negative marking?
-    public function compute_final_grade($responses, $totaltries) {
-        // TODO find out what this function does
-        return 1;
-    }
 }
