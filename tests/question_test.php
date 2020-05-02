@@ -49,5 +49,12 @@ class qtype_logicgate_question_test extends advanced_testcase
         $value =  array('answer' => PARAM_RAW);
         $this->assertEquals($value, $question->get_expected_data(), false);
     }
+
+    //Test compute final grade
+    public function test_compute_final_grade() 
+    {
+        $question = test_question_maker::make_question('logicgate');
+        $this->assertEquals(1, $question->compute_final_grade("reponses",0), false);
+    }
 }
 ?>

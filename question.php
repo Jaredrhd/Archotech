@@ -91,4 +91,9 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
+    //Multiple tries with negative marking?
+    public function compute_final_grade($responses, $totaltries) {
+        // TODO find out what this function does
+        return 1;
+    }
 }

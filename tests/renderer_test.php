@@ -24,6 +24,5 @@ class qtype_logicgate_renderer_test extends advanced_testcase
     {
         $this->markTestIncomplete('This test has not been implemented yet.');
     }
-
 }
 ?>
