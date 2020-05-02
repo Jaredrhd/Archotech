@@ -22,5 +22,13 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question = test_question_maker::make_question('logicgate');
         $this->assertEquals(array(), $question->get_correct_response(), false);
     }
+
+    public function test_grade_response()
+    {
+        $question = test_question_maker::make_question('logicgate');
+        list($fraction, $state)  = $question->grade_response(array("response"));
+        $this->assertEquals(0, $fraction, false);
+        $this->assertEquals(question_state::question_state_gradedwrong, $state, false);
+    }
 }
 ?>
