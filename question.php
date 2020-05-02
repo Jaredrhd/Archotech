@@ -63,11 +63,23 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return 'get_validation_error';
     }
 
-    public function is_same_response(array $prevresponse, array $newresponse) {
-        //Check if answer is the same as the previous answer attempt
-        return question_utils::arrays_same_at_key_missing_is_blank($prevresponse, $newresponse, 'answer');
-    }
+    public function is_same_response(array $prevresponse, array $newresponse) 
+    {
+        //If there is no prev answer, it must be new
+        if (count($prevresponse) == 0 )
+            return false;
 
+        //foreach new response
+        foreach($newresponse as $arraykey => $value)
+        {
+            //if the key matches then its the 
+            if($value == $prevresponse[$arraykey])
+               return true;
+        }
+
+        //If no matching answers were found it must be new
+        return false; 
+    }
 
     public function get_correct_response() {
         return array();
