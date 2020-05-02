@@ -38,8 +38,8 @@ class qtype_logicgate_question_test extends advanced_testcase
     {
         $question = test_question_maker::make_question('logicgate');
 
-        $this->assertEquals(true, $question->is_same_response("hi", "hi"), false);
-        $this->assertEquals(false, $question->is_same_response("hi", "hello"), false);
+        $this->assertEquals(true, $question->is_same_response(array("hi"), array("hi")), false);
+        $this->assertEquals(false, $question->is_same_response(array("hi"), array("hello")), false);
     }
     
     //Make sure data is saved in raw format
