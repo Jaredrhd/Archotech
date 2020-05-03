@@ -8,10 +8,8 @@ class qtype_logicgate_test_helper extends question_test_helper {
     }
 
     /**
-     * Makes a shortanswer question with correct ansewer 'frog', partially
-     * correct answer 'toad' and defaultmark 1. This question also has a
-     * '*' match anything answer.
-     * @return qtype_shortanswer_question
+     * Makes a logicate question
+     * @return qtype_logicgate_question
      */
     public function make_logicgate_question_simple() {
         question_bank::load_question_definition_classes('logicgate');
@@ -33,9 +31,8 @@ class qtype_logicgate_test_helper extends question_test_helper {
     }
 
     /**
-     * Gets the question data for a shortanswer question with with correct
-     * ansewer 'frog', partially correct answer 'toad' and defaultmark 1.
-     * This question also has a '*' match anything answer.
+     * Gets the question data for a logicgate question with with correct
+     * answer 'hi', partially correct answer ' ' and defaultmark 1.
      * @return stdClass
      */
     public function get_logicgate_question_data_simple() {
