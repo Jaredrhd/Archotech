@@ -529,26 +529,26 @@
         }
         this.object.draw(g);
         //Must Remember to update this if it needs updating.
-        // if (typeof this.objectType !== "undefined") {
-        //     if (this.objectType === 1) {
-        //         for (var i = 0; i < this.inputNodes.length; i++) {
-        //             this.inputNodes[i].draw(g);
-        //         }
-        //         for (var i = 0; i < this.outputNodes.length; i++) {
-        //             this.outputNodes[i].draw(g);
-        //             this.outputNodes[i].wire.draw(g);
-        //         }
-        //     } else if (this.objectType === 2) {
-        //         for (var i = 0; i < this.outputNodes.length; i++) {
-        //             this.outputNodes[i].draw(g);
-        //             this.outputNodes[i].wire.draw(g);
-        //         }
-        //     } else if (this.objectType === 4) {
-        //         for (var i = 0; i < this.inputNodes.length; i++) {
-        //             this.inputNodes[i].draw(g);
-        //         }
-        //     }
-        // }
+        if (typeof this.objectType !== "undefined") {
+            if (this.objectType === 1) {
+                for (var i = 0; i < this.inputNodes.length; i++) {
+                    this.inputNodes[i].draw(g);
+                }
+                for (var i = 0; i < this.outputNodes.length; i++) {
+                    this.outputNodes[i].draw(g);
+                    this.outputNodes[i].wire.draw(g);
+                }
+            } else if (this.objectType === 2) {
+                for (var i = 0; i < this.outputNodes.length; i++) {
+                    this.outputNodes[i].draw(g);
+                    this.outputNodes[i].wire.draw(g);
+                }
+            } else if (this.objectType === 4) {
+                for (var i = 0; i < this.inputNodes.length; i++) {
+                    this.inputNodes[i].draw(g);
+                }
+            }
+        }
         g.restore();
     }
 
