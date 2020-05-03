@@ -306,21 +306,21 @@
                             });
                         }
                     }
-                    // this.removeLogicGate = function() {
-                    //     this.inputNodes.forEach(function(item, index){
-                    //         item.removeNode();
-                    //     });
-                    //     this.outputNodes.forEach(function(item, index){
-                    //         item.removeNode();
-                    //     });
-                    //     var thisLogicGate = this;
-                    //     world.subobjects.splice(world.subobjects.findIndex(function(logicGate) { return logicGate === thisLogicGate;}), 1);
-                    // }
-                    // this.setLogicGateCoordinatesToMouseWithOffset = function() {
-                    //     var oldMousePos = mousePos;
-                    //     mousePos = getMousePos(canvas, event);
-                    //     this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
-                    // }
+                    this.removeLogicGate = function() {
+                        this.inputNodes.forEach(function(item, index){
+                            item.removeNode();
+                        });
+                        this.outputNodes.forEach(function(item, index){
+                            item.removeNode();
+                        });
+                        var thisLogicGate = this;
+                        world.subobjects.splice(world.subobjects.findIndex(function(logicGate) { return logicGate === thisLogicGate;}), 1);
+                    }
+                    this.setLogicGateCoordinatesToMouseWithOffset = function() {
+                        var oldMousePos = mousePos;
+                        mousePos = getMousePos(canvas, event);
+                        this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                    }
                 }
                 this.getCoordinates = function() {
                     return [this.translateX, this.translateY];
@@ -475,25 +475,25 @@
                     }
                 }
             }
-            // this.getDistanceOfObjectToMouse = function() {
-            //     mousePos = getMousePos(canvas, event);
-            //     return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
-            // }
-            // this.isMouseCloserToThisObject = function(otherObject) {
-            //     return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
-            // }
-            // this.isMouseWithinObjectRadius = function() {
-            //     return this.getDistanceOfObjectToMouse() <= this.dragRadius;
-            // }
-            // this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
-            //     if (this.objectType == 1) {
-            //         this.setLogicGateCoordinatesToMouseWithOffset();
-            //     } else if (this.objectType == 3) {
-            //         this.setWireCoordinatesToMouse();
-            //     } else if (this.objectType == 4) {
-            //         this.setEndNodeCoordinatesToMouseWithOffset();
-            //     }
-            // }
+            this.getDistanceOfObjectToMouse = function() {
+                mousePos = getMousePos(canvas, event);
+                return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+            }
+            this.isMouseCloserToThisObject = function(otherObject) {
+                return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
+            }
+            this.isMouseWithinObjectRadius = function() {
+                return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+            }
+            this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
+                if (this.objectType == 1) {
+                    this.setLogicGateCoordinatesToMouseWithOffset();
+                } else if (this.objectType == 3) {
+                    this.setWireCoordinatesToMouse();
+                } else if (this.objectType == 4) {
+                    this.setEndNodeCoordinatesToMouseWithOffset();
+                }
+            }
         }
     }
     TransformedObject.prototype = new SceneGraphNode();  // (makes it a subclass!)
