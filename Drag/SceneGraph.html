@@ -68,18 +68,18 @@
      */
     function updateFrame() 
     {
-        // frameNumber++;
+        frameNumber++;
 
-        // world.subobjects.forEach(function(item, index){
-        //     if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
-        //     //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
-        //         item.outputNodes.forEach(function(subItem, subIndex){
-        //             if (selectedObject !== subItem) {
-        //                 subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
-        //             }
-        //         });
-        //     }
-        // });
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
+                item.outputNodes.forEach(function(subItem, subIndex){
+                    if (selectedObject !== subItem) {
+                        subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
+                    }
+                });
+            }
+        });
     }
  
 
