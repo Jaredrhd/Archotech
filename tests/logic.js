@@ -40,8 +40,12 @@ function xnor(a, b) {
     return 0;
 }
 
+function manhattanDistance(p1, p2) {
+    return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
+}
+
 function pythagDistance(p1, p2) {
     return Math.sqrt( Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2) );
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, pythagDistance };
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance };

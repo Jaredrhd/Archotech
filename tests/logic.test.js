@@ -1,4 +1,4 @@
-const { not, and, nand, or, nor, xor, xnor, pythagDistance } = require("./logic.js");
+const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -45,6 +45,12 @@ test("Takes in 2 inputs and applies XNOR gate", () => {
     expect(xnor(1, 0)).toBe(0);
     expect(xnor(0, 1)).toBe(0);
     expect(xnor(1, 1)).toBe(1);
+});
+
+test("Takes in 2 points and returns the Manhattan distance", () => {
+    let p1 = {x: 3.5, y: 6};
+    let p2 = {x: -4.2, y: 10};
+    expect(manhattanDistance(p1, p2)).toBe(11.7);
 });
 
 test("Takes in 2 points and calculates the Pythagorean distance", () => {
