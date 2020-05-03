@@ -23,11 +23,9 @@
     var world;  // A SceneGraphNode representing the entire scene. 
     
     // TODO: Define global variables to represent animated objects in the scene.
-    var rotatingRect;  // (DELETE THIS EXAMPLE)
 
-    //If mouse down
-    var isMouseDown;
     var selectedObject = null;
+    var assignedObject = null;
     var mousePos;
     
     /**
@@ -38,30 +36,30 @@
         world = new CompoundObject();  // Root node for the scene graph.
 
         // TODO: Create objects and add them to the scene graph.
-        /*rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
-        rotatingRect.setScale(2,2).setColor("red"); 
-        rotatingRect2 = new TransformedObject(filledRect);
-        rotatingRect2.setScale(2,2).setColor("blue").setTranslation(0.5, 0);*/
-
-        var buffer_gate = new TransformedObject(bufferGate);
-        var not_gate = new TransformedObject(notGate);
-        var and_gate = new TransformedObject(andGate);
-        var nand_gate = new TransformedObject(nandGate);
-        var or_gate = new TransformedObject(orGate);
-        var nor_gate = new TransformedObject(norGate);
-        var xor_gate = new TransformedObject(xorGate);
-        var xnor_gate = new TransformedObject(xnorGate);
-
-        world.add(buffer_gate);
-        world.add(not_gate);
-        world.add(and_gate);
-        world.add(nand_gate);
-        world.add(or_gate);
+        //var buffer_gate = new TransformedObject(bufferGate, 0).setTranslation(-2, 2);
+        //var not_gate = new TransformedObject(notGate, 0).setTranslation(-2, 1);
+        //var and_gate = new TransformedObject(andGate, 0).setTranslation(-2, -2);
+        //var nand_gate = new TransformedObject(nandGate, 0).setTranslation(-2, 0);
+        //var or_gate = new TransformedObject(orGate, 0).setTranslation(-2, -1);
+        var nor_gate = new TransformedObject(norGate, 0).setTranslation(3, -2.5);
+        //var xor_gate = new TransformedObject(xorGate, 0).setTranslation(1, 1);
+        //var xnor_gate = new TransformedObject(xnorGate, 0).setTranslation(1, 0);
+        var start_node = new TransformedObject(node, 2).setTranslation(-2, -1).addOutputNode();
+        var start_node1 = new TransformedObject(node, 2).setTranslation(-2, 1).addOutputNode();
+        var end_node = new TransformedObject(node, 4).setTranslation(2, 1).addInputNode();
+        var end_node1 = new TransformedObject(node, 4).setTranslation(2, -1).addInputNode();
+        //world.add(buffer_gate);
+        //world.add(not_gate)
+        //world.add(and_gate);
+        //world.add(nand_gate);
+        //world.add(or_gate);
         world.add(nor_gate);
-        world.add(xnor_gate);
-        world.add(xor_gate);
-        // world.add(rotatingRect);
-        // world.add(rotatingRect2);
+        //world.add(xor_gate);
+        //world.add(xnor_gate);
+        world.add(start_node);
+        world.add(end_node);
+        world.add(start_node1);
+        world.add(end_node1);
     }
     
     /**
@@ -70,16 +68,18 @@
      */
     function updateFrame() 
     {
-        frameNumber++;
+        // frameNumber++;
 
-        //Calculate the distance to the rectangle with pythag
-        if(isMouseDown)
-        {
-            //etc
-            //TODO posibly save mouse coordinate as global
-            console.log("mouse pos x,y:");
-        }
-        
+        // world.subobjects.forEach(function(item, index){
+        //     if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+        //     //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
+        //         item.outputNodes.forEach(function(subItem, subIndex){
+        //             if (selectedObject !== subItem) {
+        //                 subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
+        //             }
+        //         });
+        //     }
+        // });
     }
  
 
@@ -91,6 +91,9 @@
     function SceneGraphNode() {
         this.fillColor = null;   // If non-null, the default fillStyle for this node.
         this.strokeColor = null; // If non-null, the default strokeStyle for this node.
+        if (arguments.length == 1 && arguments[0] == true) {
+            this.wireCoordinates = [0, 0];
+        }
     }
     SceneGraphNode.prototype.doDraw = function(g) {
             // This method is meant to be abstract and must be OVERRIDDEN in an actual
@@ -161,15 +164,337 @@
      *  The modeling transformations are always applied to the object
      *  in the order scale, then rotate, then translate.
      */
-    function TransformedObject(object) {
+    function TransformedObject() {
         SceneGraphNode.call(this);  // do superclass initialization
-        this.object = object;
+        this.object = arguments[0];
         this.rotationInDegrees = 0;
         this.scaleX = 1;
         this.scaleY = 1;
         this.translateX = 0;
         this.translateY = 0;
-        this.dragRadius = 1;
+        if (arguments.length == 2) {
+            this.objectType = arguments[1];
+            if (this.objectType == 0 || this.objectType == 1) {
+                if (this.objectType == 0) {
+                    this.dragRadius = 1;
+                    this.createLogicGateObject = function() {
+                        var logicGate;
+                        if (this.object === bufferGate) {
+                            logicGate = new TransformedObject(bufferGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === notGate) {
+                            logicGate = new TransformedObject(notGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === andGate) {
+                            logicGate = new TransformedObject(andGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === nandGate) {
+                            logicGate = new TransformedObject(nandGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === orGate) {
+                            logicGate = new TransformedObject(orGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === norGate) {
+                            logicGate = new TransformedObject(norGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === xorGate) {
+                            logicGate = new TransformedObject(xorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === xnorGate) {
+                            logicGate = new TransformedObject(xnorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                            world.add(logicGate);
+                            return logicGate;
+                        }
+                    }
+                } else if (this.objectType == 1) {
+                    this.dragRadius = 1.125;
+                    this.hasCharge = false;
+                    this.inputNodes = [];
+                    this.outputNodes = [];
+                    this.addInputNode = function(x, y){
+                        var inputNode = new TransformedObject(node, 5).setTranslation(x, y);
+                        inputNode.nodeOfObject = this;
+                        this.inputNodes.push(inputNode);
+                        return this;
+                    }
+                    this.addOutputNode = function(x, y) {
+                        var outputNode = new TransformedObject(node, 3).setTranslation(x, y);
+                        outputNode.nodeOfObject = this;
+                        outputNode.addWire();
+                        this.outputNodes.push(outputNode);
+                        return this;
+                    }
+                    this.reevaluateCharge = function() {
+                        var previousCharge = this.hasCharge;
+                        var numberOfChargedInputNodes = 0;
+                        this.inputNodes.forEach(function(item, index) {
+                            numberOfChargedInputNodes += item.hasCharge;
+                        });
+                        switch (this.object) {
+                            case bufferGate:
+                                if (numberOfChargedInputNodes == this.inputNodes.length) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case notGate:
+                                if (numberOfChargedInputNodes != this.inputNodes.length) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case andGate:
+                                if (numberOfChargedInputNodes == this.inputNodes.length) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case nandGate:
+                                if (numberOfChargedInputNodes == 0) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case orGate:
+                                if (numberOfChargedInputNodes != 0) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case norGate:
+                                if (numberOfChargedInputNodes != this.inputNodes.length) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case xorGate:
+                                if (numberOfChargedInputNodes == 1) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case xnorGate:
+                                if (numberOfChargedInputNodes == 1) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        if (previousCharge != this.hasCharge) {
+                            var tempLogicGate = this;
+                            this.outputNodes.forEach(function(item, index){
+                                if (item.connectedNode != "Not Connected") {
+                                    item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                }
+                            });
+                        }
+                    }
+                    // this.removeLogicGate = function() {
+                    //     this.inputNodes.forEach(function(item, index){
+                    //         item.removeNode();
+                    //     });
+                    //     this.outputNodes.forEach(function(item, index){
+                    //         item.removeNode();
+                    //     });
+                    //     var thisLogicGate = this;
+                    //     world.subobjects.splice(world.subobjects.findIndex(function(logicGate) { return logicGate === thisLogicGate;}), 1);
+                    // }
+                    // this.setLogicGateCoordinatesToMouseWithOffset = function() {
+                    //     var oldMousePos = mousePos;
+                    //     mousePos = getMousePos(canvas, event);
+                    //     this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                    // }
+                }
+                this.getCoordinates = function() {
+                    return [this.translateX, this.translateY];
+                }
+            } else if (this.objectType == 2 || this.objectType == 3 || this.objectType == 4 || this.objectType == 5) {
+                this.dragRadius = 0.125;
+                if (this.objectType == 3 || this.objectType == 5) {
+                    this.connectedNode = "Not Connected";
+                    this.nodeOfObject = "No Object";
+                    if (this.objectType == 3) {
+                        this.addWire = function() {
+                            this.wire = new TransformedObject(new SceneGraphNode(true)).setTranslation(this.translateX, this.translateY);
+                            this.wire.object.doDraw = function(g) {
+                                g.beginPath();
+                                g.moveTo(0,0);
+                                g.lineTo(0,this.wireCoordinates[1]);
+                                g.stroke();
+                                g.lineTo(this.wireCoordinates[0],this.wireCoordinates[1]);
+                                g.stroke();
+                            }
+                        }
+                        this.setWireCoordinates = function(x, y) {
+                            this.wire.object.wireCoordinates = [x, y];
+                        }
+                        this.resetWireCoordinates = function() {
+                            this.wire.object.wireCoordinates = [0, 0];
+                        }
+                        this.setWireCoordinatesToMouse = function() {
+                            mousePos = getMousePos(canvas, event);
+                            this.setWireCoordinates(mousePos.x - this.getCoordinates()[0], mousePos.y - this.getCoordinates()[1]);
+                        }
+                        this.setWireCoordinatesToOutputNodeConnectedNodeCoordinates = function() {
+                            if (this.connectedNode == "Not Connected") {
+                                this.removeNode();
+                            } else {
+                                this.setWireCoordinates(this.getDistanceFromOutputNodeToConnectedNode()[0], this.getDistanceFromOutputNodeToConnectedNode()[1]);
+                            }
+                        }
+                        this.getOutputNode = function() {
+                            if (this.connectedNode == "Not Connected") {
+                                return this;
+                            } else {
+                                if (this.isMouseWithinObjectRadius()) {
+                                    console.log("New Output Node Created");
+                                    this.nodeOfObject.addOutputNode(this.translateX, this.translateY);
+                                    return this.nodeOfObject.outputNodes[this.nodeOfObject.outputNodes.length - 1];
+                                } else {
+                                    //Evaluate here.
+                                    var node = this.connectedNode;
+                                    this.connectedNode = "Not Connected";
+                                    node.updateInputNodeCharge(false);
+                                    return this;
+                                }
+                            }
+                        }
+                        this.getDistanceFromOutputNodeToConnectedNode = function() {
+                            return [this.connectedNode.getCoordinates()[0] - this.getCoordinates()[0], this.connectedNode.getCoordinates()[1] - this.getCoordinates()[1]];
+                        }
+                    } else if (this.objectType == 5) {
+                        this.hasCharge = false;
+                        this.getInputNode = function() {
+                            if (this.connectedNode == "Not Connected") {
+                                return this;
+                            } else {
+                                var connectedOutputNode = this.connectedNode;
+                                this.connectedNode = "Not Connected";
+                                return connectedOutputNode;
+                            }
+                        }
+                        this.updateInputNodeCharge = function(charged) {
+                            var previousCharge = this.hasCharge;
+                            this.hasCharge = charged;
+                            if (previousCharge != this.hasCharge) {
+                                this.nodeOfObject.reevaluateCharge();
+                            }
+                        }
+                    }
+                    this.getCoordinates = function() {
+                        return [this.translateX + this.nodeOfObject.translateX, this.translateY + this.nodeOfObject.translateY];
+                    }
+                    this.removeNode = function() {
+                        if (this.objectType == 5) {
+                            if (this.connectedNode == "Not Connected") {
+                            } else {
+                                this.connectedNode.removeNode();
+                            }
+                        } else {
+                            if (this.connectedNode == "Not Connected") {
+                                this.resetWireCoordinates();
+                                if (this.nodeOfObject.outputNodes.length > 1) {
+                                    console.log("Removing Output Node");
+                                    var outputNode = this;
+                                    this.nodeOfObject.outputNodes.splice(this.nodeOfObject.outputNodes.findIndex(function(wireNode) { return wireNode === outputNode;}), 1);
+                                }
+                            } else {
+                                //Evaluate here.
+                                var node = this.connectedNode;
+                                this.connectedNode.connectedNode = "Not Connected";
+                                this.connectedNode = "Not Connected";
+                                node.updateInputNodeCharge(false);
+                                this.resetWireCoordinates();
+                                if (this.nodeOfObject.outputNodes.length > 1) {
+                                    var outputNode = this;
+                                    this.nodeOfObject.outputNodes.splice(this.nodeOfObject.outputNodes.findIndex(function(wireNode) { return wireNode === outputNode;}), 1);
+                                }
+                            }
+                        }
+                    }
+                } else if (this.objectType == 2 || this.objectType == 4) {
+                    if (this.objectType == 2) {
+                        this.hasCharge = true;
+                        this.outputNodes = [];
+                        this.addOutputNode = function() {
+                            var outputNode = new TransformedObject(node, 3).setTranslation(0, 0);
+                            outputNode.nodeOfObject = this;
+                            outputNode.addWire();
+                            this.outputNodes.push(outputNode);
+                            return this;
+                        }
+                        this.setCharge = function(charged) {
+                            var previousCharge = this.hasCharge;
+                            this.hasCharge = charged;
+                            if (previousCharge != this.hasCharge) {
+                                var tempStartNode = this;
+                                this.outputNodes.forEach(function(item, index){
+                                    if (item.connectedNode != "Not Connected") {
+                                        item.connectedNode.updateInputNodeCharge(tempStartNode.hasCharge);
+                                    }
+                                });
+                            }
+                        }
+                    } else if (this.objectType == 4) {
+                        this.hasCharge = false;
+                        this.inputNodes = [];
+                        this.addInputNode = function(){
+                            var inputNode = new TransformedObject(node, 5).setTranslation(0, 0);
+                            inputNode.nodeOfObject = this;
+                            this.inputNodes.push(inputNode);
+                            return this;
+                        }
+                        this.reevaluateCharge = function() {
+                            this.hasCharge = this.inputNodes[0].hasCharge;
+                        }
+                        this.setEndNodeCoordinatesToMouseWithOffset = function() {
+                            var oldMousePos = mousePos;
+                            mousePos = getMousePos(canvas, event);
+                            this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                        }
+                    }
+                    this.getCoordinates = function() {
+                        return [this.translateX, this.translateY];
+                    }
+                }
+            }
+            // this.getDistanceOfObjectToMouse = function() {
+            //     mousePos = getMousePos(canvas, event);
+            //     return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+            // }
+            // this.isMouseCloserToThisObject = function(otherObject) {
+            //     return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
+            // }
+            // this.isMouseWithinObjectRadius = function() {
+            //     return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+            // }
+            // this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
+            //     if (this.objectType == 1) {
+            //         this.setLogicGateCoordinatesToMouseWithOffset();
+            //     } else if (this.objectType == 3) {
+            //         this.setWireCoordinatesToMouse();
+            //     } else if (this.objectType == 4) {
+            //         this.setEndNodeCoordinatesToMouseWithOffset();
+            //     }
+            // }
+        }
     }
     TransformedObject.prototype = new SceneGraphNode();  // (makes it a subclass!)
     TransformedObject.prototype.setRotation = function(angle) {
@@ -203,10 +528,142 @@
             g.scale(this.scaleX, this.scaleY);
         }
         this.object.draw(g);
+        //Must Remember to update this if it needs updating.
+        // if (typeof this.objectType !== "undefined") {
+        //     if (this.objectType === 1) {
+        //         for (var i = 0; i < this.inputNodes.length; i++) {
+        //             this.inputNodes[i].draw(g);
+        //         }
+        //         for (var i = 0; i < this.outputNodes.length; i++) {
+        //             this.outputNodes[i].draw(g);
+        //             this.outputNodes[i].wire.draw(g);
+        //         }
+        //     } else if (this.objectType === 2) {
+        //         for (var i = 0; i < this.outputNodes.length; i++) {
+        //             this.outputNodes[i].draw(g);
+        //             this.outputNodes[i].wire.draw(g);
+        //         }
+        //     } else if (this.objectType === 4) {
+        //         for (var i = 0; i < this.inputNodes.length; i++) {
+        //             this.inputNodes[i].draw(g);
+        //         }
+        //     }
+        // }
         g.restore();
     }
+
+    function getObject() {
+        if (arguments.length == 1 || (arguments.length == 2 && arguments[0] != null && arguments[1] != null)) {
+            if (arguments[0] == null) {
+                var currentObject = null;
+                world.subobjects.forEach(function(item, index){
+                    if (selectedObject !== item && item.isMouseWithinObjectRadius() && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                        currentObject = item;
+                    }
+                });
+                if (currentObject != null) {
+                    console.log("Object isn't null");
+                    return getObject(currentObject);
+                } else {
+                    console.log("Object is null");
+                    return null;
+                }
+            } else if (arguments[0].objectType === 1) {
+                if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[0].object === arguments[1].object) {
+                    console.log("Removing Logic Gate");
+                    arguments[0].removeLogicGate();
+                    return null;
+                } else {
+                    var currentObject = null;
+                    arguments[0].inputNodes.concat(arguments[0].outputNodes).forEach(function(item, index){
+                        if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                            currentObject = item;
+                        }
+                    });
+                    if (currentObject != null) {
+                        return getObject(currentObject);
+                    } else {
+                        console.log("Object is a logic gate");
+                        return arguments[0];
+                    }
+                }
+            } else if (arguments[0].objectType === 0) {
+                console.log("Object is a logic gate spawner");
+                if (selectedObject == null) {
+                    return arguments[0].createLogicGateObject();
+                } else {
+                    return arguments[0];
+                }
+            } else if (arguments[0].objectType === 3) {
+                console.log("Object is an output node");
+                if (arguments.length == 2 && arguments[1].objectType === 5) {
+                    arguments[0].connectedNode = arguments[1];
+                    arguments[1].connectedNode = arguments[0];
+                    //Evaluate here.
+                    arguments[0].connectedNode.updateInputNodeCharge(arguments[0].nodeOfObject.hasCharge);
+                    return null;
+                } else {
+                    if (selectedObject == null) {
+                        return arguments[0].getOutputNode();
+                    } else {
+                        if (arguments[0].isMouseWithinObjectRadius()) {
+                            return arguments[0].nodeOfObject;
+                        } else {
+                            var node = arguments[0].connectedNode;
+                            arguments[0].getOutputNode();
+                            return node;
+                        }
+                    }
+                }
+            } else if (arguments[0].objectType === 5) {
+                console.log("Object is an input node");
+                var node = arguments[0].getInputNode();
+                if (node.connectedNode != "Not Connected") {
+                    return getObject(node);
+                } else {
+                   if (selectedObject == null) {
+                       return node.nodeOfObject;
+                   } else {
+                       return node;
+                   }
+                }
+            } else if (arguments[0].objectType === 2) {
+                console.log("Object is a start node");
+                var currentObject = null;
+                arguments[0].outputNodes.forEach(function(item, index){
+                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                        currentObject = item;
+                    }
+                });
+                if (currentObject != null) {
+                    console.log("Object is an output node");
+                    return getObject(currentObject);
+                } else {
+                    console.log("Object is a start node");
+                    return arguments[0];
+                }
+            } else if (arguments[0].objectType === 4) {
+                console.log("Object is an end node");
+                var currentObject = null;
+                arguments[0].inputNodes.forEach(function(item, index){
+                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                        currentObject = item;
+                    }
+                });
+                if (currentObject != null) {
+                    console.log("Object is an input node");
+                    return getObject(currentObject);
+                } else {
+                    console.log("Object is an end node");
+                    return arguments[0];
+                }
+            }
+        } else {
+            return null;
+        }
+    }
     
-           // Create some basic shapes as custom SceneGraphNode objects.
+        // Create some basic shapes as custom SceneGraphNode objects.
            
     var line = new SceneGraphNode();  // Line from (-0.5,0) to (0.5,0)
     line.doDraw = function(g) {
@@ -250,11 +707,18 @@
         g.fill();
     }
 
+    var node = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
+    node.doDraw = function(g) {
+        g.beginPath();
+        g.arc(0,0,0.125,0,2*Math.PI);
+        g.stroke();
+    }
+
     // ------------------------------- Logic Gates --------------------------
     /**
      * All gates are 1 unit in height and centered at (0, 0).
      * All input and output lines are 0.5 units in length.
-    */
+     */
 
     var bufferGate = new SceneGraphNode(); // Stroked triangle and two line segments. One input, one output.
     bufferGate.doDraw = function(g) {
@@ -581,37 +1045,24 @@
         //Add mouse down and up handlers
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
-                isMouseDown = true;
-                mousePos = getMousePos(canvas, event);
-                world.subobjects.forEach(function(item, index){
-                    if (selectedObject == null) {
-                        var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
-                        if (mouseDistanceToObject <= item.dragRadius) {
-                            selectedObject = item;
-                        }
-                        
-                    } else {
-                        var mouseDistanceToObject = Math.sqrt(Math.pow((mousePos.x - item.translateX), 2) + Math.pow((mousePos.y - item.translateY), 2));
-                        if (mouseDistanceToObject <= item.dragRadius && mouseDistanceToObject < Math.sqrt(Math.pow((mousePos.x - selectedObject.translateX), 2) + Math.pow((mousePos.y - selectedObject.translateY), 2))) {
-                            selectedObject = item;
-                        }
-                        
-                    }
-                });
-                console.log(mousePos.x + "," + mousePos.y);
+                selectedObject = getObject(selectedObject);
             }
         }, true);
         
         //Mouse up
-        document.addEventListener("mouseup", function(event) { if (event.which){isMouseDown = false; selectedObject = null;}}, true);  
+        document.addEventListener("mouseup", function(event) {
+            if (event.which) {
+                getObject(selectedObject, getObject(assignedObject));
+                selectedObject = null;
+                assignedObject = null;
+            }
+        }, true);
 
         //Mouse movement
         document.addEventListener("mousemove", function(event) {
             if (event.which) {
                 if (selectedObject != null) {
-                    var oldMousePos = mousePos;
-                    mousePos = getMousePos(canvas, event);
-                    selectedObject.setTranslation(selectedObject.translateX + (mousePos.x - oldMousePos.x), selectedObject.translateY + (mousePos.y - oldMousePos.y));
+                    selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                 }
             }
         }, true);
@@ -651,7 +1102,9 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
+<input type="hidden" name="QUESTION_NAME_ID" value="" id="question" size="80" class="form-control d-inline">
 <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="SAVEDDATA_NAME_ID" value="" id="savedData" size="80" class="form-control d-inline">
 
 </body>
 </html>
