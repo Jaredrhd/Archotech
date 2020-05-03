@@ -43,15 +43,13 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return array('answer' => PARAM_RAW);
     }
 
-    public function summarise_response(array $response) {
+    public function summarise_response(array $response) 
+    {
+        //Return just the string of the response
         if (isset($response['answer'])) 
-        {
             return $response['answer'];
-        } 
         else 
-        {
             return null;
-        }
     }
 
     public function is_complete_response(array $response) 
@@ -60,39 +58,40 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
     }
 
     public function get_validation_error(array $response) {
-        // TODO.
         return 'get_validation_error';
     }
 
-    public function is_same_response(array $prevresponse, array $newresponse) {
-        // TODO.
-        return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
+    public function is_same_response(array $prevresponse, array $newresponse) 
+    {
+        //If there is no prev answer, it must be new
+        if (count($prevresponse) == 0 )
+            return false;
+
+        //foreach new response
+        foreach($newresponse as $arraykey => $value)
+        {
+            //if the key matches then its the 
+            if($value == $prevresponse[$arraykey])
+               return true;
+        }
+
+        //If no matching answers were found it must be new
+        return false; 
     }
 
-
     public function get_correct_response() {
-        // TODO.
         return array();
     }
 
-
-    public function check_file_access($qa, $options, $component, $filearea,
-            $args, $forcedownload) {
-        // TODO.
-        if ($component == 'question' && $filearea == 'hint') {
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) 
+    {
+        if ($component == 'question' && $filearea == 'hint')
             return $this->check_hint_file_access($qa, $options, $args);
-
-        } else {
-            return parent::check_file_access($qa, $options, $component, $filearea,
-                    $args, $forcedownload);
-        }
+        else 
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
     public function grade_response(array $response) {
-        //TODO This should grade the question.
-        //Make some dummy cgv cases and attempt to mark them.
-
         $fraction = 0;
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
