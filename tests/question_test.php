@@ -56,5 +56,27 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question = test_question_maker::make_question('logicgate');
         $this->assertEquals(1, $question->compute_final_grade("reponses",0), false);
     }
+
+    //Test that answer is returned as string
+    public function test_summarise_response()
+    {
+        $question = test_question_maker::make_question('logicgate');
+        $response = array('answer' => "the reponse");
+
+        //Check that it returns the correct reponse
+        $this->assertEquals("the reponse", $question->summarise_response($response), false);
+        //Check that it returns null if no answer
+        $this->assertEquals(null, $question->summarise_response(array('not answer' => "the reponse")), false);
+    }
+
+    //Test that answer is complete
+    public function test_is_complete_response()
+    {
+        $question = test_question_maker::make_question('logicgate');
+        $response = array('answer' => "the reponse");
+
+        $this->assertEquals(true, $question->is_complete_response($response), false);
+        $this->assertEquals(false, $question->is_complete_response(array('not answer' => "the reponse")), false);
+    }
 }
 ?>

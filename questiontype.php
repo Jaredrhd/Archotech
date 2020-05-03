@@ -61,13 +61,13 @@ class qtype_logicgate extends question_type {
 
     }
 
+    //It is not possible to guess a score of a logic gate since it is too complex
     public function get_random_guess_score($questiondata) {
-        // TODO.
-        return 0;
+        return null;
     }
 
+    //Since the logic gate is too complex to form a response, won't implement
     public function get_possible_responses($questiondata) {
-        // TODO.
         return array();
     }
 }
