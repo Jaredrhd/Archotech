@@ -28,8 +28,14 @@ function nor(a, b) {
     return 0;
 }
 
+function xor(a, b) {
+    if(a != b)
+        return 1;
+    return 0;
+}
+
 function pythagDistance(p1, p2) {
     return Math.sqrt( Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2) );
 }
 
-module.exports = { not, and, nand, or, nor, pythagDistance };
+module.exports = { not, and, nand, or, nor, xor, pythagDistance };
