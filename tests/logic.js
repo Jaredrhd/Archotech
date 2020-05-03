@@ -4,4 +4,10 @@ function not(a) {
     return 0;
 }
 
-module.exports = not;
+function and(a, b){
+    if (a == 1 && b == 1)
+        return 1;
+    return 0;
+}
+
+module.exports = { not, and };
