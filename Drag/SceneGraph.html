@@ -368,7 +368,6 @@
                                     this.nodeOfObject.addOutputNode(this.translateX, this.translateY);
                                     return this.nodeOfObject.outputNodes[this.nodeOfObject.outputNodes.length - 1];
                                 } else {
-                                    //Evaluate here.
                                     var node = this.connectedNode;
                                     this.connectedNode = "Not Connected";
                                     node.updateInputNodeCharge(false);
@@ -416,7 +415,6 @@
                                     this.nodeOfObject.outputNodes.splice(this.nodeOfObject.outputNodes.findIndex(function(wireNode) { return wireNode === outputNode;}), 1);
                                 }
                             } else {
-                                //Evaluate here.
                                 var node = this.connectedNode;
                                 this.connectedNode.connectedNode = "Not Connected";
                                 this.connectedNode = "Not Connected";
@@ -599,7 +597,6 @@
                 if (arguments.length == 2 && arguments[1].objectType === 5) {
                     arguments[0].connectedNode = arguments[1];
                     arguments[1].connectedNode = arguments[0];
-                    //Evaluate here.
                     arguments[0].connectedNode.updateInputNodeCharge(arguments[0].nodeOfObject.hasCharge);
                     return null;
                 } else {
