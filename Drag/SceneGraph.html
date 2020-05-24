@@ -795,401 +795,401 @@
     //     //console.log(String(document.getElementById("savedData").value));
     // }
 
-    // function load() {
-    //     isLoading = true;
-    //     loadData = dataToLoad.split("\n");
-    //     for (var i = 0; i < loadData.length; ++i) { 
-    //         loadData[i] = loadData[i].split(":");
-    //     }
-    //     console.log(loadData);
+    function load() {
+        isLoading = true;
+        loadData = dataToLoad.split("\n");
+        for (var i = 0; i < loadData.length; ++i) { 
+            loadData[i] = loadData[i].split(":");
+        }
+        console.log(loadData);
 
-    //     loadData.forEach(function(item, index) {
-    //         console.log("Looping through load data.");
-    //         switch(parseInt(item[0])) {
-    //             case 0:
-    //                 switch(item[1]) {
-    //                     case "bufferGate":
-    //                         var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "notGate":
-    //                         var loadedObject = new TransformedObject(notGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "andGate":
-    //                         var loadedObject = new TransformedObject(andGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "nandGate":
-    //                         var loadedObject = new TransformedObject(nandGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "orGate":
-    //                         var loadedObject = new TransformedObject(orGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "norGate":
-    //                         var loadedObject = new TransformedObject(norGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "xorGate":
-    //                         var loadedObject = new TransformedObject(xorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     case "xnorGate":
-    //                         var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
-    //                         world.add(loadedObject);
-    //                         break;
-    //                     default:
-    //                         break;
-    //                 }
-    //                 break;
-    //             case 1:
-    //                 console.log("Attempting to create logic gate.");
-    //                 switch(item[1]) {
-    //                     case "bufferGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === bufferGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "notGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === notGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "andGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === andGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "nandGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === nandGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "orGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === orGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "norGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === norGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "xorGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xorGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     case "xnorGate":
-    //                         world.subobjects.forEach(function(item, index){
-    //                             if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xnorGate) {
-    //                                 loadingMousePos.x = item.translateX;
-    //                                 loadingMousePos.y = item.translateY;
-    //                             }
-    //                         });
-    //                         selectedObject = getObject(selectedObject);
-    //                         loadingMousePos.x = parseFloat(item[2]);
-    //                         loadingMousePos.y = parseFloat(item[3]);
-    //                         console.log(loadingMousePos.x + ":" + loadingMousePos.y);
-    //                         if (selectedObject != null) {
-    //                             selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
-    //                         }
-    //                         getObject(selectedObject, getObject(assignedObject));
-    //                         selectedObject = null;
-    //                         assignedObject = null;
-    //                         break;
-    //                     default:
-    //                         break;
-    //                 }
-    //                 break;
-    //             case 2:
-    //                 var loadedObject = new TransformedObject(node, 2).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addOutputNode();
-    //                 world.add(loadedObject);
-    //                 break;
-    //             case 4:
-    //                 var loadedObject = new TransformedObject(node, 4).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addInputNode();
-    //                 world.add(loadedObject);
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     });
+        loadData.forEach(function(item, index) {
+            console.log("Looping through load data.");
+            switch(parseInt(item[0])) {
+                case 0:
+                    switch(item[1]) {
+                        case "bufferGate":
+                            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "notGate":
+                            var loadedObject = new TransformedObject(notGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "andGate":
+                            var loadedObject = new TransformedObject(andGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "nandGate":
+                            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "orGate":
+                            var loadedObject = new TransformedObject(orGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "norGate":
+                            var loadedObject = new TransformedObject(norGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "xorGate":
+                            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "xnorGate":
+                            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 1:
+                    console.log("Attempting to create logic gate.");
+                    switch(item[1]) {
+                        case "bufferGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === bufferGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "notGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === notGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "andGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === andGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "nandGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === nandGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "orGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === orGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "norGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === norGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "xorGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xorGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "xnorGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xnorGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 2:
+                    var loadedObject = new TransformedObject(node, 2).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addOutputNode();
+                    world.add(loadedObject);
+                    break;
+                case 4:
+                    var loadedObject = new TransformedObject(node, 4).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addInputNode();
+                    world.add(loadedObject);
+                    break;
+                default:
+                    break;
+            }
+        });
 
-    //     loadData.forEach(function(item, index) {
-    //         switch(parseInt(item[0])) {
-    //             case 1:
-    //                 switch(item[1]) {
-    //                     case "bufferGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "notGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "andGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "nandGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "orGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "norGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "xorGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     case "xnorGate":
-    //                         if (item[4] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[7]);
-    //                             loadingMousePos.y = parseFloat(item[8]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[5]);
-    //                             loadingMousePos.y = parseFloat(item[6]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         if (item[9] != "-1") {
-    //                             loadingMousePos.x = parseFloat(item[12]);
-    //                             loadingMousePos.y = parseFloat(item[13]);
-    //                             selectedObject = getObject(selectedObject);
-    //                             loadingMousePos.x = parseFloat(item[10]);
-    //                             loadingMousePos.y = parseFloat(item[11]);
-    //                             getObject(selectedObject, getObject(assignedObject));
-    //                             selectedObject = null;
-    //                             assignedObject = null;
-    //                         }
-    //                         break;
-    //                     default:
-    //                         break;
-    //                 }
-    //                 break;
-    //             case 4:
-    //                 if (item[4] != "-1") {
-    //                     loadingMousePos.x = parseFloat(item[7]);
-    //                     loadingMousePos.y = parseFloat(item[8]);
-    //                     selectedObject = getObject(selectedObject);
-    //                     loadingMousePos.x = parseFloat(item[5]);
-    //                     loadingMousePos.y = parseFloat(item[6]);
-    //                     getObject(selectedObject, getObject(assignedObject));
-    //                     selectedObject = null;
-    //                     assignedObject = null;
-    //                 }
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     });
-    //     isLoading = false;
-    // }
+        loadData.forEach(function(item, index) {
+            switch(parseInt(item[0])) {
+                case 1:
+                    switch(item[1]) {
+                        case "bufferGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "notGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "andGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "nandGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "orGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "norGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "xorGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        case "xnorGate":
+                            if (item[4] != "-1") {
+                                loadingMousePos.x = parseFloat(item[7]);
+                                loadingMousePos.y = parseFloat(item[8]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[5]);
+                                loadingMousePos.y = parseFloat(item[6]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            if (item[9] != "-1") {
+                                loadingMousePos.x = parseFloat(item[12]);
+                                loadingMousePos.y = parseFloat(item[13]);
+                                selectedObject = getObject(selectedObject);
+                                loadingMousePos.x = parseFloat(item[10]);
+                                loadingMousePos.y = parseFloat(item[11]);
+                                getObject(selectedObject, getObject(assignedObject));
+                                selectedObject = null;
+                                assignedObject = null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 4:
+                    if (item[4] != "-1") {
+                        loadingMousePos.x = parseFloat(item[7]);
+                        loadingMousePos.y = parseFloat(item[8]);
+                        selectedObject = getObject(selectedObject);
+                        loadingMousePos.x = parseFloat(item[5]);
+                        loadingMousePos.y = parseFloat(item[6]);
+                        getObject(selectedObject, getObject(assignedObject));
+                        selectedObject = null;
+                        assignedObject = null;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+        isLoading = false;
+    }
 
     function compareCircuits() {
         var isCorrect = true;
