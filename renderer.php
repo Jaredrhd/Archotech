@@ -64,6 +64,16 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Displays the red x or tick
         $feedbackimg = '';
 
+        //If we are showing their mark
+        if ($options->correctness) {
+            //Get the answer
+            $answer = $question->grade_response(array('answer' => $currentanswer));
+            $fraction = $answer[0];
+
+            //Set input field diabled and set tick or cross
+            $feedbackimg = $this->feedback_image($fraction);
+        }
+
         //Get the file
         $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
 
@@ -82,20 +92,10 @@ class qtype_logicgate_renderer extends qtype_renderer
         $position = strpos($result,"value=",$position);
 
         //Place answer at the calculated position
-        $result = substr_replace($result, $currentanswer . '"', $position+7);
+        $result = substr_replace($result, $currentanswer, $position+7, 0);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
-
-        //If we are showing their mark
-        if ($options->correctness) {
-            //Get the answer
-            $answer = $question->grade_response(array('answer' => $currentanswer));
-            $fraction = $answer[0];
-
-            //Set input field diabled and set tick or cross
-            $feedbackimg = $this->feedback_image($fraction);
-        }        
 
         //return result
         return $result;
@@ -115,3 +115,5 @@ class qtype_logicgate_renderer extends qtype_renderer
         return 'correct_response';
     }
 }
+?>
+
