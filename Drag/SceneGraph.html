@@ -726,74 +726,74 @@
         }
     }
 
-    // function save() {
-    //     var saveData = "";
-    //     world.subobjects.forEach(function(item, index){
-    //         if (typeof item.objectType !== "undefined") {
-    //             saveData += item.objectType + ":";
-    //             switch(item.object) {
-    //                 case bufferGate:
-    //                     saveData += "bufferGate:";
-    //                     break;
-    //                 case notGate:
-    //                     saveData += "notGate:";
-    //                     break;
-    //                 case andGate:
-    //                     saveData += "andGate:";
-    //                     break;
-    //                 case nandGate:
-    //                     saveData += "nandGate:";
-    //                     break;
-    //                 case orGate:
-    //                     saveData += "orGate:";
-    //                     break;
-    //                 case norGate:
-    //                     saveData += "norGate:";
-    //                     break;
-    //                 case xorGate:
-    //                     saveData += "xorGate:";
-    //                     break;
-    //                 case xnorGate:
-    //                     saveData += "xnorGate:";
-    //                     break;
-    //                 case node:
-    //                     saveData += "node:";
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-    //             saveData += item.translateX + ":" + item.translateY + ":";
-    //             if (item.objectType == 1 || item.objectType == 4) {
-    //                 item.inputNodes.forEach(function(item, index){
-    //                     if (item.connectedNode == "Not Connected") {
-    //                         saveData += "-1:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":none:none:";
-    //                     } else {
-    //                         var existsError = true;
-    //                         for (var i = 0; i < world.subobjects.length; ++i) {
-    //                             if (item.connectedNode.nodeOfObject === world.subobjects[i]) {
-    //                                 saveData += i + ":" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":" + item.connectedNode.getCoordinates()[0] + ":" + item.connectedNode.getCoordinates()[1] + ":";
-    //                                 existsError = false;
-    //                             }
-    //                         }
-    //                         if (existsError) {
-    //                             saveData += "error:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":error:error:";
-    //                         }
-    //                     }
-    //                 });
-    //                 if (item.objectType == 4) {
-    //                     saveData += item.hasCharge + ":";
-    //                 }
-    //             }
-    //             saveData = saveData.substr(0, saveData.length - 1);
-    //             saveData += "\n";
-    //         }
-    //     });
-    //     saveData = saveData.substr(0, saveData.length - 1);
-    //     dataToLoad = saveData;
-    //     document.getElementById("savedData").value = dataToLoad;
-    //     //console.log(dataToLoad);
-    //     //console.log(String(document.getElementById("savedData").value));
-    // }
+    function save() {
+        var saveData = "";
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined") {
+                saveData += item.objectType + ":";
+                switch(item.object) {
+                    case bufferGate:
+                        saveData += "bufferGate:";
+                        break;
+                    case notGate:
+                        saveData += "notGate:";
+                        break;
+                    case andGate:
+                        saveData += "andGate:";
+                        break;
+                    case nandGate:
+                        saveData += "nandGate:";
+                        break;
+                    case orGate:
+                        saveData += "orGate:";
+                        break;
+                    case norGate:
+                        saveData += "norGate:";
+                        break;
+                    case xorGate:
+                        saveData += "xorGate:";
+                        break;
+                    case xnorGate:
+                        saveData += "xnorGate:";
+                        break;
+                    case node:
+                        saveData += "node:";
+                        break;
+                    default:
+                        break;
+                }
+                saveData += item.translateX + ":" + item.translateY + ":";
+                if (item.objectType == 1 || item.objectType == 4) {
+                    item.inputNodes.forEach(function(item, index){
+                        if (item.connectedNode == "Not Connected") {
+                            saveData += "-1:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":none:none:";
+                        } else {
+                            var existsError = true;
+                            for (var i = 0; i < world.subobjects.length; ++i) {
+                                if (item.connectedNode.nodeOfObject === world.subobjects[i]) {
+                                    saveData += i + ":" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":" + item.connectedNode.getCoordinates()[0] + ":" + item.connectedNode.getCoordinates()[1] + ":";
+                                    existsError = false;
+                                }
+                            }
+                            if (existsError) {
+                                saveData += "error:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":error:error:";
+                            }
+                        }
+                    });
+                    if (item.objectType == 4) {
+                        saveData += item.hasCharge + ":";
+                    }
+                }
+                saveData = saveData.substr(0, saveData.length - 1);
+                saveData += "\n";
+            }
+        });
+        saveData = saveData.substr(0, saveData.length - 1);
+        dataToLoad = saveData;
+        document.getElementById("savedData").value = dataToLoad;
+        //console.log(dataToLoad);
+        //console.log(String(document.getElementById("savedData").value));
+    }
 
     function load() {
         isLoading = true;
