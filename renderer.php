@@ -37,7 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_logicgate_renderer extends qtype_renderer 
 {
-
     //Handles displaying  of question and rendering of answer
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) 
     {
@@ -102,13 +101,17 @@ class qtype_logicgate_renderer extends qtype_renderer
         return $result;
     }
 
+    // TODO.
     public function specific_feedback(question_attempt $qa) {
-        // TODO.
         return 'specific_feedback';
     }
 
     public function correct_response(question_attempt $qa) {
-        // TODO.
+        
+        //Get the file to display as the answer
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
+        
+        //TODO inject lecturer code of logic gate save
         return 'correct_response';
     }
 }
