@@ -31,7 +31,10 @@
         x: 0,
         y: 0
     };
-    var dataToLoad = "0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
+    var dataToLoad = "";
+    var dataToTestAgainst = "0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none:false\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01:true\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
+    var logicGateLimitsString = "";
+    var logicGateLimits = [];
     var isLoading = false;
     
     /**
@@ -186,37 +189,77 @@
                     this.createLogicGateObject = function() {
                         var logicGate;
                         if (this.object === bufferGate) {
-                            logicGate = new TransformedObject(bufferGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[0] > 0) {
+                                --logicGateLimits[0];
+                                logicGate = new TransformedObject(bufferGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
+                                world.add(logicGate);
+                                return logicGate;
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === notGate) {
-                            logicGate = new TransformedObject(notGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[1] > 0) {
+                                --logicGateLimits[1];
+                                logicGate = new TransformedObject(notGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0).addOutputNode(1, 0);
+                                world.add(logicGate);
+                                return logicGate;    
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === andGate) {
-                            logicGate = new TransformedObject(andGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[2] > 0) {
+                                --logicGateLimits[2];
+                                logicGate = new TransformedObject(andGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
+                                world.add(logicGate);
+                                return logicGate;    
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === nandGate) {
-                            logicGate = new TransformedObject(nandGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[3] > 0) {
+                                --logicGateLimits[3];
+                                logicGate = new TransformedObject(nandGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-1, 0.25).addInputNode(-1, -0.25).addOutputNode(1, 0);
+                                world.add(logicGate);
+                                return logicGate;    
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === orGate) {
-                            logicGate = new TransformedObject(orGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[4] > 0) {
+                                --logicGateLimits[4];
+                                logicGate = new TransformedObject(orGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                                world.add(logicGate);
+                                return logicGate;   
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === norGate) {
-                            logicGate = new TransformedObject(norGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[5] > 0) {
+                                --logicGateLimits[5];
+                                logicGate = new TransformedObject(norGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                                world.add(logicGate);
+                                return logicGate;    
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === xorGate) {
-                            logicGate = new TransformedObject(xorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[6] > 0) {
+                                --logicGateLimits[6];
+                                logicGate = new TransformedObject(xorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                                world.add(logicGate);
+                                return logicGate;    
+                            } else {
+                                return null;
+                            }
                         } else if (this.object === xnorGate) {
-                            logicGate = new TransformedObject(xnorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
-                            world.add(logicGate);
-                            return logicGate;
+                            if (logicGateLimits[7] > 0) {
+                                --logicGateLimits[7];
+                                logicGate = new TransformedObject(xnorGate, 1).setTranslation(this.translateX, this.translateY).addInputNode(-0.9375, 0.25).addInputNode(-0.9375, -0.25).addOutputNode(0.9375, 0);
+                                world.add(logicGate);
+                                return logicGate;
+                            } else {
+                                return null;
+                            }
                         }
                     }
                 } else if (this.objectType == 1) {
@@ -319,6 +362,34 @@
                         this.outputNodes.forEach(function(item, index){
                             item.removeNode();
                         });
+                        switch (this.object) {
+                            case bufferGate:
+                                ++logicGateLimits[0];
+                                break;
+                            case notGate:
+                                ++logicGateLimits[1];
+                                break;
+                            case andGate:
+                                ++logicGateLimits[2];
+                                break;
+                            case nandGate:
+                                ++logicGateLimits[3];
+                                break;
+                            case orGate:
+                                ++logicGateLimits[4];
+                                break;
+                            case norGate:
+                                ++logicGateLimits[5];
+                                break;
+                            case xorGate:
+                                ++logicGateLimits[6];
+                                break;
+                            case xnorGate:
+                                ++logicGateLimits[7];
+                                break;
+                            default:
+                                break;
+                        }
                         var thisLogicGate = this;
                         world.subobjects.splice(world.subobjects.findIndex(function(logicGate) { return logicGate === thisLogicGate;}), 1);
                     }
@@ -736,6 +807,9 @@
                             }
                         }
                     });
+                    if (item.objectType == 4) {
+                        saveData += item.hasCharge + ":";
+                    }
                 }
                 saveData = saveData.substr(0, saveData.length - 1);
                 saveData += "\n";
@@ -743,7 +817,9 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-        console.log(dataToLoad);
+        document.getElementById("savedData").value = dataToLoad;
+        //console.log(dataToLoad);
+        //console.log(String(document.getElementById("savedData").value));
     }
 
     function load() {
@@ -1140,6 +1216,212 @@
             }
         });
         isLoading = false;
+    }
+
+    function compareCircuits() {
+        var isCorrect = true;
+        var arrayOfArrays = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
+        var endNodeCharges = [0, 0];
+        var comparingData = dataToLoad.split("\n");
+        for (var i = 0; i < comparingData.length; ++i) { 
+            comparingData[i] = comparingData[i].split(":");
+        }
+        for (let i = 0; i < comparingData.length; ++i) {
+            if (comparingData[i][0] == "4") {
+                if (comparingData[i][9] == "false") {
+                    endNodeCharges[1] += 1;    
+                } else {
+                    endNodeCharges[0] += 1;
+                }
+                if (comparingData[i][4] != "-1") {
+                    adjustTable(comparingData, arrayOfArrays, 4, 8, i);
+                }
+            } else if (comparingData[i][0] == "1") {
+                if (comparingData[i][1] == "bufferGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 0, i);
+                    }
+                } else if (comparingData[i][1] == "notGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 1, i);
+                    }
+                } else if (comparingData[i][1] == "andGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 2, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 2, i);
+                    }
+                } else if (comparingData[i][1] == "nandGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 3, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 3, i);
+                    }
+                } else if (comparingData[i][1] == "orGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 4, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 4, i);
+                    }
+                } else if (comparingData[i][1] == "norGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 5, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 5, i);
+                    }
+                } else if (comparingData[i][1] == "xorGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 6, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 6, i);
+                    }
+                } else if (comparingData[i][1] == "xnorGate") {
+                    if (comparingData[i][4] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 4, 7, i);
+                    }
+                    if (comparingData[i][9] != "-1") {
+                        adjustTable(comparingData, arrayOfArrays, 9, 7, i);
+                    }
+                }
+            }
+        }
+
+        var arrayOfArrays1 = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
+        var endNodeCharges1 = [0, 0];
+        var comparingData1 = dataToTestAgainst.split("\n");
+        for (var i = 0; i < comparingData1.length; ++i) { 
+            comparingData1[i] = comparingData1[i].split(":");
+        }
+        for (let i = 0; i < comparingData1.length; ++i) {
+            if (comparingData1[i][0] == "4") {
+                if (comparingData1[i][9] == "false") {
+                    endNodeCharges1[1] += 1;    
+                } else {
+                    endNodeCharges1[0] += 1;
+                }
+                if (comparingData1[i][4] != "-1") {
+                    adjustTable(comparingData1, arrayOfArrays1, 4, 8, i);
+                }
+            } else if (comparingData1[i][0] == "1") {
+                if (comparingData1[i][1] == "bufferGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 0, i);
+                    }
+                } else if (comparingData1[i][1] == "notGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 1, i);
+                    }
+                } else if (comparingData1[i][1] == "andGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 2, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 2, i);
+                    }
+                } else if (comparingData1[i][1] == "nandGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 3, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 3, i);
+                    }
+                } else if (comparingData1[i][1] == "orGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 4, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 4, i);
+                    }
+                } else if (comparingData1[i][1] == "norGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 5, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 5, i);
+                    }
+                } else if (comparingData1[i][1] == "xorGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 6, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 6, i);
+                    }
+                } else if (comparingData1[i][1] == "xnorGate") {
+                    if (comparingData1[i][4] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 4, 7, i);
+                    }
+                    if (comparingData1[i][9] != "-1") {
+                        adjustTable(comparingData1, arrayOfArrays1, 9, 7, i);
+                    }
+                }
+            }
+        }
+
+        if (endNodeCharges[0] != endNodeCharges1[0] || endNodeCharges[1] != endNodeCharges1[1]) {
+            isCorrect = false;
+        }
+
+        for (let i = 0; i < arrayOfArrays1.length; ++i) {
+            for (let j = 0; j < arrayOfArrays1[i].length; ++j) {
+                if (arrayOfArrays[i][j] < arrayOfArrays1[i][j]) {
+                    isCorrect = false;
+                }
+            }
+        }
+
+
+        console.log(isCorrect);
+        console.log(endNodeCharges);
+        console.table(arrayOfArrays);
+        console.log(endNodeCharges1);
+        console.table(arrayOfArrays1);
+    }
+    
+    function adjustTable(comparedData, formattedData, inputNodeNumber, logicGateNumber, logicGatePosition) {
+        if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "bufferGate") {
+            formattedData[logicGateNumber][0] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "notGate") {
+            formattedData[logicGateNumber][1] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "andGate") {
+            formattedData[logicGateNumber][2] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "nandGate") {
+            formattedData[logicGateNumber][3] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "orGate") {
+            formattedData[logicGateNumber][4] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "norGate") {
+            formattedData[logicGateNumber][5] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "xorGate") {
+            formattedData[logicGateNumber][6] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "xnorGate") {
+            formattedData[logicGateNumber][7] += 1;
+        } else if (comparedData[parseInt(comparedData[logicGatePosition][inputNodeNumber])][1] == "node") {
+            formattedData[logicGateNumber][8] += 1;
+        }
+    }
+
+    function getLogicGateLimits() {
+        logicGateLimitProcessor = logicGateLimitsString.split("\n");
+        for (var i = 0; i < logicGateLimitProcessor.length; ++i) { 
+            logicGateLimitProcessor[i] = logicGateLimitProcessor[i].split(":");
+        }
+        for (var i = 0; i < logicGateLimitProcessor.length; ++i) {
+            logicGateLimits.push(parseInt(logicGateLimitProcessor[i][1]));
+        }
+        console.log(logicGateLimits);
+    }
+
+    function setupCircuit() {
+        logicGateLimitsString = String(document.getElementById("restrictedGates").value);
+        dataToLoad = String(document.getElementById("savedData").value);
+        logicGateLimitsString = logicGateLimitsString.replace(/\\n/g, "\n");
+        dataToLoad = dataToLoad.replace(/\\n/g, "\n");
+        getLogicGateLimits();
+        load();
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
@@ -1546,12 +1828,18 @@
             }
         }, true);
 
+        setupCircuit();
+
         //s key pressed
         document.addEventListener("keydown", function(event) {
             if (event.which == 83) {
                 save();
             } else if (event.which == 76) {
                 load();
+            } else if (event.which == 67) {
+                compareCircuits();
+            } else if (event.which == 71) {
+                getLogicGateLimits();
             }
         }, true);
     }
@@ -1592,7 +1880,8 @@
 
 <input type="hidden" name="QUESTION_NAME_ID" value="" id="question" size="80" class="form-control d-inline">
 <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
-<input type="hidden" name="SAVEDDATA_NAME_ID" value="" id="savedData" size="80" class="form-control d-inline">
+<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none:false\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01:true\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1" id="savedData" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:1\nnotGate:1\nandGate:1\nnandGate:1\norGate:1\nnorGate:1\nxorGate:1\nxnorGate:1" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>

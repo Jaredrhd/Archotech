@@ -85,6 +85,16 @@ class qtype_logicgate_renderer extends qtype_renderer
             $result .= html_writer::tag('span', $input, array('class' => 'answer'));
         }
 
+        //Set data for passing to JS
+        $result = $this->answerNameID($currentanswer,$input,$result);
+        $result = $this->restrictedGates($question,$result);
+
+        //return result
+        return $result;
+    }
+
+    private function answerNameID($currentanswer, $input, $result)
+    {
         //Get the string pos at ANSWER_NAME_ID
         $position = strpos($result,"ANSWER_NAME_ID",0);
 
@@ -97,7 +107,30 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Replace the ANSWER_NAME_ID with the question id for saving
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
 
-        //return result
+        return $result;
+    }
+
+    private function restrictedGates($question, $result)
+    {
+        $data = 'buffergate:' . $question->buffergate;
+        $data .= '\nnotgate:' . $question->notgate;
+        $data .= '\nandgate:' . $question->andgate;
+        $data .= '\nnandgate:' . $question->nandgate;
+        $data .= '\norgate:' . $question->orgate;
+        $data .= '\nnorgate:' . $question->norgate;
+        $data .= '\nxorgate:' . $question->xorgate;
+        $data .= '\nxnorgate:' . $question->xnorgate;
+
+
+        //Get the string pos at ANSWER_NAME_ID
+        $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);
+
+        //Get the value= position from the last position, this is the value we need to edit to show answer 
+        $position = strpos($result,"value=",$position);
+
+        //Place answer at the calculated position
+        $result = substr_replace($result, $data, $position+7, 0);
+
         return $result;
     }
 
