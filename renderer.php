@@ -86,41 +86,41 @@ class qtype_logicgate_renderer extends qtype_renderer
         }
 
         //Set data for passing to JS
-        $result = $this->answerNameID($currentanswer,$input,$result);
+        $result = $this->answerNameID($currentanswer,$inputname,$result);
         $result = $this->restrictedGates($question,$result);
 
         //return result
         return $result;
     }
 
-    private function answerNameID($currentanswer, $input, $result)
+    private function answerNameID($currentanswer, $inputname, $result)
     {
         //Get the string pos at ANSWER_NAME_ID
-        $position = strpos($result,"ANSWER_NAME_ID",0);
+        $position = strpos($result,"saveddata_name_id",0);
 
         //Get the value= position from the last position, this is the value we need to edit to show answer 
         $position = strpos($result,"value=",$position);
 
         //Place answer at the calculated position
+        //$currentanswer = '0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none:false\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01:true\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
         $result = substr_replace($result, $currentanswer, $position+7, 0);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
-        $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
+        $result = str_replace("saveddata_name_id", $inputname, $result);
 
         return $result;
     }
 
     private function restrictedGates($question, $result)
     {
-        $data = 'buffergate:' . $question->buffergate;
-        $data .= '\nnotgate:' . $question->notgate;
-        $data .= '\nandgate:' . $question->andgate;
-        $data .= '\nnandgate:' . $question->nandgate;
-        $data .= '\norgate:' . $question->orgate;
-        $data .= '\nnorgate:' . $question->norgate;
-        $data .= '\nxorgate:' . $question->xorgate;
-        $data .= '\nxnorgate:' . $question->xnorgate;
-
+        $data = 'buffergate:' . ((int)$question->buffergate * 1000);
+        $data .= '\nnotgate:' . ((int)$question->notgate * 1000);
+        $data .= '\nandgate:' . ((int)$question->andgate * 1000);
+        $data .= '\nnandgate:' . ((int)$question->nandgate * 1000);
+        $data .= '\norgate:' . ((int)$question->orgate * 1000);
+        $data .= '\nnorgate:' . ((int)$question->norgate * 1000);
+        $data .= '\nxorgate:' . ((int)$question->xorgate * 1000);
+        $data .= '\nxnorgate:' . ((int)$question->xnorgate * 1000);
 
         //Get the string pos at ANSWER_NAME_ID
         $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);

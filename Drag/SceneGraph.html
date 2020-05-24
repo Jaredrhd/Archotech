@@ -1817,6 +1817,7 @@
                 selectedObject = null;
                 assignedObject = null;
             }
+            save();
         }, true);
 
         //Mouse movement
@@ -1878,10 +1879,8 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="QUESTION_NAME_ID" value="" id="question" size="80" class="form-control d-inline">
-<input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
-<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none:false\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01:true\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:1\nnotGate:1\nandGate:1\nnandGate:1\norGate:1\nnorGate:1\nxorGate:1\nxnorGate:1" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="saveddata_name_id" value="" id="savedData" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
