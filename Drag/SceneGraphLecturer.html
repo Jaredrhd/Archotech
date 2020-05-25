@@ -32,9 +32,7 @@
         y: 0
     };
     var dataToLoad = "";
-
     var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-
     var logicGateLimitsString = "";
     var logicGateLimits = [];
     var isLoading = false;
@@ -45,6 +43,32 @@
     function createWorld() {
 
         world = new CompoundObject();  // Root node for the scene graph.
+
+        // TODO: Create objects and add them to the scene graph.
+        //var buffer_gate = new TransformedObject(bufferGate, 0).setTranslation(-2, 2);
+        //var not_gate = new TransformedObject(notGate, 0).setTranslation(-2, 1);
+        //var and_gate = new TransformedObject(andGate, 0).setTranslation(-2, -2);
+        //var nand_gate = new TransformedObject(nandGate, 0).setTranslation(-2, 0);
+        //var or_gate = new TransformedObject(orGate, 0).setTranslation(-2, -1);
+        //var nor_gate = new TransformedObject(norGate, 0).setTranslation(3, -2.5);
+        //var xor_gate = new TransformedObject(xorGate, 0).setTranslation(1, 1);
+        //var xnor_gate = new TransformedObject(xnorGate, 0).setTranslation(1, 0);
+        //var start_node = new TransformedObject(node, 2).setTranslation(-2, -1).addOutputNode();
+        //var start_node1 = new TransformedObject(node, 2).setTranslation(-2, 1).addOutputNode();
+        //var end_node = new TransformedObject(node, 4).setTranslation(2, 1).addInputNode();
+        //var end_node1 = new TransformedObject(node, 4).setTranslation(2, -1).addInputNode();
+        //world.add(buffer_gate);
+        //world.add(not_gate)
+        //world.add(and_gate);
+        //world.add(nand_gate);
+        //world.add(or_gate);
+        //world.add(nor_gate);
+        //world.add(xor_gate);
+        //world.add(xnor_gate);
+        //world.add(start_node);
+        //world.add(end_node);
+        //world.add(start_node1);
+        //world.add(end_node1);
     }
     
     /**
@@ -57,6 +81,7 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -594,6 +619,7 @@
             g.scale(this.scaleX, this.scaleY);
         }
         this.object.draw(g);
+        //Must Remember to update this if it needs updating.
         if (typeof this.objectType !== "undefined") {
             if (this.objectType === 1) {
                 for (var i = 0; i < this.inputNodes.length; i++) {
@@ -786,26 +812,25 @@
                     }
                 }
                 saveData = saveData.substr(0, saveData.length - 1);
-
                 saveData += "|";
             }
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-
-
+        document.getElementById("id_answer_0").value = dataToLoad;
         document.getElementById("savedData").value = dataToLoad;
         document.getElementById("answer").value = dataToLoad;
-        
+
+        console.log("hi");
+        console.log(document.getElementById("id_answer_0").value);
+        console.log(dataToLoad);
         //console.log(dataToLoad);
         //console.log(String(document.getElementById("savedData").value));
     }
 
     function load() {
         isLoading = true;
-
         loadData = dataToLoad.split("|");
-
         for (var i = 0; i < loadData.length; ++i) { 
             loadData[i] = loadData[i].split(":");
         }
@@ -1204,7 +1229,6 @@
         var arrayOfArrays = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
         var endNodeCharges = [0, 0];
         var comparingData = dataToLoad.split("|");
-
         for (var i = 0; i < comparingData.length; ++i) { 
             comparingData[i] = comparingData[i].split(":");
         }
@@ -1276,7 +1300,6 @@
         var arrayOfArrays1 = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
         var endNodeCharges1 = [0, 0];
         var comparingData1 = dataToTestAgainst.split("|");
-
         for (var i = 0; i < comparingData1.length; ++i) { 
             comparingData1[i] = comparingData1[i].split(":");
         }
@@ -1388,9 +1411,7 @@
     }
 
     function getLogicGateLimits() {
-      
         logicGateLimitProcessor = logicGateLimitsString.split("|");
-
         for (var i = 0; i < logicGateLimitProcessor.length; ++i) { 
             logicGateLimitProcessor[i] = logicGateLimitProcessor[i].split(":");
         }
@@ -1866,8 +1887,7 @@
 
 <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
 <input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
-
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
