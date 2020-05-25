@@ -87,6 +87,11 @@ function calculateAngle(u, v) {
     return Math.round( Math.acos(dot / (normU * normV)) * 100) / 100;
 }
 
+function orthogonalVectors(u, v) {
+    let dot = u.x * v.x + u.y * v.y;
+    return dot == 0;
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle };
+                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors };
