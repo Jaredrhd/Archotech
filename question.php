@@ -93,18 +93,22 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    public function grade_response(array $response) {
+    public function grade_response(array $response) 
+    {
+        //If there is no lecturer answer, return 0 since you can't pass
+        if(empty($this->answersFromLecturer))
+            return 0;
 
         //Get key and value from answer
         reset($this->answersFromLecturer);
         $first_key = key($this->answersFromLecturer);
         $res = $this->answersFromLecturer[$first_key]->answer;
 
+        //Get student answer
         $val = $response["answer"];
-        $s = $this->compareCircuits($val,$res);
-        $s = false;
         $fraction = (($this->compareCircuits($val,$res) == true) ? 1 : 0);
 
+        //return answer
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
