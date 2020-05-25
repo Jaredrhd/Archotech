@@ -118,7 +118,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return 1;
     }
 
-    private function compareCircuits($dataToLoad, $dataToTestAgainst) 
+    public function compareCircuits($dataToLoad, $dataToTestAgainst) 
     {
         $isCorrect = true;
         $arrayOfArrays = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
@@ -281,7 +281,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return $isCorrect;
     }
     
-    private function adjustTable($comparedData, $formattedData, $inputNodeNumber, $logicGateNumber, $logicGatePosition) {
+    public function adjustTable($comparedData, $formattedData, $inputNodeNumber, $logicGateNumber, $logicGatePosition) {
         if ($comparedData[(int)($comparedData[$logicGatePosition][$inputNodeNumber])][1] == "bufferGate") {
             $formattedData[$logicGateNumber][0] += 1;
         } else if ($comparedData[(int)($comparedData[$logicGatePosition][$inputNodeNumber])][1] == "notGate") {
