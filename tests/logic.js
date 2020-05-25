@@ -48,4 +48,8 @@ function pythagDistance(p1, p2) {
     return Math.sqrt( Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2) );
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance };
+function vectorMagnitude(u) {
+    return Math.sqrt(Math.pow(u.u1, 2) + Math.pow(u.u2, 2)) 
+}
+
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude };
