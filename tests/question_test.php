@@ -29,9 +29,8 @@ class qtype_logicgate_question_test extends advanced_testcase
     public function test_grade_response()
     {
         $question = test_question_maker::make_question('logicgate');
-        list($fraction, $state)  = $question->grade_response(array("0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false"));
+        list($fraction, $state)  = $question->grade_response(array("answer" => "0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false"));
         $this->assertEquals(0, $fraction, false);
-        $this->assertEquals(1, $fraction, false);
     }
 
     //Test the same response function
