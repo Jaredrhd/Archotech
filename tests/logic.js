@@ -80,6 +80,13 @@ function subtractVectors(u, v) {
     return [u.x - v.x, u.y - v.y];
 }
 
+function calculateAngle(u, v) {
+    let dot = u.x * v.x + u.y * v.y;
+    let normU = Math.sqrt( Math.pow(u.x, 2) + Math.pow(u.y, 2) );
+    let normV = Math.sqrt( Math.pow(v.x, 2) + Math.pow(v.y, 2) );
+    return Math.round( Math.acos(dot / (normU * normV)) * 100) / 100;
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector, subtractVectors };
+                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle };

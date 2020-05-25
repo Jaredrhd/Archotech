@@ -1,6 +1,6 @@
 const { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
         pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-        minkowskiDistance, findDirectionVector, subtractVectors } = require("./logic.js");
+        minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -108,4 +108,10 @@ test("Takes in 2 vectors u and v and subtracts them", () => {
     let u = {x: 10, y: -4.5};
     let v = {x: 3, y: 12};
     expect(subtractVectors(u, v)).toStrictEqual([7, -16.5]);
+});
+
+test("Takes in 2 vectors and returns the angle between them in radians", () => {
+    let u = {x: -5, y: 2};
+    let v = {x: 10, y: -3};
+    expect(calculateAngle(u, v)).toBe(3.05);
 });
