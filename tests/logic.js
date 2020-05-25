@@ -68,4 +68,10 @@ function dotProductTheta(u, v, theta) {
     return Math.round( (Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2)) * Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2)) * Math.cos(theta)) * 100 ) / 100;
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta };
+function minkowskiDistance(p1, p2, n) {
+    return Math.round( (Math.pow( Math.pow((p1.x - p2.x), n) + Math.pow((p1.y - p2.y), n), 1/n )) * 100 ) / 100;
+}
+
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
+                   pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
+                   minkowskiDistance };

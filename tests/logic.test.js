@@ -1,4 +1,6 @@
-const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta } = require("./logic.js");
+const { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
+        pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
+        minkowskiDistance } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -87,4 +89,11 @@ test("Takes in two vectors and the angle between them and returns the dot produc
     let v = {x: 19, y: 12};
     let theta = Math.PI/4;
     expect(dotProductTheta(u, v, theta)).toBe(136.69);
+});
+
+test("Takes in 2 points and an order n and returns the Minkowski distance", () => {
+    let p1 = {x: 7.6, y: -3};
+    let p2 = {x: -1.1, y: 4.2};
+    let n = 3;
+    expect(minkowskiDistance(p1, p2, n)).toBe(6.58);
 });
