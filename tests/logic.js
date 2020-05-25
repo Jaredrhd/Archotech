@@ -76,6 +76,10 @@ function findDirectionVector(p1, p2) {
     return [p2.x - p1.x, p2.y - p1.y];
 }
 
+function subtractVectors(u, v) {
+    return [u.x - v.x, u.y - v.y];
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector };
+                   minkowskiDistance, findDirectionVector, subtractVectors };
