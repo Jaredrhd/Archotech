@@ -59,4 +59,8 @@ function addVectors(u, v) {
     return tempArr;
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors };
+function dotProduct(u, v) {
+    return (u.u1 * v.v1) + (u.u2 * v.v2);
+}
+
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors, dotProduct };

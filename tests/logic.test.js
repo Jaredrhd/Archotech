@@ -1,4 +1,4 @@
-const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors } = require("./logic.js");
+const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors, dotProduct } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -68,4 +68,10 @@ test("Takes in two vectors and returns their sum", () => {
     let u = {u1: 6, u2: 2.5};
     let v = {v1: 7.25, v2: 1};
     expect(addVectors(u, v)).toStrictEqual([13.25, 3.5]);
+});
+
+test("Takes in two vectors and returns the dot product between them", () => {
+    let u = {u1: 4, u2: 9};
+    let v = {v1: 13, v2: 3.75};
+    expect(dotProduct(u, v)).toBe(85.75);
 });
