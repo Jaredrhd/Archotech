@@ -49,18 +49,19 @@ function pythagDistance(p1, p2) {
 }
 
 function vectorMagnitude(u) {
-    return Math.sqrt(Math.pow(u.u1, 2) + Math.pow(u.u2, 2)) 
+    return Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2)); 
 }
 
 function addVectors(u, v) {
-    let tempArr = [];
-    tempArr.push(u.u1 + v.v1);
-    tempArr.push(u.u2 + v.v2);
-    return tempArr;
+    return [u.x + v.x, u.y + v.y];
 }
 
 function dotProduct(u, v) {
-    return (u.u1 * v.v1) + (u.u2 * v.v2);
+    return (u.x * v.x) + (u.y * v.y);
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors, dotProduct };
+function dotProductTheta(u, v, theta) {
+    return Math.round( (Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2)) * Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2)) * Math.cos(theta)) * 100 ) / 100;
+}
+
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors, dotProduct, dotProductTheta };
