@@ -1,6 +1,6 @@
 const { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
         pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-        minkowskiDistance } = require("./logic.js");
+        minkowskiDistance, findDirectionVector } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -96,4 +96,10 @@ test("Takes in 2 points and an order n and returns the Minkowski distance", () =
     let p2 = {x: -1.1, y: 4.2};
     let n = 3;
     expect(minkowskiDistance(p1, p2, n)).toBe(6.58);
+});
+
+test("Takes in 2 points p1 and p2 and returns a direction vector from p1 to p2", () => {
+    let p1 = {x: 5, y: -2};
+    let p2 = {x: -1, y: 8};
+    expect(findDirectionVector(p1, p2)).toStrictEqual([-6, 10]);
 });

@@ -72,6 +72,10 @@ function minkowskiDistance(p1, p2, n) {
     return Math.round( (Math.pow( Math.pow((p1.x - p2.x), n) + Math.pow((p1.y - p2.y), n), 1/n )) * 100 ) / 100;
 }
 
+function findDirectionVector(p1, p2) {
+    return [p2.x - p1.x, p2.y - p1.y];
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance };
+                   minkowskiDistance, findDirectionVector };
