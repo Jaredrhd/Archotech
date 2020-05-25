@@ -48,6 +48,10 @@ function pythagDistance(p1, p2) {
     return Math.sqrt( Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2) );
 }
 
+function midpoint(p1, p2) {
+    return [(p1.x + p2.x)/2, (p1.y + p2.y)/2];
+}
+
 function vectorMagnitude(u) {
     return Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2)); 
 }
@@ -64,4 +68,4 @@ function dotProductTheta(u, v, theta) {
     return Math.round( (Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2)) * Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2)) * Math.cos(theta)) * 100 ) / 100;
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors, dotProduct, dotProductTheta };
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta };
