@@ -41,6 +41,9 @@ require_once($CFG->dirroot . '/question/type/logicgate/question.php');
  */
 class qtype_logicgate extends question_type {
 
+    public function extra_question_fields() {
+        return array('qtype_logicgate_options', 'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate', 'norgate','xorgate','xnorgate','saveddata_name_id' );
+    }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
@@ -52,13 +55,28 @@ class qtype_logicgate extends question_type {
     }
 
     public function save_question_options($question) {
-        $this->save_hints($question);
+        parent::save_question_options($question);
+        $this->save_question_answers($question);
+        //$this->save_hints($question);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $this->initialise_question_answers($question, $questiondata);
 
+        //Set up the data for renderer.php
+        $question->bufferGate =  $questiondata->options->andgate;
+        $question->notGate =  $questiondata->options->notgate;
+        $question->andGate =  $questiondata->options->andgate;
+        $question->nandGate =  $questiondata->options->nandgate;
+        $question->orGate =  $questiondata->options->orgate;
+        $question->norGate =  $questiondata->options->norgate;
+        $question->xorGate =  $questiondata->options->xorgate;
+        $question->xnorGate =  $questiondata->options->xnorgate;
+        $question->xnorGate =  $questiondata->options->xnorgate;
+        
+        //Set the answer
+        $this->initialise_question_answers($question, $questiondata);
+        $question->answersFromLecturer = $questiondata->options->answers;
     }
 
     //It is not possible to guess a score of a logic gate since it is too complex
