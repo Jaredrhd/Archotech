@@ -1,4 +1,4 @@
-const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance } = require("./logic.js");
+const { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -57,4 +57,34 @@ test("Takes in 2 points and calculates the Pythagorean distance", () => {
     let p1 = {x: 5, y: 3};
     let p2 = {x: 15, y: 2};
     expect(pythagDistance(p1, p2)).toBe(Math.sqrt(101));
+});
+
+test("Takes in 2 points and calculates the midpoint between them", () => {
+    let p1 = {x: 17, y: 4};
+    let p2 = {x: 7, y: 21};
+    expect(midpoint(p1, p2)).toStrictEqual([12, 12.5]);
+});
+
+test("Takes in a vector and returns the magnitude of the vector", () => {
+    let u = {x: 12, y: 5};
+    expect(vectorMagnitude(u)).toBe(13);
+});
+
+test("Takes in two vectors and returns their sum", () => {
+    let u = {x: 6, y: 2.5};
+    let v = {x: 7.25, y: 1};
+    expect(addVectors(u, v)).toStrictEqual([13.25, 3.5]);
+});
+
+test("Takes in two vectors and returns the dot product", () => {
+    let u = {x: 4, y: 9};
+    let v = {x: 13, y: 3.75};
+    expect(dotProduct(u, v)).toBe(85.75);
+});
+
+test("Takes in two vectors and the angle between them and returns the dot product", () => {
+    let u = {x: 7, y: 5};
+    let v = {x: 19, y: 12};
+    let theta = Math.PI/4;
+    expect(dotProductTheta(u, v, theta)).toBe(136.69);
 });
