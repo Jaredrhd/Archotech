@@ -102,7 +102,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         $position = strpos($result,"value=",$position);
 
         //Place answer at the calculated position
-        //$currentanswer = '0:norGate:3:-2.5\n2:node:-2:-1\n4:node:2:1:-1:2:1:none:none:false\n2:node:-2:1\n4:node:2:-1:5:2:-1:0.8375:-1.01:true\n1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
+        $currentanswer = '0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
         $result = substr_replace($result, $currentanswer, $position+7, 0);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
@@ -114,13 +114,13 @@ class qtype_logicgate_renderer extends qtype_renderer
     private function restrictedGates($question, $result)
     {
         $data = 'buffergate:' . ((int)$question->buffergate * 1000);
-        $data .= '\nnotgate:' . ((int)$question->notgate * 1000);
-        $data .= '\nandgate:' . ((int)$question->andgate * 1000);
-        $data .= '\nnandgate:' . ((int)$question->nandgate * 1000);
-        $data .= '\norgate:' . ((int)$question->orgate * 1000);
-        $data .= '\nnorgate:' . ((int)$question->norgate * 1000);
-        $data .= '\nxorgate:' . ((int)$question->xorgate * 1000);
-        $data .= '\nxnorgate:' . ((int)$question->xnorgate * 1000);
+        $data .= '|notgate:' . ((int)$question->notgate * 1000);
+        $data .= '|andgate:' . ((int)$question->andgate * 1000);
+        $data .= '|nandgate:' . ((int)$question->nandgate * 1000);
+        $data .= '|orgate:' . ((int)$question->orgate * 1000);
+        $data .= '|norgate:' . ((int)$question->norgate * 1000);
+        $data .= '|xorgate:' . ((int)$question->xorgate * 1000);
+        $data .= '|xnorgate:' . ((int)$question->xnorgate * 1000);
 
         //Get the string pos at ANSWER_NAME_ID
         $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);

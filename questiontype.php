@@ -56,7 +56,7 @@ class qtype_logicgate extends question_type {
 
     public function save_question_options($question) {
         parent::save_question_options($question);
-        //$this->save_question_answers($question);
+        $this->save_question_answers($question);
         //$this->save_hints($question);
     }
 
@@ -72,9 +72,11 @@ class qtype_logicgate extends question_type {
         $question->norGate =  $questiondata->options->norgate;
         $question->xorGate =  $questiondata->options->xorgate;
         $question->xnorGate =  $questiondata->options->xnorgate;
-
+        $question->xnorGate =  $questiondata->options->xnorgate;
+        
+        //Set the answer
         $this->initialise_question_answers($question, $questiondata);
-
+        $question->answersFromLecturer = $questiondata->options->answers;
     }
 
     //It is not possible to guess a score of a logic gate since it is too complex

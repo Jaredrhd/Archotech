@@ -817,7 +817,10 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-        document.getElementById("savedData").value = dataToLoad;
+        document.getElementById("id_answer_0").value = dataToLoad;
+        console.log("hi");
+        console.log(document.getElementById("id_answer_0").value);
+        console.log(dataToLoad);
         //console.log(dataToLoad);
         //console.log(String(document.getElementById("savedData").value));
     }
@@ -1879,8 +1882,8 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="saveddata_name_id" value="" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1" id="savedData" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:10|notGate:10|andGate:10|nandGate:10|orGate:10|norGate:10|xorGate:10|xnorGate:10" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
