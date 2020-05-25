@@ -817,7 +817,10 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
+
         document.getElementById("savedData").value = dataToLoad;
+        document.getElementById("answer").value = dataToLoad;
+        
         //console.log(dataToLoad);
         //console.log(String(document.getElementById("savedData").value));
     }
@@ -1834,13 +1837,13 @@
         //s key pressed
         document.addEventListener("keydown", function(event) {
             if (event.which == 83) {
-                save();
+                //save();
             } else if (event.which == 76) {
-                load();
+                //load();
             } else if (event.which == 67) {
-                compareCircuits();
+                //compareCircuits();
             } else if (event.which == 71) {
-                getLogicGateLimits();
+                //getLogicGateLimits();
             }
         }, true);
     }
@@ -1879,7 +1882,8 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="saveddata_name_id" value="" id="savedData" size="80" class="form-control d-inline">
+<input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="savedData" size="80" class="form-control d-inline">
 <input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>

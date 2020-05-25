@@ -99,11 +99,13 @@ class qtype_logicgate_renderer extends qtype_renderer
         $position = strpos($result,"saveddata_name_id",0);
 
         //Get the value= position from the last position, this is the value we need to edit to show answer 
-        $position = strpos($result,"value=",$position);
-
+        //$position = strpos($result,"value=",$position);
         //Place answer at the calculated position
-        $currentanswer = '0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
-        $result = substr_replace($result, $currentanswer, $position+7, 0);
+        //$currentanswer = '0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
+        //$result = substr_replace($result, $currentanswer, $position+7, 0);
+
+        if($currentanswer != '')
+            $result = str_replace("0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false", $currentanswer, $result);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
         $result = str_replace("saveddata_name_id", $inputname, $result);

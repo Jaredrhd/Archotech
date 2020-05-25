@@ -104,6 +104,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         $s = $this->compareCircuits($val,$res);
         $s = false;
         $fraction = (($this->compareCircuits($val,$res) == true) ? 1 : 0);
+
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
