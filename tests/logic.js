@@ -52,4 +52,11 @@ function vectorMagnitude(u) {
     return Math.sqrt(Math.pow(u.u1, 2) + Math.pow(u.u2, 2)) 
 }
 
-module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude };
+function addVectors(u, v) {
+    let tempArr = [];
+    tempArr.push(u.u1 + v.v1);
+    tempArr.push(u.u2 + v.v2);
+    return tempArr;
+}
+
+module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, pythagDistance, vectorMagnitude, addVectors };
