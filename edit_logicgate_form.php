@@ -51,12 +51,15 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
         $this->add_checkbox_controller(1, NULL, NULL, 1);
 
-        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
-
-        #Add hidden field with circuit stuff
-        $mform->addElement('header', 'answer', "Create Logic Gate Answer");
+        //Add hidden field with circuit stuff
+        $mform->addElement('header', 'Answer', "Create Answer");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphLecturer.html')));
         $mform->addElement('hidden', 'saveddata_name_id','');
+
+        //Hide the answer field
+        $mform->addElement('html', '<div style="display: none;">');
+        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
+        $mform->addElement('html', '</div>');
 
         $this->add_interactive_settings(true, true);
     }
