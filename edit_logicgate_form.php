@@ -38,13 +38,34 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_logicgate_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
-        $this->add_interactive_settings();
+
+        //Adds checkboxes for logic gates
+        $mform->addElement('header', 'Gates', "Enable/Disable Gates");
+        $mform->addElement('advcheckbox', 'buffergate', "Buffer Gate", "Buffer Gate", array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'notgate', "", "Not Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'andgate', "", "And Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'nandgate', "", "Nand Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'orgate', "", "Or Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'norgate', "", "Nor Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xorgate', "", "Xor Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
+        $this->add_checkbox_controller(1, NULL, NULL, 1);
+
+        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
+
+        #Add hidden field with circuit stuff
+        $mform->addElement('header', 'answer', "Create Logic Gate Answer");
+        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphLecturer.html')));
+        $mform->addElement('hidden', 'saveddata_name_id','');
+
+        $this->add_interactive_settings(true, true);
     }
 
+    //Perform a preprocessing needed on the data passed to set_data() before it is used to initialise the form. 
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);
-
         return $question;
     }
 
