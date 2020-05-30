@@ -78,7 +78,8 @@ class qtype_logicgate_renderer extends qtype_renderer
         $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
 
         //Add the question text
-        $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+        $result = html_writer::tag('div', $question->name, array('class' => 'h2'));
+        $result .= html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
         //This is probably what we want to display since we dont have placeholder
         if (!$placeholder) {
@@ -138,7 +139,7 @@ class qtype_logicgate_renderer extends qtype_renderer
 
     // TODO.
     public function specific_feedback(question_attempt $qa) {
-        return 'specific_feedback';
+        return '';
     }
 
     public function correct_response(question_attempt $qa) {
@@ -147,7 +148,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
         
         //TODO inject lecturer code of logic gate save
-        return 'correct_response';
+        return '';
     }
 }
 ?>
