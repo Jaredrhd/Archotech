@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/logicgate/db" VERSION="20200525" COMMENT="XMLDB file for Moodle question/type/logicgate"
+<XMLDB PATH="question/type/logicgate/db" VERSION="20200531" COMMENT="XMLDB file for Moodle question/type/logicgate"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -17,6 +17,15 @@
         <FIELD NAME="xorgate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xnorgate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="saveddata_name_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="buffergateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="notgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="andgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="nandgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="orgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="norgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="xorgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="xnorgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

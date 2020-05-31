@@ -1397,7 +1397,14 @@
 
     function setupCircuit() {
         logicGateLimitsString = String(document.getElementById("restrictedGates").value);
-        dataToLoad = String(document.getElementById("savedData").value);
+
+        savedDataLecturer = document.getElementById("id_answer_0").value
+
+        if(savedDataLecturer != '')
+            dataToLoad = String(document.getElementById("id_answer_0").value);
+        else
+            dataToLoad = String(document.getElementById("savedData").value);
+
         //logicGateLimitsString = logicGateLimitsString.replace(/\\n/g, "\n");
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
@@ -1823,6 +1830,9 @@
                 //getLogicGateLimits();
             }
         }, true);
+
+        //Hack to hide moodle answer thing
+        document.getElementById('id_answerhdr').setAttribute("style", "display: none;"); 
     }
 
     //Get Mouse Position based on coordinate sysetm we are using

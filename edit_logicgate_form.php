@@ -51,17 +51,25 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
         $this->add_checkbox_controller(1, NULL, NULL, 1);
 
+        #The Numerical limits
+        $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount, disable the gate above to overide these values</p>');
+        $mform->addElement('float', 'buffergateamount', "Buffer Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'notgateamount', "Not Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'andgateamount', "And Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'nandgateamount', "Nand Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'orgateamount', "Or Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'norgateamount', "Nor Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'xorgateamount', "Xor Gate Limit", array('value'=>0));
+        $mform->addElement('float', 'xnorgateamount', "Xnor Gate Limit", array('value'=>0));
+
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphLecturer.html')));
-        $mform->addElement('hidden', 'saveddata_name_id','');
-
-        //Hide the answer field
-        $mform->addElement('html', '<div style="display: none;">');
-        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
-        $mform->addElement('html', '</div>');
 
         $this->add_interactive_settings(true, true);
+
+        //Hide the answer field  (NOTE this is forcibly hidden in the SceneGraphLecturer by getting th id. It is a hack but can't figure out how to hide this)
+        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
     }
 
     //Perform a preprocessing needed on the data passed to set_data() before it is used to initialise the form. 

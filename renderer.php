@@ -105,6 +105,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         //$currentanswer = '0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
         //$result = substr_replace($result, $currentanswer, $position+7, 0);
 
+        //If the current answer is not blank, ie we have already started the question, replace the template answer with the current answer
         if($currentanswer != '')
             $result = str_replace("0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false", $currentanswer, $result);
 
@@ -116,14 +117,16 @@ class qtype_logicgate_renderer extends qtype_renderer
 
     private function restrictedGates($question, $result)
     {
-        $data = 'buffergate:' . ((int)$question->buffergate * 1000);
-        $data .= '|notgate:' . ((int)$question->notgate * 1000);
-        $data .= '|andgate:' . ((int)$question->andgate * 1000);
-        $data .= '|nandgate:' . ((int)$question->nandgate * 1000);
-        $data .= '|orgate:' . ((int)$question->orgate * 1000);
-        $data .= '|norgate:' . ((int)$question->norgate * 1000);
-        $data .= '|xorgate:' . ((int)$question->xorgate * 1000);
-        $data .= '|xnorgate:' . ((int)$question->xnorgate * 1000);
+
+        //Construct limits
+        $data = 'buffergate:' . ((int)$question->buffergate * $question->bufferGateAmount);
+        $data .= '|notgate:' . ((int)$question->notgate * $question->notGateAmount);
+        $data .= '|andgate:' . ((int)$question->andgate * $question->andGateAmount);
+        $data .= '|nandgate:' . ((int)$question->nandgate * $question->nandGateAmount);
+        $data .= '|orgate:' . ((int)$question->orgate * $question->orGateamount);
+        $data .= '|norgate:' . ((int)$question->norgate * $question->norGateAmount);
+        $data .= '|xorgate:' . ((int)$question->xorgate * $question->xorGateAmount);
+        $data .= '|xnorgate:' . ((int)$question->xnorgate * $question->xnorGateAmount);
 
         //Get the string pos at ANSWER_NAME_ID
         $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);
