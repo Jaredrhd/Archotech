@@ -64,11 +64,11 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
-        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphLecturer.html')));
+        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
 
         $this->add_interactive_settings(true, true);
 
-        //Hide the answer field  (NOTE this is forcibly hidden in the SceneGraphLecturer by getting th id. It is a hack but can't figure out how to hide this)
+        //Hide the answer field is done in lecturer code (HACK) (NOTE this is forcibly hidden in the SceneGraph by getting th id. It is a hack but can't figure out how to hide this)
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
     }
 

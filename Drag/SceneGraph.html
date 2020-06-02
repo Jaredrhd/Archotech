@@ -23,7 +23,6 @@
     var world;  // A SceneGraphNode representing the entire scene. 
     
     // TODO: Define global variables to represent animated objects in the scene.
-
     var selectedObject = null;
     var assignedObject = null;
     var mousePos;
@@ -36,12 +35,12 @@
     var logicGateLimitsString = "";
     var logicGateLimits = [];
     var isLoading = false;
-    
+
     /**
      *  Builds the data structure that represents the entire picture.
      */
-    function createWorld() {
-
+    function createWorld() 
+    {
         world = new CompoundObject();  // Root node for the scene graph.
     }
     
@@ -55,6 +54,7 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -615,7 +615,7 @@
         }
         g.restore();
     }
-
+    
     function getObject() {
         if (arguments.length == 1 || (arguments.length == 2 && arguments[0] != null && arguments[1] != null)) {
             if (arguments[0] == null) {
@@ -790,12 +790,15 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-
-        document.getElementById("savedData").value = dataToLoad;
+        if (document.getElementById("id_answer_0") != null) {
+            document.getElementById("id_answer_0").value = dataToLoad;
+        }
         document.getElementById("answer").value = dataToLoad;
-        
-        //console.log(dataToLoad);
-        //console.log(String(document.getElementById("savedData").value));
+
+        if (document.getElementsByName("buffergate").length != 0) {
+            var i = document.getElementsByName("buffergate")[1].checked;
+            console.log(i);
+        }
     }
 
     function load() {
@@ -1393,7 +1396,18 @@
 
     function setupCircuit() {
         logicGateLimitsString = String(document.getElementById("restrictedGates").value);
-        dataToLoad = String(document.getElementById("savedData").value);
+
+        if (document.getElementById("id_answer_0") != null && document.getElementById("id_answer_0").value != "") {
+            dataToLoad = String(document.getElementById("id_answer_0").value);
+        }
+        else if(document.getElementById("id_answer_0") != null) 
+        {
+            dataToLoad = "0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false";
+        }
+        else 
+        {
+            dataToLoad = String(document.getElementById("answer").value);
+        }
         //logicGateLimitsString = logicGateLimitsString.replace(/\\n/g, "\n");
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
@@ -1767,6 +1781,7 @@
     
     //----------------------- initialization -------------------------------
     function init() {
+    	//window.oncontextmenu = event => event.preventDefault()
         canvas = document.getElementById("thecanvas");
         if (!canvas.getContext) {
             document.getElementById("message").innerHTML = "ERROR: Canvas not supported";
@@ -1807,18 +1822,10 @@
 
         setupCircuit();
 
-        //s key pressed
-        document.addEventListener("keydown", function(event) {
-            if (event.which == 83) {
-                //save();
-            } else if (event.which == 76) {
-                //load();
-            } else if (event.which == 67) {
-                //compareCircuits();
-            } else if (event.which == 71) {
-                //getLogicGateLimits();
-            }
-        }, true);
+        if (document.getElementById("id_answerhdr") != null) {
+            document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
+        }
+
     }
 
     //Get Mouse Position based on coordinate sysetm we are using
@@ -1856,8 +1863,8 @@
 </div>
 
 <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
-<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="curatedsaveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="curatedsavedData" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>

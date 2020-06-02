@@ -96,28 +96,29 @@ class qtype_logicgate_renderer extends qtype_renderer
 
     private function answerNameID($currentanswer, $inputname, $result)
     {
+        //If the current answer is blank, Insert curated answer
+        $data = '0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false';
+
+        if($currentanswer != '')
+            $data = $currentanswer;
+
         //Get the string pos at ANSWER_NAME_ID
-        $position = strpos($result,"saveddata_name_id",0);
+        $position = strpos($result,"ANSWER_NAME_ID",0);
 
         //Get the value= position from the last position, this is the value we need to edit to show answer 
-        //$position = strpos($result,"value=",$position);
-        //Place answer at the calculated position
-        //$currentanswer = '0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1';
-        //$result = substr_replace($result, $currentanswer, $position+7, 0);
+        $position = strpos($result,"value=",$position);
 
-        //If the current answer is not blank, ie we have already started the question, replace the template answer with the current answer
-        if($currentanswer != '')
-            $result = str_replace("0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false", $currentanswer, $result);
+        //Place answer at the calculated position
+        $result = substr_replace($result, $data, $position+7, 0);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
-        $result = str_replace("saveddata_name_id", $inputname, $result);
+        $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
 
         return $result;
     }
 
     private function restrictedGates($question, $result)
     {
-
         //Construct limits
         $data = 'buffergate:' . ((int)$question->buffergate * $question->bufferGateAmount);
         $data .= '|notgate:' . ((int)$question->notgate * $question->notGateAmount);
@@ -145,10 +146,14 @@ class qtype_logicgate_renderer extends qtype_renderer
         return '';
     }
 
-    public function correct_response(question_attempt $qa) {
+    public function correct_response(question_attempt $qa) 
+    {
+        $question = $qa->get_question();
         
         //Get the file to display as the answer
-        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
+        //$result = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphcopy.html'));
+        
+        $result = $this->restrictedGates($question, $result);
         
         //TODO inject lecturer code of logic gate save
         return '';

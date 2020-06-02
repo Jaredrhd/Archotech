@@ -74,15 +74,18 @@ class qtype_logicgate extends question_type {
         $question->xnorGate =  $questiondata->options->xnorgate;
         $question->xnorGate =  $questiondata->options->xnorgate;
 
-        $question->bufferGateAmount =  ($questiondata->options->buffergateamount == 0) ? 1000 : $questiondata->options->buffergateamount ;
+        //Set value amounts
+        $question->bufferGateAmount =  ($questiondata->options->buffergateamount == 0) ? 1000 : $questiondata->options->buffergateamount;
         $question->notGateAmount =  ($questiondata->options->notgateamount == 0) ? 1000 : $questiondata->options->notgateamount;
-        $question->andGateAmount =  ($questiondata->options->andgateamount == 0) ? 100 : $questiondata->options->andgateamount;
+        $question->andGateAmount =  ($questiondata->options->andgateamount == 0) ? 1000 : $questiondata->options->andgateamount;
         $question->nandGateAmount =  ($questiondata->options->nandgateamount == 0) ? 1000 : $questiondata->options->nandgateamount;
         $question->orGateamount =  ($questiondata->options->orgateamount == 0) ? 1000 :  $questiondata->options->orgateamount;
         $question->norGateAmount =  ($questiondata->options->norgateamount == 0) ? 1000 : $questiondata->options->norgateamount;
         $question->xorGateAmount =  ($questiondata->options->xorgateamount == 0) ? 1000 : $questiondata->options->xorgateamount;
         $question->xnorGateAmount =  ($questiondata->options->xnorgateamount == 0) ? 1000 : $questiondata->options->xnorgateamount;
-        
+
+        //TODO Pass curated data
+
         //Set the answer
         $this->initialise_question_answers($question, $questiondata);
         $question->answersFromLecturer = $questiondata->options->answers;

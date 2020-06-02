@@ -16,15 +16,15 @@
         <FIELD NAME="norgate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xorgate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xnorgate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="saveddata_name_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="buffergateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="notgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="andgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="nandgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="orgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="norgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="xorgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="xnorgateamount" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="curated_saveddata_name_id" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="buffergateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="notgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="andgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="nandgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="orgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="norgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="xorgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="xnorgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="0" COMMENT="Limit this specific gate to the amount listed here"/>
 
       </FIELDS>
       <KEYS>
