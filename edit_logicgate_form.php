@@ -41,7 +41,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
         //Adds checkboxes for logic gates
         $mform->addElement('header', 'Gates', "Enable/Disable Gates");
-        $mform->addElement('advcheckbox', 'buffergate', "Buffer Gate", "Buffer Gate", array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'buffergate', "", "Buffer Gate", array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'notgate', "", "Not Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'andgate', "", "And Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'nandgate', "", "Nand Gate",  array('group' => 1), array(0, 1));
@@ -65,6 +65,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
+        $mform->addElement('hidden', 'curated_data','');
 
         $this->add_interactive_settings(true, true);
 
