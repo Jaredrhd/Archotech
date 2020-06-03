@@ -49,7 +49,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'norgate', "", "Nor Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'xorgate', "", "Xor Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
-        $this->add_checkbox_controller(1, NULL, NULL, 1);
+        //$this->add_checkbox_controller(1, NULL, NULL, 0);
 
         #The Numerical limits
         $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount, disable the gate above to overide these values</p>');

@@ -1781,6 +1781,9 @@
     
     //----------------------- initialization -------------------------------
     function init() {
+        if (document.getElementById("restrictedGates").value == "") {
+            document.getElementById("restrictedGates").value = "bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100";
+        }
     	//window.oncontextmenu = event => event.preventDefault()
         canvas = document.getElementById("thecanvas");
         if (!canvas.getContext) {
@@ -1826,6 +1829,7 @@
             document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
         }
 
+
     }
 
     //Get Mouse Position based on coordinate sysetm we are using
@@ -1864,7 +1868,7 @@
 
 <input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
 <input type="hidden" name="curated_data" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="curatedsavedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
