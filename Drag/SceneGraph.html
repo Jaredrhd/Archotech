@@ -580,7 +580,11 @@
                 return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
             }
             this.isMouseWithinObjectRadius = function() {
-                return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+                if (selectedObject == null) {
+                    return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+                } else {
+                    return this.getDistanceOfObjectToMouse() <= this.dragRadius + 0.25;
+                }
             }
             this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
                 if (this.objectType == 1) {
@@ -810,10 +814,10 @@
                     case node:
                         saveData += "node:";
                         break;
-                    case node:
+                    case startNode:
                         saveData += "startNode:";
                         break;
-                    case node:
+                    case endNode:
                         saveData += "endNode:";
                         break;
                     default:
@@ -857,8 +861,7 @@
             console.log(i);
         }
 
-
-        //console.log(dataToLoad);
+        console.log(dataToLoad);
         //console.log(String(document.getElementById("answer").value));
     }
 
@@ -1937,7 +1940,7 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="ANSWER_NAME_ID" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="ANSWER_NAME_ID" value="0:norGate:3:-2|0:startNode:1:-2|0:endNode:-1:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="answer" size="80" class="form-control d-inline">
 <input type="hidden" name="curatedsaveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="curatedsavedData" size="80" class="form-control d-inline">
 <input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
