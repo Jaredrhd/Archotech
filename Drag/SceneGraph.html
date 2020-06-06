@@ -522,6 +522,11 @@
                                 });
                             }
                         }
+                        this.setStartNodeCoordinatesToMouseWithOffset = function() {
+                            var oldMousePos = mousePos;
+                            mousePos = getMousePos(canvas, event);
+                            this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                        }
                         this.removeStartNode = function() {
                             this.outputNodes.forEach(function(item, index){
                                 item.removeNode();
@@ -577,7 +582,6 @@
             this.isMouseWithinObjectRadius = function() {
                 return this.getDistanceOfObjectToMouse() <= this.dragRadius;
             }
-            //Make Edits Here for Start node.
             this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
                 if (this.objectType == 1) {
                     this.setLogicGateCoordinatesToMouseWithOffset();
@@ -585,6 +589,8 @@
                     this.setWireCoordinatesToMouse();
                 } else if (this.objectType == 4) {
                     this.setEndNodeCoordinatesToMouseWithOffset();
+                } else if (this.objectType == 2) {
+                    this.setStartNodeCoordinatesToMouseWithOffset();
                 }
             }
         }
