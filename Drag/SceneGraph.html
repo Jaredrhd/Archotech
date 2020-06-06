@@ -35,6 +35,7 @@
     var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
     var logicGateLimitsString = "";
     var logicGateLimits = [];
+    var logicGateRestrictions = [-1, -1, -1, -1, -1, -1, -1, -1];
     var isLoading = false;
     
     /**
@@ -55,6 +56,7 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -158,7 +160,11 @@
             this.objectType = arguments[1];
             if (this.objectType == 0 || this.objectType == 1) {
                 if (this.objectType == 0) {
-                    this.dragRadius = 1;
+                    if (this.object === startNode || this.object === endNode) {
+                        this.dragRadius = 0.125;
+                    } else {
+                        this.dragRadius = 1;
+                    }
                     this.createLogicGateObject = function() {
                         var logicGate;
                         if (this.object === bufferGate) {
@@ -233,6 +239,14 @@
                             } else {
                                 return null;
                             }
+                        } else if (this.object === startNode) {
+                            logicGate = new TransformedObject(node, 2).setTranslation(this.translateX, this.translateY).addOutputNode();
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === endNode) {
+                            logicGate = new TransformedObject(node, 4).setTranslation(this.translateX, this.translateY).addInputNode();
+                            world.add(logicGate);
+                            return logicGate;
                         }
                     }
                 } else if (this.objectType == 1) {
@@ -790,12 +804,19 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-
-        document.getElementById("savedData").value = dataToLoad;
+        if (document.getElementById("id_answer_0") != null) {
+            document.getElementById("id_answer_0").value = dataToLoad;
+        }
         document.getElementById("answer").value = dataToLoad;
-        
+
+        if (document.getElementsByName("buffergate").length != 0) {
+            var i = document.getElementsByName("buffergate")[1].checked;
+            console.log(i);
+        }
+
+
         //console.log(dataToLoad);
-        //console.log(String(document.getElementById("savedData").value));
+        //console.log(String(document.getElementById("answer").value));
     }
 
     function load() {
@@ -1393,7 +1414,11 @@
 
     function setupCircuit() {
         logicGateLimitsString = String(document.getElementById("restrictedGates").value);
-        dataToLoad = String(document.getElementById("savedData").value);
+        if (document.getElementById("id_answer_0") != null && document.getElementById("id_answer_0").value != "") {
+            dataToLoad = String(document.getElementById("id_answer_0").value);
+        } else {
+            dataToLoad = String(document.getElementById("answer").value);
+        }
         //logicGateLimitsString = logicGateLimitsString.replace(/\\n/g, "\n");
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
@@ -1446,6 +1471,19 @@
 
     var node = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     node.doDraw = function(g) {
+        g.beginPath();
+        g.arc(0,0,0.125,0,2*Math.PI);
+        g.stroke();
+    }
+    var startNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
+    startNode.doDraw = function(g) {
+        g.beginPath();
+        g.arc(0,0,0.125,0,2*Math.PI);
+        g.stroke();
+    }
+
+    var endNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
+    endNode.doDraw = function(g) {
         g.beginPath();
         g.arc(0,0,0.125,0,2*Math.PI);
         g.stroke();
@@ -1807,18 +1845,10 @@
 
         setupCircuit();
 
-        //s key pressed
-        document.addEventListener("keydown", function(event) {
-            if (event.which == 83) {
-                //save();
-            } else if (event.which == 76) {
-                //load();
-            } else if (event.which == 67) {
-                //compareCircuits();
-            } else if (event.which == 71) {
-                //getLogicGateLimits();
-            }
-        }, true);
+        if (document.getElementById("id_answerhdr") != null) {
+            document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
+        }
+
     }
 
     //Get Mouse Position based on coordinate sysetm we are using
@@ -1855,9 +1885,9 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
-<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="ANSWER_NAME_ID" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="curatedsaveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="curatedsavedData" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
