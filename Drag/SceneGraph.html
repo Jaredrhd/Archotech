@@ -522,6 +522,13 @@
                                 });
                             }
                         }
+                        this.removeStartNode = function() {
+                            this.outputNodes.forEach(function(item, index){
+                                item.removeNode();
+                            });
+                            var thisStartNode = this;
+                            world.subobjects.splice(world.subobjects.findIndex(function(startNode) { return startNode === thisStartNode;}), 1);
+                        }
                     } else if (this.objectType == 4) {
                         this.hasCharge = false;
                         this.inputNodes = [];
@@ -543,6 +550,13 @@
                                 this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
                             }
                         }
+                        this.removeEndNode = function() {
+                            this.inputNodes.forEach(function(item, index){
+                                item.removeNode();
+                            });
+                            var thisEndNode = this;
+                            world.subobjects.splice(world.subobjects.findIndex(function(endNode) { return endNode === thisEndNode;}), 1);
+                        }
                     }
                     this.getCoordinates = function() {
                         return [this.translateX, this.translateY];
@@ -563,6 +577,7 @@
             this.isMouseWithinObjectRadius = function() {
                 return this.getDistanceOfObjectToMouse() <= this.dragRadius;
             }
+            //Make Edits Here for Start node.
             this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
                 if (this.objectType == 1) {
                     this.setLogicGateCoordinatesToMouseWithOffset();
