@@ -740,7 +740,6 @@
                         return arguments[0];
                     }
                 }
-                
             } else if (arguments[0].objectType === 4) {
                 console.log("Object is an end node");
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === endNode) {
@@ -762,7 +761,6 @@
                         return arguments[0];
                     }
                 }
-                
             }
         } else {
             return null;
@@ -801,6 +799,12 @@
                         break;
                     case node:
                         saveData += "node:";
+                        break;
+                    case node:
+                        saveData += "startNode:";
+                        break;
+                    case node:
+                        saveData += "endNode:";
                         break;
                     default:
                         break;
@@ -891,6 +895,14 @@
                             break;
                         case "xnorGate":
                             var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "startNode":
+                            var loadedObject = new TransformedObject(startNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "endNode":
+                            var loadedObject = new TransformedObject(endNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
                             world.add(loadedObject);
                             break;
                         default:
