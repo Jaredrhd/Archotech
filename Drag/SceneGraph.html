@@ -732,18 +732,22 @@
                     arguments[0].removeStartNode();
                     return null;
                 } else {
-                    var currentObject = null;
-                    arguments[0].outputNodes.forEach(function(item, index){
-                        if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
-                            currentObject = item;
-                        }
-                    });
-                    if (currentObject != null) {
-                        console.log("Object is an output node");
-                        return getObject(currentObject);
-                    } else {
-                        console.log("Object is a start node");
+                    if (event.which == 3) {
                         return arguments[0];
+                    } else {
+                        var currentObject = null;
+                        arguments[0].outputNodes.forEach(function(item, index){
+                            if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                                currentObject = item;
+                            }
+                        });
+                        if (currentObject != null) {
+                            console.log("Object is an output node");
+                            return getObject(currentObject);
+                        } else {
+                            console.log("Object is a start node");
+                            return arguments[0];
+                        }
                     }
                 }
             } else if (arguments[0].objectType === 4) {
@@ -1889,6 +1893,7 @@
                 }
             }
         }, true);
+
 
         setupCircuit();
 
