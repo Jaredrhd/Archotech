@@ -721,34 +721,48 @@
                 }
             } else if (arguments[0].objectType === 2) {
                 console.log("Object is a start node");
-                var currentObject = null;
-                arguments[0].outputNodes.forEach(function(item, index){
-                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
-                        currentObject = item;
-                    }
-                });
-                if (currentObject != null) {
-                    console.log("Object is an output node");
-                    return getObject(currentObject);
+                if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === startNode) {
+                    console.log("Removing Start Node");
+                    arguments[0].removeStartNode();
+                    return null;
                 } else {
-                    console.log("Object is a start node");
-                    return arguments[0];
+                    var currentObject = null;
+                    arguments[0].outputNodes.forEach(function(item, index){
+                        if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                            currentObject = item;
+                        }
+                    });
+                    if (currentObject != null) {
+                        console.log("Object is an output node");
+                        return getObject(currentObject);
+                    } else {
+                        console.log("Object is a start node");
+                        return arguments[0];
+                    }
                 }
+                
             } else if (arguments[0].objectType === 4) {
                 console.log("Object is an end node");
-                var currentObject = null;
-                arguments[0].inputNodes.forEach(function(item, index){
-                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
-                        currentObject = item;
-                    }
-                });
-                if (currentObject != null) {
-                    console.log("Object is an input node");
-                    return getObject(currentObject);
+                if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === endNode) {
+                    console.log("Removing End Node");
+                    arguments[0].removeEndNode();
+                    return null;
                 } else {
-                    console.log("Object is an end node");
-                    return arguments[0];
+                    var currentObject = null;
+                    arguments[0].inputNodes.forEach(function(item, index){
+                        if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                            currentObject = item;
+                        }
+                    });
+                    if (currentObject != null) {
+                        console.log("Object is an input node");
+                        return getObject(currentObject);
+                    } else {
+                        console.log("Object is an end node");
+                        return arguments[0];
+                    }
                 }
+                
             }
         } else {
             return null;
