@@ -1596,7 +1596,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === notGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1607,7 +1607,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === andGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1618,7 +1618,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === nandGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1629,7 +1629,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === orGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1640,7 +1640,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === norGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1651,7 +1651,7 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xorGate) {
                     item.removeLogicGate();
                 }
             });
@@ -1662,11 +1662,12 @@
             ++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
-                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xnorGate) {
                     item.removeLogicGate();
                 }
             });
         }
+        save();
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
