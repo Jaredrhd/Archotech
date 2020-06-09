@@ -1566,7 +1566,30 @@
     }
 
     function updateLogicGateSpawners() {
-        
+        var logicGateRestrictionsCounter = 1;
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object !== startNode && item.object !== endNode) {
+                var thisLogicGateSpawner = item;
+                world.subobjects.splice(world.subobjects.findIndex(function(logicGateSpawner) { return logicGateSpawner === thisLogicGateSpawner;}), 1);
+            }
+        });
+
+        endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
+            if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
+                return true;;
+            } 
+        });
+        if (logicGateRestrictions[0] == true) {
+            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
