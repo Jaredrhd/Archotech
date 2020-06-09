@@ -37,6 +37,7 @@
     var logicGateLimits = [];
     var logicGateRestrictions;
     var isLoading = false;
+    var updateSpawners = false;
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -64,6 +65,45 @@
                 });
             }
         });
+
+        if (typeof logicGateRestrictions != "undefined") {
+            if (document.getElementsByName("buffergate")[1].checked != logicGateRestrictions[0]) {
+                updateSpawners = true;
+                logicGateRestrictions[0] = document.getElementsByName("buffergate")[1].checked;
+            }
+            if (document.getElementsByName("notgate")[1].checked != logicGateRestrictions[1]) {
+                updateSpawners = true;
+                logicGateRestrictions[1] = document.getElementsByName("notgate")[1].checked;
+            }
+            if (document.getElementsByName("andgate")[1].checked != logicGateRestrictions[2]) {
+                updateSpawners = true;
+                logicGateRestrictions[2] = document.getElementsByName("andgate")[1].checked;
+            }
+            if (document.getElementsByName("nandgate")[1].checked != logicGateRestrictions[3]) {
+                updateSpawners = true;
+                logicGateRestrictions[3] = document.getElementsByName("nandgate")[1].checked;
+            }
+            if (document.getElementsByName("orgate")[1].checked != logicGateRestrictions[4]) {
+                updateSpawners = true;
+                logicGateRestrictions[4] = document.getElementsByName("orgate")[1].checked;
+            }
+            if (document.getElementsByName("norgate")[1].checked != logicGateRestrictions[5]) {
+                updateSpawners = true;
+                logicGateRestrictions[5] = document.getElementsByName("norgate")[1].checked;
+            }
+            if (document.getElementsByName("xorgate")[1].checked != logicGateRestrictions[6]) {
+                updateSpawners = true;
+                logicGateRestrictions[6] = document.getElementsByName("xorgate")[1].checked;
+            }
+            if (document.getElementsByName("xnorgate")[1].checked != logicGateRestrictions[7]) {
+                updateSpawners = true;
+                logicGateRestrictions[7] = document.getElementsByName("xnorgate")[1].checked;
+            }
+            if (updateSpawners == true) {
+                updateSpawners = false;
+                updateLogicGateSpawners();
+            }
+        }
     }
  
 
@@ -1523,6 +1563,10 @@
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
         load();
+    }
+
+    function updateLogicGateSpawners() {
+        
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
