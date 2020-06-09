@@ -35,7 +35,7 @@
     var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
     var logicGateLimitsString = "";
     var logicGateLimits = [];
-    var logicGateRestrictions = [-1, -1, -1, -1, -1, -1, -1, -1];
+    var logicGateRestrictions;
     var isLoading = false;
     
     /**
@@ -866,11 +866,57 @@
     }
 
     function load() {
+        if (document.getElementsByName("buffergate").length != 0) {
+            logicGateRestrictions = [false, false, false, false, false, false, false, false];
+        }
         isLoading = true;
         loadData = dataToLoad.split("|");
         for (var i = 0; i < loadData.length; ++i) { 
             loadData[i] = loadData[i].split(":");
         }
+        if (document.getElementsByName("buffergate").length != 0) {
+            loadData.forEach(function(item, index) {
+                if (parseInt(item[0]) == 0) {
+                    switch(item[1]) {
+                        case "bufferGate":
+                            logicGateRestrictions[0] = true;
+                            break;
+                        case "notGate":
+                            logicGateRestrictions[1] = true;
+                            break;
+                        case "andGate":
+                            logicGateRestrictions[2] = true;
+                            break;
+                        case "nandGate":
+                            logicGateRestrictions[3] = true;
+                            break;
+                        case "orGate":
+                            logicGateRestrictions[4] = true;
+                            break;
+                        case "norGate":
+                            logicGateRestrictions[5] = true;
+                            break;
+                        case "xorGate":
+                            logicGateRestrictions[6] = true;
+                            break;
+                        case "xnorGate":
+                            logicGateRestrictions[7] = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            document.getElementsByName("buffergate")[1].checked = logicGateRestrictions[0];
+            document.getElementsByName("notgate")[1].checked = logicGateRestrictions[1];
+            document.getElementsByName("andgate")[1].checked = logicGateRestrictions[2];
+            document.getElementsByName("nandgate")[1].checked = logicGateRestrictions[3];
+            document.getElementsByName("orgate")[1].checked = logicGateRestrictions[4];
+            document.getElementsByName("norgate")[1].checked = logicGateRestrictions[5];
+            document.getElementsByName("xorgate")[1].checked = logicGateRestrictions[6];
+            document.getElementsByName("xnorgate")[1].checked = logicGateRestrictions[7];
+        }
+        
         console.log(loadData);
 
         loadData.forEach(function(item, index) {
@@ -1876,6 +1922,7 @@
             if (event.which){
                 selectedObject = getObject(selectedObject);
             }
+            console.log(typeof logicGateRestrictions);
         }, true);
         
         //Mouse up
