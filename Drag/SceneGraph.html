@@ -1590,6 +1590,83 @@
                 }
             });
         }
+        if (logicGateRestrictions[1] == true) {
+            var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[2] == true) {
+            var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[3] == true) {
+            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[4] == true) {
+            var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[5] == true) {
+            var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[6] == true) {
+            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[7] == true) {
+            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
