@@ -607,6 +607,9 @@
                         return [this.translateX, this.translateY];
                     }
                 }
+            } else if (this.objectType == 6) {
+                this.xBoundry = [-canvas.width/2, canvas.width/2];
+                this.yBoundry = [-canvas.height/2, canvas.height/2];
             }
             this.getDistanceOfObjectToMouse = function() {
                 if (isLoading) {
@@ -1810,6 +1813,11 @@
         g.stroke();
     }
 
+    var draggableCanvas = new SceneGraphNode();
+    draggableCanvas.doDraw = function(g) {
+
+    }
+
     // ------------------------------- Logic Gates --------------------------
     /**
      * All gates are 1 unit in height and centered at (0, 0).
@@ -2143,7 +2151,8 @@
             if (event.which){
                 selectedObject = getObject(selectedObject);
             }
-            console.log(typeof logicGateRestrictions);
+            //console.log(typeof logicGateRestrictions);
+            console.log(canvas);
         }, true);
         
         //Mouse up
