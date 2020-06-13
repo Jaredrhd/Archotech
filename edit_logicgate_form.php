@@ -65,7 +65,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
-        $mform->addElement('hidden', 'curated_data','');
+        $mform->addElement('hidden', 'curated_data','',array('id'=>'curated_data'));
 
         $this->add_interactive_settings(true, true);
 

@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/question/type/logicgate/question.php');
 class qtype_logicgate extends question_type {
 
     public function extra_question_fields() {
-        return array('qtype_logicgate_options', 'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate', 'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount','nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount' );
+        return array('qtype_logicgate_options', 'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate', 'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount','nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount','curated_data');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -84,8 +84,9 @@ class qtype_logicgate extends question_type {
         $question->xorGateAmount =  ($questiondata->options->xorgateamount == 0) ? 1000 : $questiondata->options->xorgateamount;
         $question->xnorGateAmount =  ($questiondata->options->xnorgateamount == 0) ? 1000 : $questiondata->options->xnorgateamount;
 
-        //TODO Pass curated data
-
+        //Pass curated data
+        $question->curated_data = $questiondata->options->curated_data;
+        
         //Set the answer
         $this->initialise_question_answers($question, $questiondata);
         $question->answersFromLecturer = $questiondata->options->answers;

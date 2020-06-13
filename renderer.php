@@ -87,17 +87,17 @@ class qtype_logicgate_renderer extends qtype_renderer
         }
 
         //Set data for passing to JS
-        $result = $this->answerNameID($currentanswer,$inputname,$result);
+        $result = $this->answerNameID($question,$currentanswer,$inputname,$result);
         $result = $this->restrictedGates($question,$result);
 
         //return result
         return $result;
     }
 
-    private function answerNameID($currentanswer, $inputname, $result)
+    private function answerNameID($question, $currentanswer, $inputname, $result)
     {
         //If the current answer is blank, Insert curated answer
-        $data = '0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false';
+        $data = $question->curated_data;
 
         if($currentanswer != '')
             $data = $currentanswer;
