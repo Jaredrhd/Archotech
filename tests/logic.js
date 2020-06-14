@@ -92,6 +92,30 @@ function orthogonalVectors(u, v) {
     return dot == 0;
 }
 
+function xorAnd(a, b, c) {
+    return and(xor(a, b), c);
+}
+
+function xnorAnd(a, b, c) {
+    return and(xnor(a, b), c);
+}
+
+function xorNor(a, b, c) {
+    return nor(xor(a, b), c);
+}
+
+function xnorNor(a, b, c) { 
+    return nor(xnor(a, b), c);
+}
+
+function checkOrthogonalAfterSum(v1, v2, v3, v4) {
+    let u = {x: addVectors(v1, v2)[0], y: addVectors(v1, v2)[1]};
+    let v = {x: addVectors(v3, v4)[0], y: addVectors(v3, v4)[1]};
+
+    return orthogonalVectors(u, v);
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors };
+                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd, 
+                   xnorAnd, xorNor, xnorNor, checkOrthogonalAfterSum };
