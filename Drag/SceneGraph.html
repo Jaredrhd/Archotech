@@ -35,7 +35,9 @@
     var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
     var logicGateLimitsString = "";
     var logicGateLimits = [];
+    var logicGateRestrictions;
     var isLoading = false;
+    var updateSpawners = false;
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -55,6 +57,7 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
+            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -62,6 +65,45 @@
                 });
             }
         });
+
+        if (typeof logicGateRestrictions != "undefined") {
+            if (document.getElementsByName("buffergate")[1].checked != logicGateRestrictions[0]) {
+                updateSpawners = true;
+                logicGateRestrictions[0] = document.getElementsByName("buffergate")[1].checked;
+            }
+            if (document.getElementsByName("notgate")[1].checked != logicGateRestrictions[1]) {
+                updateSpawners = true;
+                logicGateRestrictions[1] = document.getElementsByName("notgate")[1].checked;
+            }
+            if (document.getElementsByName("andgate")[1].checked != logicGateRestrictions[2]) {
+                updateSpawners = true;
+                logicGateRestrictions[2] = document.getElementsByName("andgate")[1].checked;
+            }
+            if (document.getElementsByName("nandgate")[1].checked != logicGateRestrictions[3]) {
+                updateSpawners = true;
+                logicGateRestrictions[3] = document.getElementsByName("nandgate")[1].checked;
+            }
+            if (document.getElementsByName("orgate")[1].checked != logicGateRestrictions[4]) {
+                updateSpawners = true;
+                logicGateRestrictions[4] = document.getElementsByName("orgate")[1].checked;
+            }
+            if (document.getElementsByName("norgate")[1].checked != logicGateRestrictions[5]) {
+                updateSpawners = true;
+                logicGateRestrictions[5] = document.getElementsByName("norgate")[1].checked;
+            }
+            if (document.getElementsByName("xorgate")[1].checked != logicGateRestrictions[6]) {
+                updateSpawners = true;
+                logicGateRestrictions[6] = document.getElementsByName("xorgate")[1].checked;
+            }
+            if (document.getElementsByName("xnorgate")[1].checked != logicGateRestrictions[7]) {
+                updateSpawners = true;
+                logicGateRestrictions[7] = document.getElementsByName("xnorgate")[1].checked;
+            }
+            if (updateSpawners == true) {
+                updateSpawners = false;
+                updateLogicGateSpawners();
+            }
+        }
     }
  
 
@@ -158,7 +200,11 @@
             this.objectType = arguments[1];
             if (this.objectType == 0 || this.objectType == 1) {
                 if (this.objectType == 0) {
-                    this.dragRadius = 1;
+                    if (this.object === startNode || this.object === endNode) {
+                        this.dragRadius = 0.125;
+                    } else {
+                        this.dragRadius = 1;
+                    }
                     this.createLogicGateObject = function() {
                         var logicGate;
                         if (this.object === bufferGate) {
@@ -233,6 +279,14 @@
                             } else {
                                 return null;
                             }
+                        } else if (this.object === startNode) {
+                            logicGate = new TransformedObject(node, 2).setTranslation(this.translateX, this.translateY).addOutputNode();
+                            world.add(logicGate);
+                            return logicGate;
+                        } else if (this.object === endNode) {
+                            logicGate = new TransformedObject(node, 4).setTranslation(this.translateX, this.translateY).addInputNode();
+                            world.add(logicGate);
+                            return logicGate;
                         }
                     }
                 } else if (this.objectType == 1) {
@@ -508,6 +562,18 @@
                                 });
                             }
                         }
+                        this.setStartNodeCoordinatesToMouseWithOffset = function() {
+                            var oldMousePos = mousePos;
+                            mousePos = getMousePos(canvas, event);
+                            this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                        }
+                        this.removeStartNode = function() {
+                            this.outputNodes.forEach(function(item, index){
+                                item.removeNode();
+                            });
+                            var thisStartNode = this;
+                            world.subobjects.splice(world.subobjects.findIndex(function(startNode) { return startNode === thisStartNode;}), 1);
+                        }
                     } else if (this.objectType == 4) {
                         this.hasCharge = false;
                         this.inputNodes = [];
@@ -529,6 +595,13 @@
                                 this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
                             }
                         }
+                        this.removeEndNode = function() {
+                            this.inputNodes.forEach(function(item, index){
+                                item.removeNode();
+                            });
+                            var thisEndNode = this;
+                            world.subobjects.splice(world.subobjects.findIndex(function(endNode) { return endNode === thisEndNode;}), 1);
+                        }
                     }
                     this.getCoordinates = function() {
                         return [this.translateX, this.translateY];
@@ -547,7 +620,11 @@
                 return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
             }
             this.isMouseWithinObjectRadius = function() {
-                return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+                if (selectedObject == null) {
+                    return this.getDistanceOfObjectToMouse() <= this.dragRadius;
+                } else {
+                    return this.getDistanceOfObjectToMouse() <= this.dragRadius + 0.25;
+                }
             }
             this.dragOutputNodeWireButIfNoneDragLogicGate = function() {
                 if (this.objectType == 1) {
@@ -556,6 +633,8 @@
                     this.setWireCoordinatesToMouse();
                 } else if (this.objectType == 4) {
                     this.setEndNodeCoordinatesToMouseWithOffset();
+                } else if (this.objectType == 2) {
+                    this.setStartNodeCoordinatesToMouseWithOffset();
                 }
             }
         }
@@ -692,33 +771,49 @@
                 }
             } else if (arguments[0].objectType === 2) {
                 console.log("Object is a start node");
-                var currentObject = null;
-                arguments[0].outputNodes.forEach(function(item, index){
-                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
-                        currentObject = item;
-                    }
-                });
-                if (currentObject != null) {
-                    console.log("Object is an output node");
-                    return getObject(currentObject);
+                if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === startNode) {
+                    console.log("Removing Start Node");
+                    arguments[0].removeStartNode();
+                    return null;
                 } else {
-                    console.log("Object is a start node");
-                    return arguments[0];
+                    if (event.which == 3) {
+                        return arguments[0];
+                    } else {
+                        var currentObject = null;
+                        arguments[0].outputNodes.forEach(function(item, index){
+                            if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                                currentObject = item;
+                            }
+                        });
+                        if (currentObject != null) {
+                            console.log("Object is an output node");
+                            return getObject(currentObject);
+                        } else {
+                            console.log("Object is a start node");
+                            return arguments[0];
+                        }
+                    }
                 }
             } else if (arguments[0].objectType === 4) {
                 console.log("Object is an end node");
-                var currentObject = null;
-                arguments[0].inputNodes.forEach(function(item, index){
-                    if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
-                        currentObject = item;
-                    }
-                });
-                if (currentObject != null) {
-                    console.log("Object is an input node");
-                    return getObject(currentObject);
+                if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === endNode) {
+                    console.log("Removing End Node");
+                    arguments[0].removeEndNode();
+                    return null;
                 } else {
-                    console.log("Object is an end node");
-                    return arguments[0];
+                    var currentObject = null;
+                    arguments[0].inputNodes.forEach(function(item, index){
+                        if ((selectedObject == null || ((selectedObject.objectType === 3 || selectedObject.objectType === 5) && selectedObject.nodeOfObject !== item.nodeOfObject)) && item.isMouseWithinObjectRadius() && item.isMouseCloserToThisObject(item.nodeOfObject) && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                            currentObject = item;
+                        }
+                    });
+                    if (currentObject != null) {
+                        console.log("Object is an input node");
+                        return getObject(currentObject);
+                    } else {
+                        console.log("Object is an end node");
+                        return arguments[0];
+                    }
                 }
             }
         } else {
@@ -759,6 +854,12 @@
                     case node:
                         saveData += "node:";
                         break;
+                    case startNode:
+                        saveData += "startNode:";
+                        break;
+                    case endNode:
+                        saveData += "endNode:";
+                        break;
                     default:
                         break;
                 }
@@ -790,20 +891,141 @@
         });
         saveData = saveData.substr(0, saveData.length - 1);
         dataToLoad = saveData;
-
-        document.getElementById("savedData").value = dataToLoad;
+        if (document.getElementById("id_answer_0") != null) {
+            document.getElementById("id_answer_0").value = dataToLoad;
+        }
         document.getElementById("answer").value = dataToLoad;
+
+        if (document.getElementsByName("buffergate").length != 0) {
+            var i = document.getElementsByName("buffergate")[1].checked;
+            console.log(i);
+        }
+
+        if (typeof logicGateRestrictions != "undefined") {
+            var curatedSaveData = "";
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && !(item.objectType === 0 && (item.object === startNode || item.object === endNode)) && item.objectType !== 1) {
+                    curatedSaveData += item.objectType + ":";
+                    switch(item.object) {
+                        case bufferGate:
+                        curatedSaveData += "bufferGate:";
+                            break;
+                        case notGate:
+                        curatedSaveData += "notGate:";
+                            break;
+                        case andGate:
+                        curatedSaveData += "andGate:";
+                            break;
+                        case nandGate:
+                        curatedSaveData += "nandGate:";
+                            break;
+                        case orGate:
+                        curatedSaveData += "orGate:";
+                            break;
+                        case norGate:
+                        curatedSaveData += "norGate:";
+                            break;
+                        case xorGate:
+                        curatedSaveData += "xorGate:";
+                            break;
+                        case xnorGate:
+                        curatedSaveData += "xnorGate:";
+                            break;
+                        case node:
+                        curatedSaveData += "node:";
+                            break;
+                        default:
+                            break;
+                    }
+                    curatedSaveData += item.translateX + ":" + item.translateY + ":";
+                    if (item.objectType == 1 || item.objectType == 4) {
+                        item.inputNodes.forEach(function(item, index){
+                            if (item.connectedNode == "Not Connected") {
+                                curatedSaveData += "-1:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":none:none:";
+                            } else {
+                                var existsError = true;
+                                for (var i = 0; i < world.subobjects.length; ++i) {
+                                    if (item.connectedNode.nodeOfObject === world.subobjects[i]) {
+                                        curatedSaveData += i + ":" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":" + item.connectedNode.getCoordinates()[0] + ":" + item.connectedNode.getCoordinates()[1] + ":";
+                                        existsError = false;
+                                    }
+                                }
+                                if (existsError) {
+                                    curatedSaveData += "error:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":error:error:";
+                                }
+                            }
+                        });
+                        if (item.objectType == 4) {
+                            curatedSaveData += item.hasCharge + ":";
+                        }
+                    }
+                    curatedSaveData = curatedSaveData.substr(0, curatedSaveData.length - 1);
+                    curatedSaveData += "|";
+                }
+            });
+            curatedSaveData = curatedSaveData.substr(0, curatedSaveData.length - 1);
+            document.getElementById("curated_data").value = curatedSaveData;
+
+            console.log(curatedSaveData);
+        }
         
-        //console.log(dataToLoad);
-        //console.log(String(document.getElementById("savedData").value));
+
+        console.log(dataToLoad);
+        //console.log(String(document.getElementById("answer").value));
     }
 
     function load() {
+        if (document.getElementsByName("buffergate").length != 0) {
+            logicGateRestrictions = [false, false, false, false, false, false, false, false];
+        }
         isLoading = true;
         loadData = dataToLoad.split("|");
         for (var i = 0; i < loadData.length; ++i) { 
             loadData[i] = loadData[i].split(":");
         }
+        if (document.getElementsByName("buffergate").length != 0) {
+            loadData.forEach(function(item, index) {
+                if (parseInt(item[0]) == 0) {
+                    switch(item[1]) {
+                        case "bufferGate":
+                            logicGateRestrictions[0] = true;
+                            break;
+                        case "notGate":
+                            logicGateRestrictions[1] = true;
+                            break;
+                        case "andGate":
+                            logicGateRestrictions[2] = true;
+                            break;
+                        case "nandGate":
+                            logicGateRestrictions[3] = true;
+                            break;
+                        case "orGate":
+                            logicGateRestrictions[4] = true;
+                            break;
+                        case "norGate":
+                            logicGateRestrictions[5] = true;
+                            break;
+                        case "xorGate":
+                            logicGateRestrictions[6] = true;
+                            break;
+                        case "xnorGate":
+                            logicGateRestrictions[7] = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            //document.getElementsByName("buffergate")[1].checked = logicGateRestrictions[0];
+            //document.getElementsByName("notgate")[1].checked = logicGateRestrictions[1];
+            //document.getElementsByName("andgate")[1].checked = logicGateRestrictions[2];
+            //document.getElementsByName("nandgate")[1].checked = logicGateRestrictions[3];
+            //document.getElementsByName("orgate")[1].checked = logicGateRestrictions[4];
+            //document.getElementsByName("norgate")[1].checked = logicGateRestrictions[5];
+            //document.getElementsByName("xorgate")[1].checked = logicGateRestrictions[6];
+            //document.getElementsByName("xnorgate")[1].checked = logicGateRestrictions[7];
+        }
+        
         console.log(loadData);
 
         loadData.forEach(function(item, index) {
@@ -841,6 +1063,14 @@
                             break;
                         case "xnorGate":
                             var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "startNode":
+                            var loadedObject = new TransformedObject(startNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        case "endNode":
+                            var loadedObject = new TransformedObject(endNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
                             world.add(loadedObject);
                             break;
                         default:
@@ -1393,11 +1623,127 @@
 
     function setupCircuit() {
         logicGateLimitsString = String(document.getElementById("restrictedGates").value);
-        dataToLoad = String(document.getElementById("savedData").value);
+        if (document.getElementById("id_answer_0") != null && document.getElementById("id_answer_0").value != "") {
+            dataToLoad = String(document.getElementById("id_answer_0").value);
+        } else {
+            dataToLoad = String(document.getElementById("answer").value);
+        }
         //logicGateLimitsString = logicGateLimitsString.replace(/\\n/g, "\n");
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
         load();
+    }
+
+    function updateLogicGateSpawners() {
+        var logicGateRestrictionsCounter = 1;
+        var removingCounter = [];
+        //I'm removing items from an array as I'm looping through it, what was I thinking.
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object !== startNode && item.object !== endNode) {
+                var thisLogicGateSpawner = item;
+                removingCounter.push(world.subobjects.findIndex(function(logicGateSpawner) { return logicGateSpawner === thisLogicGateSpawner;}));
+                //world.subobjects.splice(, 1);
+            }
+        });
+        removingCounter.sort((a,b)=>a-b);
+        for (let i = 0; i < removingCounter.length; ++i) {
+            world.subobjects.splice(removingCounter[i]-i, 1);
+        }
+
+        endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
+            if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
+                return true;;
+            } 
+        });
+        if (logicGateRestrictions[0] == true) {
+            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[1] == true) {
+            var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === notGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[2] == true) {
+            var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === andGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[3] == true) {
+            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === nandGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[4] == true) {
+            var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === orGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[5] == true) {
+            var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === norGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[6] == true) {
+            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xorGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        if (logicGateRestrictions[7] == true) {
+            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            world.add(loadedObject);
+            ++logicGateRestrictionsCounter;
+        } else {
+            world.subobjects.forEach(function(item, index){
+                if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xnorGate) {
+                    item.removeLogicGate();
+                }
+            });
+        }
+        save();
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
@@ -1446,6 +1792,19 @@
 
     var node = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     node.doDraw = function(g) {
+        g.beginPath();
+        g.arc(0,0,0.125,0,2*Math.PI);
+        g.stroke();
+    }
+    var startNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
+    startNode.doDraw = function(g) {
+        g.beginPath();
+        g.arc(0,0,0.125,0,2*Math.PI);
+        g.stroke();
+    }
+
+    var endNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
+    endNode.doDraw = function(g) {
         g.beginPath();
         g.arc(0,0,0.125,0,2*Math.PI);
         g.stroke();
@@ -1784,6 +2143,7 @@
             if (event.which){
                 selectedObject = getObject(selectedObject);
             }
+            console.log(typeof logicGateRestrictions);
         }, true);
         
         //Mouse up
@@ -1805,20 +2165,13 @@
             }
         }, true);
 
+
         setupCircuit();
 
-        //s key pressed
-        document.addEventListener("keydown", function(event) {
-            if (event.which == 83) {
-                //save();
-            } else if (event.which == 76) {
-                //load();
-            } else if (event.which == 67) {
-                //compareCircuits();
-            } else if (event.which == 71) {
-                //getLogicGateLimits();
-            }
-        }, true);
+        if (document.getElementById("id_answerhdr") != null) {
+            document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
+        }
+
     }
 
     //Get Mouse Position based on coordinate sysetm we are using
@@ -1855,9 +2208,8 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="ANSWER_NAME_ID" value="" id="answer" size="80" class="form-control d-inline">
-<input type="hidden" name="saveddata_name_id" value="0:norGate:3:-2|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:-1:2:-1:none:none:false" id="savedData" size="80" class="form-control d-inline">
-<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="" id="restrictedGates" size="80" class="form-control d-inline">
+<input type="hidden" name="ANSWER_NAME_ID" value="0:startNode:-3:2|0:endNode:-3:1.5" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
 </html>
