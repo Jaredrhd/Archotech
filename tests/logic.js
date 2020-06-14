@@ -92,6 +92,10 @@ function orthogonalVectors(u, v) {
     return dot == 0;
 }
 
+function xorAnd(a, b, c) {
+    return and(xor(a, b), c);
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors };
+                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd };
