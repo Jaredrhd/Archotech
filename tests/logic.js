@@ -104,7 +104,11 @@ function xorNor(a, b, c) {
     return nor(xor(a, b), c);
 }
 
+function xnorNor(a, b, c) { 
+    return nor(xnor(a, b), c);
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
                    minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd, 
-                   xnorAnd, xorNor };
+                   xnorAnd, xorNor, xnorNor };
