@@ -1,7 +1,7 @@
 const { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
         pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
         minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors,
-        xorAnd } = require("./logic.js");
+        xorAnd, xnorAnd } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -127,4 +127,10 @@ test("Takes in 3 inputs, applies xor gate to first two and and gate to final exp
     expect(xorAnd(0, 1, 1)).toBe(1);
     expect(xorAnd(1, 1, 1)).toBe(0);
     expect(xorAnd(1, 1, 0)).toBe(0);
+});
+
+test("Takes in 3 inputs, applies xnor gate to first two and and gate to final expression", () => {
+    expect(xnorAnd(1, 1, 0)).toBe(0);
+    expect(xnorAnd(0, 0, 1)).toBe(1);
+    expect(xnorAnd(0, 1, 1)).toBe(0);
 });

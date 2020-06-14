@@ -96,6 +96,10 @@ function xorAnd(a, b, c) {
     return and(xor(a, b), c);
 }
 
+function xnorAnd(a, b, c) {
+    return and(xnor(a, b), c);
+}
+
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
-                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd };
+                   minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd, xnorAnd };
