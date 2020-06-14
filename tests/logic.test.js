@@ -1,7 +1,7 @@
 const { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
         pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
         minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors,
-        xorAnd, xnorAnd, xorNor, xnorNor, xorNand, orNand, checkOrthogonalAfterSum } = require("./logic.js");
+        xorAnd, xnorAnd, xorNor, xnorNor, xorNand, orNand, orXnor, checkOrthogonalAfterSum } = require("./logic.js");
 
 test("Takes in 1 input and applies NOT gate logic", () => {
     expect(not(0)).toBe(1);
@@ -157,6 +157,12 @@ test("Takes in 3 inputs, applies or gate to first two and nand gate to final exp
     expect(orNand(0, 1, 1)).toBe(0);
     expect(orNand(1, 1, 1)).toBe(0);
     expect(orNand(1, 1, 0)).toBe(1);
+});
+
+test("Takes in 3 inputs, applies or gate to first two and xnor gate to final expression", () => {
+    expect(orXnor(0, 1, 1)).toBe(1);
+    expect(orXnor(1, 1, 1)).toBe(1);
+    expect(orXnor(1, 1, 0)).toBe(0);
 });
 
 test("Takes in 4 vectors, sums pairs of vectors and checks their orthogonality after summing", () => {
