@@ -112,6 +112,10 @@ function xorNand(a, b, c) {
     return nand(xor(a, b), c);
 }
 
+function orNand(a, b, c) {
+    return nand(or(a, b), c);
+}
+
 function checkOrthogonalAfterSum(v1, v2, v3, v4) {
     let u = {x: addVectors(v1, v2)[0], y: addVectors(v1, v2)[1]};
     let v = {x: addVectors(v3, v4)[0], y: addVectors(v3, v4)[1]};
@@ -122,4 +126,4 @@ function checkOrthogonalAfterSum(v1, v2, v3, v4) {
 module.exports = { not, and, nand, or, nor, xor, xnor, manhattanDistance, 
                    pythagDistance, midpoint, vectorMagnitude, addVectors, dotProduct, dotProductTheta,
                    minkowskiDistance, findDirectionVector, subtractVectors, calculateAngle, orthogonalVectors, xorAnd, 
-                   xnorAnd, xorNor, xnorNor, xorNand, checkOrthogonalAfterSum };
+                   xnorAnd, xorNor, xnorNor, xorNand, orNand, checkOrthogonalAfterSum };
