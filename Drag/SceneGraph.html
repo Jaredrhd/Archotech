@@ -914,6 +914,8 @@
                     case endNode:
                         saveData += "endNode:";
                         break;
+                    case draggableCanvas:
+                        saveData += "draggableCanvas";
                     default:
                         break;
                 }
@@ -987,6 +989,9 @@
                             break;
                         case node:
                         curatedSaveData += "node:";
+                            break;
+                        case draggableCanvas:
+                        curatedSaveData += "draggableCanvas:";
                             break;
                         default:
                             break;
