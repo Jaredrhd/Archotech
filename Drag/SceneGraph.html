@@ -620,10 +620,38 @@
                 }
                 this.setDraggableCanvasCoordinatesToMouseWithOffset = function() {
                     //Work with isLoading to move all other objects to relative origin.
+                    // if (isLoading) {
+                    //     this.setTranslation(loadingMousePos.x, loadingMousePos.y);
+                    // } else if (resetToOrigin) {
+                    //     isLoading = true;
+                    //     for (var i = 0; i < world.subobjects.length; ++i) {
+                    //         if (world.subobjects[i] !== this) {
+                    //             loadingMousePos.x = world.subobjects[i].getCoordinates()[0] - this.getCoordinates()[0];
+                    //             loadingMousePos.y = world.subobjects[i].getCoordinates()[1] - this.getCoordinates()[1];
+                    //             world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                    //         } else {
+                    //             console.log("Trying to move drag object when shouldn't.");
+                    //         }
+                    //     }
+                    //     loadingMousePos.x = 0;
+                    //     loadingMousePos.y = 0;
+                    //     this.dragOutputNodeWireButIfNoneDragLogicGate();
+                    //     isLoading = false;
+                    //     resetToOrigin = false;
+                    // } else {
+                    //     var oldMousePos = mousePos;
+                    //     mousePos = getMousePos(canvas, event);
+                    //     this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                    //     for (var i = 0; i < world.subobjects.length; ++i) {
+                    //         if (world.subobjects[i] !== this) {
+                    //             mousePos = oldMousePos;
+                    //             world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                    //         } else {
+                    //             console.log("Trying to move drag object when shouldn't.");
+                    //         }
+                    //     }
+                    // }
                     if (isLoading) {
-                        this.setTranslation(loadingMousePos.x, loadingMousePos.y);
-                    } else if (resetToOrigin) {
-                        isLoading = true;
                         for (var i = 0; i < world.subobjects.length; ++i) {
                             if (world.subobjects[i] !== this) {
                                 loadingMousePos.x = world.subobjects[i].getCoordinates()[0] - this.getCoordinates()[0];
@@ -633,11 +661,7 @@
                                 console.log("Trying to move drag object when shouldn't.");
                             }
                         }
-                        loadingMousePos.x = 0;
-                        loadingMousePos.y = 0;
-                        this.dragOutputNodeWireButIfNoneDragLogicGate();
-                        isLoading = false;
-                        resetToOrigin = false;
+                        this.setTranslation(0, 0);
                     } else {
                         var oldMousePos = mousePos;
                         mousePos = getMousePos(canvas, event);
@@ -650,7 +674,7 @@
                                 console.log("Trying to move drag object when shouldn't.");
                             }
                         }
-                    } 
+                    }
                 }
             }
             this.getDistanceOfObjectToMouse = function() {
