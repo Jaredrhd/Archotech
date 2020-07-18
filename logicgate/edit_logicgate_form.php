@@ -52,7 +52,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         //$this->add_checkbox_controller(1, NULL, NULL, 0);
 
         #The Numerical limits
-        $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount, disable the gate above to overide these values</p>');
+        $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount, disable the gate above to overide these values. Note this only affects the student.</p>');
         $mform->addElement('float', 'buffergateamount', "Buffer Gate Limit", array('value'=>0));
         $mform->addElement('float', 'notgateamount', "Not Gate Limit", array('value'=>0));
         $mform->addElement('float', 'andgateamount', "And Gate Limit", array('value'=>0));
@@ -78,6 +78,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);
+        
         return $question;
     }
 

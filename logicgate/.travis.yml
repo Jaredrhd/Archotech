@@ -86,16 +86,16 @@ jobs:
       after_success:
         - moodle-plugin-ci coveralls-upload
         
-    - language: node_js
-      node_js:
-        - node
+    # - language: node_js
+    #   node_js:
+    #     - node
 
-      install:
-        - npm install coveralls --save-dev
-        - npm install --save-dev jest
+    #   install:
+    #     - npm install coveralls --save-dev
+    #     - npm install --save-dev jest
 
-      script:
-        - npm run coveralls 
+    #   script:
+    #     - npm run coveralls 
 
 # Cache NPM's and Composer's caches to speed up build times.
 cache:
