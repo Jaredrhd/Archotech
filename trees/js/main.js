@@ -1,9 +1,26 @@
 onload = init;
 
-let canvas, context;
-let tree = null;
+/** HTML ELEMENTS */
 const nodeValue = document.getElementById("node-value");
-const addNodeButton = document.getElementById("add-node");
+const randNodeValueCheckbox = document.getElementById("random-node-value");
+const addRootButton = document.getElementById("add-root");
+
+let canvas, context, board;
+
+const ROWS = 10;
+const COLS = 13;
+
+let tree = null;
+let selectedNode = null;
+
+const MAX_NODE_VALUE = 99;
+const MIN_NODE_VALUE = 0;
+
+/** Boolean indicating whether a new node's value should be taken from user input or randomised */
+let randNodeValue = false;
+
+/** TESTING */
+let drawGrid = true;
 
 function init() {
     canvas = document.getElementById("canvas");
@@ -13,156 +30,142 @@ function init() {
     }
 
     context = canvas.getContext("2d");
+    board = new Board(canvas, context, ROWS, COLS);
+
+    if(drawGrid) {
+        board.drawGrid();
+    }
 
     initListeners();
 }
 
-function initListeners() {
-    addNodeButton.addEventListener("click", addNode);
+function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    /** Redraw the tree */
+    for(let i = 0; i < board.rows; i++) {
+        for(let j = 0; j < board.columns; j++) {
+            if(typeof tree.nodes[i][j] !== "undefined") {
+                tree.nodes[i][j].draw(board, tree.nodes[i][j].parent, tree.nodes[i][j].cellCoords.x, tree.nodes[i][j].cellCoords.y);
+            }
+        }
+    }
+
+    if(drawGrid) {
+        board.drawGrid();
+    }
 }
 
-function addNode() {
-    if(nodeValue.value === "") return; // No value for node
+function initListeners() {
+    randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
+    addRootButton.addEventListener("click", addRoot);
+    canvas.addEventListener("click", onBoardClick);
+    canvas.addEventListener("mousemove", onBoardHover);
+    canvas.addEventListener("mouseleave", onBoardExit);
+}
 
-    if(!tree) { // Tree is empty
-        tree = new Tree(Number(nodeValue.value));
-        addNodeButton.innerHTML = "ADD NODE";
+function randNodeValueChecked() {
+    randNodeValue = this.checked ? true : false;
+
+    if(randNodeValue) { // If the random value checkbox is checked, disable user specified node values
+        nodeValue.disabled = true;
     }
     else {
-
+        nodeValue.disabled = false;
     }
 }
 
-function draw() {
+function addRoot() {
+    let newNodeValue = getNewNodeValue();
 
-}
+    if(!newNodeValue) return; // newNodeValue is null
 
-//------------------- A Simple Scene Object-Oriented Scene Graph API ----------------
-    
-/**
- * The (abstract) base class for all nodes in the scene graph data structure.
- */
-function SceneGraphNode() {
-    this.fillColor = null;   // If non-null, the default fillStyle for this node.
-    this.strokeColor = null; // If non-null, the default strokeStyle for this node.
-}
-SceneGraphNode.prototype.doDraw = function(g) {
-        // This method is meant to be abstract and must be OVERRIDDEN in an actual
-        // object. It is not meant to be called; it is called by draw().
-    throw "doDraw not implemented in SceneGraphNode"
-}
-SceneGraphNode.prototype.draw = function(g) {
-        // This method should be CALLED to draw the object It should NOT
-        // ordinarily be overridden in subclasses.
-    graphics.save();
-    if (this.fillColor) {
-        g.fillStyle = this.fillColor;
+    if(!tree) { // Tree doesn't exist
+        tree = new Tree(Number(newNodeValue), board);
+        addRootButton.style.display = "none";
     }
-    if (this.strokeColor) {
-        g.strokeStyle = this.strokeColor;
+}
+
+function onBoardClick(event) {
+    if(!tree) return;
+
+    board.boardCoordsFromMouse(event); 
+
+    if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node at the selected cell
+        if(tree.nodes[board.cellY][board.cellX] == selectedNode) { // If the current selected node is selected again
+            selectedNode.selected = false;
+            selectedNode = null;
+            redrawCanvas();
+            return;
+        }
+        if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
+            selectedNode.selected = false;
+        }
+
+        selectedNode = tree.nodes[board.cellY][board.cellX];
+
+        selectedNode.selected = true;
+
+        redrawCanvas();
     }
-    this.doDraw(g);
-    graphics.restore();
-}
-SceneGraphNode.prototype.setFillColor = function(color) {
-        // Sets fillColor for this node to color.
-        // Color should be a legal CSS color string, or null.
-    this.fillColor = color;
-    return this;
-}
-SceneGraphNode.prototype.setStrokeColor = function(color) {
-        // Sets strokeColor for this node to color.
-        // Color should be a legal CSS color string, or null.
-    this.strokeColor = color;
-    return this;
-}
-SceneGraphNode.prototype.setColor = function(color) {
-        // Sets both the fillColor and strokeColor to color.
-        // Color should be a legal CSS color string, or null.
-    this.fillColor = color;
-    this.strokeColor = color;
-    return this;
-}
+    else { // No node at the selected cell so place a child node
+        if(!selectedNode) return; // No node selected
 
-/**
- *  Defines a subclass, CompoundObject, of SceneGraphNode to represent
- *  an object that is made up of sub-objects.  Initially, there are no
- *  sub-objects.  Objects are added with the add() method.
- */
-function CompoundObject() {
-    SceneGraphNode.call(this);  // do superclass initialization
-    this.subobjects = [];  // the list of sub-objects of this object
-}
-CompoundObject.prototype = new SceneGraphNode(); // (makes it a subclass!)
-CompoundObject.prototype.add = function(node) {
-    this.subobjects.push(node);
-    return this;
-}
-CompoundObject.prototype.doDraw = function(g) {
-        // Just call the sub-objects' draw() methods.
-    for (var i = 0; i < this.subobjects.length; i++)
-        this.subobjects[i].draw(g);
-}
+        if(board.cellX == selectedNode.cellCoords.x) return; // Don't allow child node to be in line with parent node
+        if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
 
-    /**
- *  Define a subclass, TransformedObject, of SceneGraphNode that
- *  represents an object along with a modeling transformation to
- *  be applied to that object.  The object must be specified in
- *  the constructor.  The transformation is specified by calling
- *  the setScale(), setRotate() and setTranslate() methods. Note that
- *  each of these methods returns a reference to the TransformedObject
- *  as its return value, to allow for chaining of method calls.
- *  The modeling transformations are always applied to the object
- *  in the order scale, then rotate, then translate.
- */
-function TransformedObject() {
-    SceneGraphNode.call(this);  // do superclass initialization
-}
+        let newNodeValue = getNewNodeValue();
 
-TransformedObject.prototype = new SceneGraphNode();  // (makes it a subclass!)
-TransformedObject.prototype.setRotation = function(angle) {
-    // Set the angle of rotation, measured in DEGREES.  The rotation
-    // is always about the origin.
-    this.rotationInDegrees = angle;
-    return this;
-}
-TransformedObject.prototype.setScale = function(sx, sy) {
-    // Sets scaling factors.
-    this.scaleX = sx;
-    this.scaleY = sy;
-    return this;
-}
-TransformedObject.prototype.setTranslation = function(dx,dy) {
-    // Set translation mounts.
-    this.translateX = dx;
-    this.translateY = dy;
-    return this;
-}
-TransformedObject.prototype.doDraw = function(g) {
-        // Draws the object, with its modeling transformation.
-    g.save();
-    if (this.translateX != 0 || this.translateY != 0) {
-        g.translate(this.translateX, this.translateY);
+        if(!newNodeValue) return; // newNodeValue is null
+
+        if(board.cellX < selectedNode.cellCoords.x) { // Adding a left child
+            if(selectedNode.children.leftChild) return; // Parent already has a left child
+
+            tree.addChild(selectedNode, board, "left", Number(newNodeValue), board.cellX, board.cellY);
+        }
+        else { // Adding a right child
+            if(selectedNode.children.rightChild) return; // Parent already has a right child
+
+            tree.addChild(selectedNode, board, "right", Number(newNodeValue), board.cellX, board.cellY);
+        }
     }
-    if (this.rotationInDegrees != 0) {
-        g.rotate(this.rotationInDegrees/180*Math.PI);
-    }
-    if (this.scaleX != 1 || this.scaleY != 1) {
-        g.scale(this.scaleX, this.scaleY);
-    }
-    this.object.draw(g);
-    g.restore();
 }
 
-var treeNode = new SceneGraphNode();
-treeNode.doDraw = function() {
-    context.save();
+function onBoardHover(event) {
+    if(!tree) return;
 
-    context.beginPath();
-    context.arc(1.1, 0, 0.1, 0, 2*Math.PI);
-    context.stroke();
+    board.boardCoordsFromMouse(event);
 
-    context.restore();
+    console.clear();
+    console.log(board.selectedBoardCoords);
+    console.log(board.cellX, board.cellY);
+
+    if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node in the hovered cell
+        document.body.style.cursor = "pointer";
+    }
+    else if(selectedNode) { // No node in the hovered cell but an existing node is selected
+        document.body.style.cursor = "crosshair";
+    }
+    else { // No node in the hovered cell and no node selected
+        document.body.style.cursor = "default";
+    }
 }
 
-export {TransformedObject, treeNode};
+function onBoardExit() {
+    document.body.style.cursor = "default";
+}
+
+function getNewNodeValue() {
+    let newNodeValue = null;
+
+    if(!randNodeValue) { // Set the node's value to the user specified input
+        newNodeValue = nodeValue.value;
+
+        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE) return;
+    }
+    else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
+        newNodeValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);
+    }
+
+    return newNodeValue;
+}

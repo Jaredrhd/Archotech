@@ -1,0 +1,12 @@
+#toolbar {
+    width: 200px;
+    height: 600px;
+    display: inline-block;
+    border: 2px solid black;
+    margin: 0 15px;
+    text-align: center;
+}
+
+.toolbar-element {
+    margin: 18px 15px;
+}
