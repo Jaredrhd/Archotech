@@ -37,16 +37,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_trees_edit_form extends question_edit_form {
 
-    //SETUP CHECK BOXES AND FORM STUFF
     protected function definition_inner($mform) {
         $this->add_interactive_settings();
+
+        $mform->addElement('header', 'Answer', "Create Answer");
+        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/trees/index.html')));
+        $mform->registerNoSubmitButton('add-root');
     }
 
-    //Something
-    protected function data_preprocessing($question) 
-    {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
-        $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);
 
         return $question;
@@ -56,5 +56,3 @@ class qtype_trees_edit_form extends question_edit_form {
         return 'trees';
     }
 }
-
-//LECTURER SET UP QUESTION

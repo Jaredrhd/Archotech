@@ -4,6 +4,7 @@ onload = init;
 const nodeValue = document.getElementById("node-value");
 const randNodeValueCheckbox = document.getElementById("random-node-value");
 const addRootButton = document.getElementById("add-root");
+const removeNodeButton = document.getElementById("remove-node");
 
 let canvas, context, board;
 
@@ -59,13 +60,14 @@ function redrawCanvas() {
 function initListeners() {
     randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
     addRootButton.addEventListener("click", addRoot);
+    removeNodeButton.addEventListener("click", removeNodeAndChildren);
     canvas.addEventListener("click", onBoardClick);
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
 }
 
 function randNodeValueChecked() {
-    randNodeValue = this.checked ? true : false;
+    randNodeValue = this.checked;
 
     if(randNodeValue) { // If the random value checkbox is checked, disable user specified node values
         nodeValue.disabled = true;
@@ -82,8 +84,34 @@ function addRoot() {
 
     if(!tree) { // Tree doesn't exist
         tree = new Tree(Number(newNodeValue), board);
-        addRootButton.style.display = "none";
     }
+    else { // Tree instance already exists - will be true if the root node was removed
+        tree.setNewRoot(Number(newNodeValue), board);
+    }
+
+    addRootButton.style.display = "none";
+}
+
+function removeNodeAndChildren() {
+    if(!selectedNode.isLeaf()) {
+        if(confirm("This will remove all subtrees")) {
+            tree.removeNodeAndChildren(selectedNode);
+        }
+        else {
+            return;
+        }
+    }
+    else {
+        tree.removeNodeAndChildren(selectedNode);
+    }
+    
+    if(selectedNode.isRoot) {
+        addRootButton.style.display = "block";
+    }
+
+    redrawCanvas();
+    selectedNode = null;
+    removeNodeButton.style.display = "none";
 }
 
 function onBoardClick(event) {
@@ -96,6 +124,7 @@ function onBoardClick(event) {
             selectedNode.selected = false;
             selectedNode = null;
             redrawCanvas();
+            removeNodeButton.style.display = "none";
             return;
         }
         if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
@@ -107,6 +136,8 @@ function onBoardClick(event) {
         selectedNode.selected = true;
 
         redrawCanvas();
+
+        removeNodeButton.style.display = "block";
     }
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
@@ -135,10 +166,6 @@ function onBoardHover(event) {
     if(!tree) return;
 
     board.boardCoordsFromMouse(event);
-
-    console.clear();
-    console.log(board.selectedBoardCoords);
-    console.log(board.cellX, board.cellY);
 
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node in the hovered cell
         document.body.style.cursor = "pointer";

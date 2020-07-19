@@ -36,15 +36,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_trees_renderer extends qtype_renderer {
-    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+    public function formulation_and_controls(question_attempt $qa,
+            question_display_options $options) {
 
-        //Get the whole question with everything (hints, penalties, length, feedback, etc)
         $question = $qa->get_question();
 
-        //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
-
-        //Check for reg expr placeholder (possibly remove)
         $placeholder = false;
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
@@ -58,19 +55,21 @@ class qtype_trees_renderer extends qtype_renderer {
 
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
-        //LOOK HERE FOR READING IN FOLDER
-        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
-
+        /* if ($qa->get_state() == question_state::$invalid) {
+            $result .= html_writer::nonempty_tag('div',
+                    $question->get_validation_error(array('answer' => $currentanswer)),
+                    array('class' => 'validationerror'));
+        }*/
         return $result;
     }
 
     public function specific_feedback(question_attempt $qa) {
         // TODO.
-        return 'specific_feedback';
+        return '';
     }
 
     public function correct_response(question_attempt $qa) {
         // TODO.
-        return 'correct_respone';
+        return '';
     }
 }
