@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree</title>
+</head>
+<link rel="stylesheet" href="styles.css">
+<script src="/question/type/trees/js/Board.js"></script>
+<script src="/question/type/trees/js/Node.js"></script>
+<script src="/question/type/trees/js/Tree.js"></script>
+<body>
+    
+<noscript>
+    <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
+</noscript>
+    
+<div id="layout">
+    <div style="float:left; border: 2px solid black">
+        <canvas id="canvas" width="800" height="600" style="display:block"></canvas>
+    </div>
+    <div id="toolbar">
+        <!-- <form class="toolbar-element"> -->
+            <label for="node-value">NODE VALUE</label>
+            <input id="node-value" type="number" min="0" max="99" autocomplete="off" required>
+            <label for="random-node-value">RANDOM VALUE</label>
+            <input id="random-node-value" type="checkbox" autocomplete="off">
+        <!-- </form> -->
+        <button type="button" id="add-root" class="toolbar-element">ADD ROOT</button>
+        <button type="button" id="remove-node" class="toolbar-element" style="display: none">REMOVE</button>
+    </div>
+</div>
+<script src="/question/type/trees/js/main.js"></script>
+</body>
+</html>

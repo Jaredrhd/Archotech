@@ -24,11 +24,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['pluginname'] = 'trees';
-$string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric or text value or select a value from a number of options.';
+$string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric
+or text value or select a value from a number of options.';
 $string['pluginname_link'] = 'question/type/trees';
 $string['pluginnameadding'] = 'Adding a trees question';
 $string['pluginnameediting'] = 'Editing a trees question';
-$string['pluginnamesummary'] = 'A trees question type which allows the embedding of the response fields for various available sub questions in the question text.
+$string['pluginnamesummary'] = 'A trees question type which allows the embedding of the response fields for various available
+sub questions in the question text.
 
 So the student can enter a numeric or short text answer or choose an answer or answer(s) from
  using a select box, check boxes or radio boxes.';
