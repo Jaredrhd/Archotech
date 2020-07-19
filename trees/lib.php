@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Checks file access for trees questions.
  * @package  qtype_trees
