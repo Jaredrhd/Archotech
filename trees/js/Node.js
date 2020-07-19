@@ -81,18 +81,35 @@ class Node {
             let angleParent = this._parent.children.leftChild === this ? (150 * Math.PI / 180) : (30 * Math.PI / 180); // Parent has larger angle if child is left child
             let angleChild = this._parent.children.leftChild === this ? (325 * Math.PI / 180) : (215 * Math.PI / 180); // Child has larger angle if child is left child
 
+            angleChild = 270 * Math.PI / 180;
+
             board.context.save();
 
             board.context.lineWidth = 2;
             board.context.beginPath();
 
             /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
-            board.context.moveTo(this._nodeRadius*Math.cos(angleParent) + parent.boardCoords.x, this._nodeRadius*Math.sin(angleParent) + parent.boardCoords.y);
+            board.context.moveTo(this._nodeRadius*Math.cos(angleParent) +  this._parent.boardCoords.x, this._nodeRadius*Math.sin(angleParent) +  this._parent.boardCoords.y);
             board.context.lineTo(this._nodeRadius*Math.cos(angleChild) + this._boardCoords.x, this._nodeRadius*Math.sin(angleChild) + this._boardCoords.y);
 
             board.context.stroke();
 
             board.context.restore();
         }
+    }
+
+    childType() {
+        if(this.isRoot) return;
+
+        if(this.parent.children.leftChild === this) {
+            return "left";
+        }
+        else {
+            return "right";
+        }
+    }
+
+    isLeaf() {
+        return this._children.leftChild === null && this._children.rightChild === null;
     }
 }

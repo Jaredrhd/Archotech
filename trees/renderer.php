@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Generates the output for trees questions.
  *

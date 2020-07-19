@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * trees question editing form definition.
  *
@@ -40,6 +39,9 @@ class qtype_trees_edit_form extends question_edit_form {
     //SETUP CHECK BOXES AND FORM STUFF
     protected function definition_inner($mform) {
         $this->add_interactive_settings();
+
+        $mform->addElement('header', 'Answer', "Create Answer");
+        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/trees/index.html')));
     }
 
     //Something
