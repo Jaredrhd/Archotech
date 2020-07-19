@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_trees';
-$plugin->version   = 2013012901;
+$plugin->version   = 2013012905;
 
 $plugin->requires  = 2012062504;
 

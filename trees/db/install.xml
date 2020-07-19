@@ -8,23 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
-        <FIELD NAME="buffergate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="notgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="andgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="nandgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="orgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="norgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="xorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="xnorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="curated_data" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="buffergateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="notgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="andgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="nandgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="orgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="norgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="xorgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
-        <FIELD NAME="xnorgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

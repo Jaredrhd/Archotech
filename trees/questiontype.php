@@ -38,14 +38,7 @@ require_once($CFG->dirroot . '/question/type/trees/question.php');
 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_trees extends question_type 
-{
-
-    //The things to be saved and retrieved from the DB
-    public function extra_question_fields() 
-    {
-        return array();
-    }
+class qtype_trees extends question_type {
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -58,25 +51,21 @@ class qtype_trees extends question_type
     }
 
     public function save_question_options($question) {
-        // parent::save_question_options($question);
-        // $this->save_question_answers($question);
         $this->save_hints($question);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
-        // TODO. For passing the stuff around from lecturer to renderer
-        //$questiondata comes from lectuerer side.
-        //You can access $question in renderer so possibly create stuff you need.
-        //EG: $question->bufferGate =  $questiondata->options->andgate;
-        
-        $this->initialise_question_instance($question, $questiondata);
+        // TODO.
+        parent::initialise_question_instance($question, $questiondata);
     }
 
     public function get_random_guess_score($questiondata) {
+        // TODO.
         return 0;
     }
 
     public function get_possible_responses($questiondata) {
+        // TODO.
         return array();
     }
 }
