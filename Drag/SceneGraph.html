@@ -493,7 +493,7 @@
                                 return this;
                             } else {
                                 if (this.isMouseWithinObjectRadius()) {
-                                    console.log("New Output Node Created");
+                                    //console.log("New Output Node Created");
                                     this.nodeOfObject.addOutputNode(this.translateX, this.translateY);
                                     return this.nodeOfObject.outputNodes[this.nodeOfObject.outputNodes.length - 1];
                                 } else {
@@ -539,7 +539,7 @@
                             if (this.connectedNode == "Not Connected") {
                                 this.resetWireCoordinates();
                                 if (this.nodeOfObject.outputNodes.length > 1) {
-                                    console.log("Removing Output Node");
+                                    //console.log("Removing Output Node");
                                     var outputNode = this;
                                     this.nodeOfObject.outputNodes.splice(this.nodeOfObject.outputNodes.findIndex(function(wireNode) { return wireNode === outputNode;}), 1);
                                 }
@@ -657,7 +657,7 @@
                 this.yBoundry = [-canvas.height/200, canvas.height/200];
                 this.isMouseWithinCanvasBoundry = function() {
                     mousePos = getMousePos(canvas, event);
-                    console.log(mousePos);
+                    //console.log(mousePos);
                     return mousePos.x >= this.xBoundry[0] && mousePos.x <= this.xBoundry[1] && mousePos.y >= this.xBoundry[0] && mousePos.y <= this.yBoundry[1];
                 }
                 this.getCoordinates = function() {
@@ -698,11 +698,10 @@
                     // }
                     if (isLoading) {
                         for (var i = 0; i < world.subobjects.length; ++i) {
-                            console.log("Draggable Object Stuff #1");
-                            if (world.subobjects[i] !== this) {
+                            //console.log("Draggable Object Stuff #1");
+                            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType !== 6) {
                                 loadingMousePos.x = world.subobjects[i].getCoordinates()[0] - this.getCoordinates()[0];
                                 loadingMousePos.y = world.subobjects[i].getCoordinates()[1] - this.getCoordinates()[1];
-                                console.log(world.subobjects[i].objectType);
                                 world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
                             }
                         }
@@ -710,13 +709,15 @@
                     } else {
                         var oldMousePos = mousePos;
                         mousePos = getMousePos(canvas, event);
+                        var newMousePos = mousePos;
                         this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
                         for (var i = 0; i < world.subobjects.length; ++i) {
-                            if (world.subobjects[i] !== this) {
+                            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType !== 6) {
                                 mousePos = oldMousePos;
                                 world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
                             }
                         }
+                        mousePos = newMousePos;
                     }
                 }
             }
@@ -824,10 +825,10 @@
                     }
                 });
                 if (currentObject != null) {
-                    console.log("Object isn't null");
+                    //console.log("Object isn't null");
                     return getObject(currentObject);
                 } else {
-                    console.log("Object is possibly null or drag object.");
+                    //console.log("Object is possibly null or drag object.");
                     var dragObject = null;
                     world.subobjects.forEach(function(item, index){
                         if (item.objectType == 6 && item.isMouseWithinCanvasBoundry()) {
@@ -838,7 +839,7 @@
                 }
             } else if (arguments[0].objectType === 1) {
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[0].object === arguments[1].object) {
-                    console.log("Removing Logic Gate");
+                    //console.log("Removing Logic Gate");
                     arguments[0].removeLogicGate();
                     return null;
                 } else {
@@ -851,19 +852,19 @@
                     if (currentObject != null) {
                         return getObject(currentObject);
                     } else {
-                        console.log("Object is a logic gate");
+                        //console.log("Object is a logic gate");
                         return arguments[0];
                     }
                 }
             } else if (arguments[0].objectType === 0) {
-                console.log("Object is a logic gate spawner");
+                //console.log("Object is a logic gate spawner");
                 if (selectedObject == null) {
                     return arguments[0].createLogicGateObject();
                 } else {
                     return arguments[0];
                 }
             } else if (arguments[0].objectType === 3) {
-                console.log("Object is an output node");
+                //console.log("Object is an output node");
                 if (arguments.length == 2 && arguments[1].objectType === 5) {
                     arguments[0].connectedNode = arguments[1];
                     arguments[1].connectedNode = arguments[0];
@@ -883,7 +884,7 @@
                     }
                 }
             } else if (arguments[0].objectType === 5) {
-                console.log("Object is an input node");
+                //console.log("Object is an input node");
                 var node = arguments[0].getInputNode();
                 if (node.connectedNode != "Not Connected") {
                     return getObject(node);
@@ -895,9 +896,9 @@
                    }
                 }
             } else if (arguments[0].objectType === 2) {
-                console.log("Object is a start node");
+                //console.log("Object is a start node");
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === startNode) {
-                    console.log("Removing Start Node");
+                    //console.log("Removing Start Node");
                     arguments[0].removeStartNode();
                     return null;
                 } else {
@@ -911,18 +912,18 @@
                             }
                         });
                         if (currentObject != null) {
-                            console.log("Object is an output node");
+                            //console.log("Object is an output node");
                             return getObject(currentObject);
                         } else {
-                            console.log("Object is a start node");
+                            //console.log("Object is a start node");
                             return arguments[0];
                         }
                     }
                 }
             } else if (arguments[0].objectType === 4) {
-                console.log("Object is an end node");
+                //console.log("Object is an end node");
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === endNode) {
-                    console.log("Removing End Node");
+                    //console.log("Removing End Node");
                     arguments[0].removeEndNode();
                     return null;
                 } else {
@@ -933,10 +934,10 @@
                         }
                     });
                     if (currentObject != null) {
-                        console.log("Object is an input node");
+                        //console.log("Object is an input node");
                         return getObject(currentObject);
                     } else {
-                        console.log("Object is an end node");
+                        //console.log("Object is an end node");
                         return arguments[0];
                     }
                 }
@@ -1025,7 +1026,7 @@
 
         if (document.getElementsByName("buffergate").length != 0) {
             var i = document.getElementsByName("buffergate")[1].checked;
-            console.log(i);
+            //console.log(i);
         }
 
         if (typeof logicGateRestrictions != "undefined") {
@@ -1096,11 +1097,11 @@
             curatedSaveData = curatedSaveData.substr(0, curatedSaveData.length - 1);
             document.getElementById("curated_data").value = curatedSaveData;
 
-            console.log(curatedSaveData);
+            //console.log(curatedSaveData);
         }
         
 
-        console.log(dataToLoad);
+        //console.log(dataToLoad);
         //console.log(String(document.getElementById("answer").value));
     }
 
@@ -1156,10 +1157,10 @@
             //document.getElementsByName("xnorgate")[1].checked = logicGateRestrictions[7];
         }
         
-        console.log(loadData);
+        //console.log(loadData);
 
         loadData.forEach(function(item, index) {
-            console.log("Looping through load data.");
+            //console.log("Looping through load data.");
             switch(parseInt(item[0])) {
                 case 0:
                     switch(item[1]) {
@@ -1208,7 +1209,7 @@
                     }
                     break;
                 case 1:
-                    console.log("Attempting to create logic gate.");
+                    //console.log("Attempting to create logic gate.");
                     switch(item[1]) {
                         case "bufferGate":
                             world.subobjects.forEach(function(item, index){
@@ -1220,7 +1221,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1238,7 +1239,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1256,7 +1257,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1274,7 +1275,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1292,7 +1293,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1310,7 +1311,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1328,7 +1329,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1346,7 +1347,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1564,9 +1565,11 @@
         var draggableCanvasObject = null;
         world.subobjects.forEach(function(item, index) {
             if (item.objectType == 6) {
+                //console.log("I should run once.");
                 draggableCanvasObject = item;
             }    
         });
+        //console.log("I should run once.");
         draggableCanvasObject.dragOutputNodeWireButIfNoneDragLogicGate();
         isLoading = false;
     }
@@ -1728,11 +1731,11 @@
         }
 
 
-        console.log(isCorrect);
-        console.log(endNodeCharges);
-        console.table(arrayOfArrays);
-        console.log(endNodeCharges1);
-        console.table(arrayOfArrays1);
+        //console.log(isCorrect);
+        //console.log(endNodeCharges);
+        //console.table(arrayOfArrays);
+        //console.log(endNodeCharges1);
+        //console.table(arrayOfArrays1);
     }
     
     function adjustTable(comparedData, formattedData, inputNodeNumber, logicGateNumber, logicGatePosition) {
@@ -1765,7 +1768,7 @@
         for (var i = 0; i < logicGateLimitProcessor.length; ++i) {
             logicGateLimits.push(parseInt(logicGateLimitProcessor[i][1]));
         }
-        console.log(logicGateLimits);
+        //console.log(logicGateLimits);
     }
 
     function setupCircuit() {
@@ -2314,7 +2317,7 @@
                 selectedObject = getObject(selectedObject);
             }
             //console.log(typeof logicGateRestrictions);
-            console.log(canvas);
+            //console.log(canvas);
         }, true);
         
         //Mouse up
