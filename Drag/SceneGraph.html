@@ -40,6 +40,7 @@
     //var resetToOrigin = true;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
+    var browserDimensionsChanged = false;
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -106,6 +107,9 @@
                 updateLogicGateSpawners();
             }
         }
+    
+        
+
     }
  
 
@@ -1913,6 +1917,19 @@
             }
         });
     }
+
+    function resizeCanvas(){
+        //innerWidth of 2100 gives 1200 by 900.
+        console.log(window.innerWidth);
+        if (window.innerWidth > 2100) {
+            canvas.width = 1200;
+            canvas.height = 900;
+            X_LEFT = -6;
+            X_RIGHT = 6;
+            Y_BOTTOM = -4.5;
+            Y_TOP = 4.5;
+        }
+    }
     
         // Create some basic shapes as custom SceneGraphNode objects.
            
@@ -2315,6 +2332,16 @@
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 selectedObject = getObject(selectedObject);
+                //console.log(window.innerWidth);
+                if (false) {
+                    resizeCanvas();
+                    //canvas.width = 1600;
+                    //canvas.height = 1200;
+                    //X_LEFT = -8;
+                    //X_RIGHT = 8;
+                    //Y_BOTTOM = -6;
+                    //Y_TOP = 6;
+                }
             }
             //console.log(typeof logicGateRestrictions);
             //console.log(canvas);
