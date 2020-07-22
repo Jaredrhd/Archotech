@@ -1077,7 +1077,7 @@
                                 var existsError = true;
                                 for (var i = 0; i < world.subobjects.length; ++i) {
                                     if (item.connectedNode.nodeOfObject === world.subobjects[i]) {
-                                        curatedSaveData += i + ":" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":" + item.connectedNode.getCoordinates()[0] + ":" + item.connectedNode.getCoordinates()[1] + ":";
+                                        curatedSaveData += "-1:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":none:none:";
                                         existsError = false;
                                     }
                                 }
