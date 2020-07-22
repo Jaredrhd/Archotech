@@ -1928,7 +1928,35 @@
             X_RIGHT = 6;
             Y_BOTTOM = -4.5;
             Y_TOP = 4.5;
-        }
+        } else if (window.innerWidth > 2000) {
+            canvas.width = 1100;
+            canvas.height = 825;
+            X_LEFT = -5.5;
+            X_RIGHT = 5.5;
+            Y_BOTTOM = -4.125;
+            Y_TOP = 4.125;
+        } else if (window.innerWidth > 1900) {
+            canvas.width = 1000;
+            canvas.height = 750;
+            X_LEFT = -5;
+            X_RIGHT = 5;
+            Y_BOTTOM = -3.75;
+            Y_TOP = 3.75;
+        } else if (window.innerWidth > 1800) {
+            canvas.width = 900;
+            canvas.height = 675;
+            X_LEFT = -4.5;
+            X_RIGHT = 4.5;
+            Y_BOTTOM = -3.375;
+            Y_TOP = 3.375;
+        } else {
+            canvas.width = 800;
+            canvas.height = 600;
+            X_LEFT = -4;
+            X_RIGHT = 4;
+            Y_BOTTOM = -3;
+            Y_TOP = 3;
+        }   
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
@@ -2333,7 +2361,7 @@
             if (event.which){
                 selectedObject = getObject(selectedObject);
                 //console.log(window.innerWidth);
-                if (false) {
+                if (true) {
                     resizeCanvas();
                     //canvas.width = 1600;
                     //canvas.height = 1200;
