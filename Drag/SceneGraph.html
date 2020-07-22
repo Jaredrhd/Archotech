@@ -436,6 +436,17 @@
                             this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
                         } 
                     }
+                    this.rescaleObject = function() {
+                        this.scaleX = canvasObjectsScale * 1;
+                        this.scaleY = canvasObjectsScale * 1;
+                        this.dragRadius = this.scaleX * 1.125;
+                        this.inputNodes.forEach(function(item, index){
+                            item.rescaleObject();
+                        });
+                        this.outputNodes.forEach(function(item, index){
+                            item.rescaleObject();
+                        });
+                    }
                 }
                 this.getCoordinates = function() {
                     return [this.translateX, this.translateY];
@@ -593,6 +604,14 @@
                             var thisStartNode = this;
                             world.subobjects.splice(world.subobjects.findIndex(function(startNode) { return startNode === thisStartNode;}), 1);
                         }
+                        this.rescaleObject = function() {
+                            this.scaleX = canvasObjectsScale * 1;
+                            this.scaleY = canvasObjectsScale * 1;
+                            this.dragRadius = this.scaleX * 1.125;
+                            this.outputNodes.forEach(function(item, index){
+                                item.rescaleObject();
+                            });
+                        }
                     } else if (this.objectType == 4) {
                         this.hasCharge = false;
                         this.inputNodes = [];
@@ -621,6 +640,14 @@
                             });
                             var thisEndNode = this;
                             world.subobjects.splice(world.subobjects.findIndex(function(endNode) { return endNode === thisEndNode;}), 1);
+                        }
+                        this.rescaleObject = function() {
+                            this.scaleX = canvasObjectsScale * 1;
+                            this.scaleY = canvasObjectsScale * 1;
+                            this.dragRadius = this.scaleX * 1.125;
+                            this.inputNodes.forEach(function(item, index){
+                                item.rescaleObject();
+                            });
                         }
                     }
                     this.getCoordinates = function() {
