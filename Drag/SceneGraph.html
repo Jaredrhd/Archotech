@@ -309,6 +309,7 @@
                     this.addOutputNode = function(x, y) {
                         var outputNode = new TransformedObject(node, 3).setTranslation(x, y);
                         outputNode.nodeOfObject = this;
+                        //outputNode.rescaleObject();
                         outputNode.addWire();
                         outputNode.rescaleObject();
                         this.outputNodes.push(outputNode);
@@ -463,9 +464,9 @@
                             this.wire.object.doDraw = function(g) {
                                 g.beginPath();
                                 g.moveTo(0,0);
-                                g.lineTo(0,this.wireCoordinates[1]);
+                                g.lineTo(0,this.wireCoordinates[1]/canvasObjectsScale);
                                 g.stroke();
-                                g.lineTo(this.wireCoordinates[0],this.wireCoordinates[1]);
+                                g.lineTo(this.wireCoordinates[0]/canvasObjectsScale,this.wireCoordinates[1]/canvasObjectsScale);
                                 g.stroke();
                             }
                         }
@@ -571,6 +572,7 @@
                         this.addOutputNode = function() {
                             var outputNode = new TransformedObject(node, 3).setTranslation(0, 0);
                             outputNode.nodeOfObject = this;
+                            //outputNode.rescaleObject();
                             outputNode.addWire();
                             outputNode.rescaleObject();
                             this.outputNodes.push(outputNode);
