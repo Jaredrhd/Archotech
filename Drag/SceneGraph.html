@@ -40,7 +40,6 @@
     //var resetToOrigin = true;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
-    //var browserDimensionsChanged = false;
     var browserDimensions = {
         x: 0,
         y: 0
@@ -1910,10 +1909,10 @@
     function updateScale(degreeOfScaleChange) {
         if (!(parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) > 1.5 || parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) < 0.5)) {
             canvasObjectsScale = parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1));
-            console.log("New scale is: " + canvasObjectsScale);
+            //console.log("New scale is: " + canvasObjectsScale);
             rescaleCanvasObjects();
         } else {
-            console.log("Scale has been capped");
+            //console.log("Scale has been capped");
         }
     }
 
@@ -1927,7 +1926,6 @@
 
     function resizeCanvas(){
         //innerWidth of 2100 gives 1200 by 900.
-        console.log(window.innerWidth);
         if (window.innerWidth > 2100) {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 0) {
@@ -2434,6 +2432,7 @@
         browserDimensions.x = window.innerWidth;
         browserDimensions.y = window.innerHeight;
         setupCircuit();
+        resizeCanvas();
 
         if (document.getElementById("id_answerhdr") != null) {
             document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
