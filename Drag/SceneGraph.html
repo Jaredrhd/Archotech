@@ -726,7 +726,11 @@
                 } else {
                     mousePos = getMousePos(canvas, event);
                 }
-                return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+                if (typeof this.nodeOfObject != "undefined") {
+                    return Math.sqrt(Math.pow((mousePos.x - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX))), 2) + Math.pow((mousePos.y - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY))), 2));
+                } else {
+                    return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+                }
             }
             this.isMouseCloserToThisObject = function(otherObject) {
                 return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
