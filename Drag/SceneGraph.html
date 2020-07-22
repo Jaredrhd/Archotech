@@ -40,7 +40,11 @@
     //var resetToOrigin = true;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
-    var browserDimensionsChanged = false;
+    //var browserDimensionsChanged = false;
+    var browserDimensions = {
+        x: 0,
+        y: 0
+    }
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -108,7 +112,9 @@
             }
         }
     
-        
+        if (browserDimensions.x != window.innerWidth || browserDimensions.y != window.innerHeight) {
+            resizeCanvas();
+        }
 
     }
  
@@ -2360,16 +2366,6 @@
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 selectedObject = getObject(selectedObject);
-                //console.log(window.innerWidth);
-                if (true) {
-                    resizeCanvas();
-                    //canvas.width = 1600;
-                    //canvas.height = 1200;
-                    //X_LEFT = -8;
-                    //X_RIGHT = 8;
-                    //Y_BOTTOM = -6;
-                    //Y_TOP = 6;
-                }
             }
             //console.log(typeof logicGateRestrictions);
             //console.log(canvas);
@@ -2408,6 +2404,8 @@
             }
         }, true);
 
+        browserDimensions.x = window.innerWidth;
+        browserDimensions.y = window.innerHeight;
         setupCircuit();
 
         if (document.getElementById("id_answerhdr") != null) {
