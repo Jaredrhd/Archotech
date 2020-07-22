@@ -1849,6 +1849,8 @@
         }
         save();
     }
+
+    
     
         // Create some basic shapes as custom SceneGraphNode objects.
            
@@ -2275,6 +2277,19 @@
             }
         }, true);
 
+        //Keyboard key pressed
+        document.addEventListener("keydown", function(event) {
+            switch (event.code) {
+                case "NumpadAdd":
+                    
+                    break;
+                case "NumpadSubtract":
+
+                    break;
+                default:
+                    break;
+            }
+        }, true);
 
         setupCircuit();
 
