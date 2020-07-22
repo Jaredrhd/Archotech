@@ -302,6 +302,7 @@
                     this.addInputNode = function(x, y){
                         var inputNode = new TransformedObject(node, 5).setTranslation(x, y);
                         inputNode.nodeOfObject = this;
+                        inputNode.rescaleObject();
                         this.inputNodes.push(inputNode);
                         return this;
                     }
@@ -309,6 +310,7 @@
                         var outputNode = new TransformedObject(node, 3).setTranslation(x, y);
                         outputNode.nodeOfObject = this;
                         outputNode.addWire();
+                        outputNode.rescaleObject();
                         this.outputNodes.push(outputNode);
                         return this;
                     }
@@ -439,9 +441,9 @@
                     return [this.translateX, this.translateY];
                 }
             } else if (this.objectType == 2 || this.objectType == 3 || this.objectType == 4 || this.objectType == 5) {
-                this.dragRadius = canvasObjectsScale * 0.125;
+                //this.dragRadius = canvasObjectsScale * 0.125;
                 if (this.objectType == 3 || this.objectType == 5) {
-                    //this.dragRadius = 0.125;
+                    this.dragRadius = 0.125;
                     this.connectedNode = "Not Connected";
                     this.nodeOfObject = "No Object";
                     if (this.objectType == 3) {
@@ -551,7 +553,7 @@
                 } else if (this.objectType == 2 || this.objectType == 4) {
                     this.scaleX = canvasObjectsScale * 1;
                     this.scaleY = canvasObjectsScale * 1;
-                    //this.dragRadius = this.scaleX * 0.125;
+                    this.dragRadius = this.scaleX * 0.125;
                     if (this.objectType == 2) {
                         this.hasCharge = true;
                         this.outputNodes = [];
@@ -559,6 +561,7 @@
                             var outputNode = new TransformedObject(node, 3).setTranslation(0, 0);
                             outputNode.nodeOfObject = this;
                             outputNode.addWire();
+                            outputNode.rescaleObject();
                             this.outputNodes.push(outputNode);
                             return this;
                         }
@@ -596,6 +599,7 @@
                         this.addInputNode = function(){
                             var inputNode = new TransformedObject(node, 5).setTranslation(0, 0);
                             inputNode.nodeOfObject = this;
+                            inputNode.rescaleObject();
                             this.inputNodes.push(inputNode);
                             return this;
                         }
