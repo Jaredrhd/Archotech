@@ -1895,9 +1895,18 @@
         if (!(parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) > 1.5 || parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) < 0.5)) {
             canvasObjectsScale = parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1));
             console.log("New scale is: " + canvasObjectsScale);
+            rescaleCanvasObjects();
         } else {
             console.log("Scale has been capped");
         }
+    }
+
+    function rescaleCanvasObjects() {
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2 || item.objectType === 4)) {
+                item.rescaleObject();
+            }
+        });
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
