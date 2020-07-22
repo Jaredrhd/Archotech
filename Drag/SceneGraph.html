@@ -202,11 +202,10 @@
             this.objectType = arguments[1];
             if (this.objectType == 0 || this.objectType == 1) {
                 if (this.objectType == 0) {
-                    //Possible unnessesary because these spawners don't change scale so their interaction radius doesn't need to change.
                     if (this.object === startNode || this.object === endNode) {
-                        this.dragRadius = canvasObjectsScale * 0.125;
+                        this.dragRadius = 0.125;
                     } else {
-                        this.dragRadius = canvasObjectsScale * 1;
+                        this.dragRadius = 1;
                     }
                     this.createLogicGateObject = function() {
                         var logicGate;
@@ -309,7 +308,6 @@
                     this.addOutputNode = function(x, y) {
                         var outputNode = new TransformedObject(node, 3).setTranslation(x, y);
                         outputNode.nodeOfObject = this;
-                        //outputNode.rescaleObject();
                         outputNode.addWire();
                         outputNode.rescaleObject();
                         this.outputNodes.push(outputNode);
@@ -453,7 +451,6 @@
                     return [this.translateX, this.translateY];
                 }
             } else if (this.objectType == 2 || this.objectType == 3 || this.objectType == 4 || this.objectType == 5) {
-                //this.dragRadius = canvasObjectsScale * 0.125;
                 if (this.objectType == 3 || this.objectType == 5) {
                     this.dragRadius = 0.125;
                     this.connectedNode = "Not Connected";
@@ -572,7 +569,6 @@
                         this.addOutputNode = function() {
                             var outputNode = new TransformedObject(node, 3).setTranslation(0, 0);
                             outputNode.nodeOfObject = this;
-                            //outputNode.rescaleObject();
                             outputNode.addWire();
                             outputNode.rescaleObject();
                             this.outputNodes.push(outputNode);
@@ -609,7 +605,7 @@
                         this.rescaleObject = function() {
                             this.scaleX = canvasObjectsScale * 1;
                             this.scaleY = canvasObjectsScale * 1;
-                            this.dragRadius = this.scaleX * 1.125;
+                            this.dragRadius = this.scaleX * 0.125;
                             this.outputNodes.forEach(function(item, index){
                                 item.rescaleObject();
                             });
@@ -646,7 +642,7 @@
                         this.rescaleObject = function() {
                             this.scaleX = canvasObjectsScale * 1;
                             this.scaleY = canvasObjectsScale * 1;
-                            this.dragRadius = this.scaleX * 1.125;
+                            this.dragRadius = this.scaleX * 0.125;
                             this.inputNodes.forEach(function(item, index){
                                 item.rescaleObject();
                             });
