@@ -479,7 +479,7 @@
                             } else {
                                 mousePos = getMousePos(canvas, event);
                             }
-                            this.setWireCoordinates(mousePos.x - this.getCoordinates()[0], mousePos.y - this.getCoordinates()[1]);
+                            this.setWireCoordinates(mousePos.x - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX)), mousePos.y - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY)));
                         }
                         this.setWireCoordinatesToOutputNodeConnectedNodeCoordinates = function() {
                             if (this.connectedNode == "Not Connected") {
@@ -505,7 +505,7 @@
                             }
                         }
                         this.getDistanceFromOutputNodeToConnectedNode = function() {
-                            return [this.connectedNode.getCoordinates()[0] - this.getCoordinates()[0], this.connectedNode.getCoordinates()[1] - this.getCoordinates()[1]];
+                            return [(this.connectedNode.getCoordinates()[0] + (this.connectedNode.nodeOfObject.scaleX*this.connectedNode.translateX - this.connectedNode.translateX)) - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX)), (this.connectedNode.getCoordinates()[1] + (this.connectedNode.nodeOfObject.scaleX*this.connectedNode.translateY - this.connectedNode.translateY)) - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY))];
                         }
                     } else if (this.objectType == 5) {
                         this.hasCharge = false;
