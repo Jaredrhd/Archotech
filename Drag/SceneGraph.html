@@ -1850,7 +1850,14 @@
         save();
     }
 
-    
+    function updateScale(degreeOfScaleChange) {
+        if (!(parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) > 1.5 || parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) < 0.5)) {
+            canvasObjectsScale = parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1));
+            console.log("New scale is: " + canvasObjectsScale);
+        } else {
+            console.log("Scale has been capped");
+        }
+    }
     
         // Create some basic shapes as custom SceneGraphNode objects.
            
@@ -2281,10 +2288,10 @@
         document.addEventListener("keydown", function(event) {
             switch (event.code) {
                 case "NumpadAdd":
-                    
+                    updateScale(0.1);
                     break;
                 case "NumpadSubtract":
-
+                    updateScale(-0.1);
                     break;
                 default:
                     break;
