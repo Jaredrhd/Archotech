@@ -41,6 +41,7 @@ class qtype_trees_renderer extends qtype_renderer {
         $question = $qa->get_question();
 
         $questiontext = $question->format_questiontext($qa);
+        
         $placeholder = false;
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
