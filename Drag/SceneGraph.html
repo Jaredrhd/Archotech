@@ -1946,12 +1946,14 @@
                     item.setTranslation(-5, item.translateY-(-5-item.translateX));
                 }
             });
+            let soe = [1,(4/3)];
+            let soi = 0;
             canvas.width = 1200;
-            canvas.height = 900;
+            canvas.height = 900*soe[soi];
             X_LEFT = -6;
             X_RIGHT = 6;
-            Y_BOTTOM = -4.5;
-            Y_TOP = 4.5;
+            Y_BOTTOM = -4.5*soe[soi];
+            Y_TOP = 4.5*soe[soi];
             
         } else if (window.innerWidth > 2000) {
             world.subobjects.forEach(function(item, index){
