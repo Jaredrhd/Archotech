@@ -39,7 +39,7 @@
     var isLoading = false;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
-    var numberOfSpawners = 0;
+    var numberOfSpawners = 10;
     var browserDimensions = {
         x: 0,
         y: 0
@@ -1950,11 +1950,11 @@
     function resizeCanvas(){
         if (window.innerWidth > 1200) {
             canvas.width = 800+(window.innerWidth-1200);
-            canvas.height = ((800+(window.innerWidth-1200))/800)*600*(((numberOfSpawners*0.5)+6)/6);
+            canvas.height = ((800+(window.innerWidth-1200))/800)*600;
             X_LEFT = ((800+(window.innerWidth-1200))/800)*(-4);
             X_RIGHT = ((800+(window.innerWidth-1200))/800)*4;
-            Y_BOTTOM = ((800+(window.innerWidth-1200))/800)*(-3)-(numberOfSpawners*0.25);
-            Y_TOP = ((800+(window.innerWidth-1200))/800)*3+(numberOfSpawners*0.25);
+            Y_BOTTOM = ((800+(window.innerWidth-1200))/800)*(-3);
+            Y_TOP = ((800+(window.innerWidth-1200))/800)*3;
         } else {
             canvas.width = 800;
             canvas.height = 600*(((numberOfSpawners*0.5)+6)/6);
@@ -1962,6 +1962,11 @@
             X_RIGHT = 4;
             Y_BOTTOM = -3-(numberOfSpawners*0.25);
             Y_TOP = 3+(numberOfSpawners*0.25);
+        }
+        if ((Y_TOP - Y_BOTTOM) < (numberOfSpawners * 1.2)) {
+            canvas.height = ((numberOfSpawners * 1.2)/(Y_TOP - Y_BOTTOM))*canvas.height;
+            Y_TOP = (numberOfSpawners * 0.6);
+            Y_BOTTOM = -(numberOfSpawners * 0.6);
         }
         //innerWidth of 2100 gives 1200 by 900.
         /*if (window.innerWidth > 2100) {
