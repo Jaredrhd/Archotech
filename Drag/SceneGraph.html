@@ -188,7 +188,7 @@
             // Just call the sub-objects' draw() methods.
         this.delayedDraws = [[],[]];
         for (var i = 0; i < this.subobjects.length; i++) {
-            if (typeof this.subobjects[i].objectType != "undefined" && this.subobjects[i].objectType == 0) {
+            if (typeof this.subobjects[i].objectType != "undefined" && (this.subobjects[i].objectType == 0 || this.subobjects[i] === selectedObject)) {
                 this.delayedDraws[1].push(i);
             } else if (typeof this.subobjects[i].objectType == "undefined") {
                 this.delayedDraws[0].push(i);
