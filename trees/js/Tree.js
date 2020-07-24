@@ -10,6 +10,10 @@ class Tree {
         this._root.parent = null;
         this._root.draw(board, null, (board.columns - 1) * 0.5, 0); // board, parent, cellX, cellY
         this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+
+        this._inOrder = "";
+        this._preOrder = "";
+        this._postOrder = "";
     }
 
     get root() {
@@ -20,8 +24,32 @@ class Tree {
         return this._nodes;
     }
 
+    get inOrder() {
+        return this._inOrder;
+    }
+
+    get preOrder() {
+        return this._preOrder;
+    }
+
+    get postOrder() {
+        return this._postOrder;
+    }
+
     set root(value) {
         this._root = value;
+    }
+
+    set inOrder(value) {
+        this._inOrder = value;
+    }
+
+    set preOrder(value) {
+        this._preOrder = value;
+    }
+
+    set postOrder(value) {
+        this._postOrder = value;
     }
 
     addChild(selectedNode, board, childType, childValue, childCellX, childCellY) {
@@ -70,6 +98,30 @@ class Tree {
         this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
     }
 
+    inOrderTraversal(node) {
+        if(!node) return;
+    
+        this.inOrderTraversal(node.children.leftChild);
+        this.inOrder += node.value + " ";
+        this.inOrderTraversal(node.children.rightChild);
+    }
+    
+    preOrderTraversal(node) {
+        if(!node) return;
+    
+        this.preOrder += node.value + " ";
+        this.preOrderTraversal(node.children.leftChild);
+        this.preOrderTraversal(node.children.rightChild);
+    }
+    
+    postOrderTraversal(node) {
+        if(!node) return;
+    
+        this.postOrderTraversal(node.children.leftChild);
+        this.postOrderTraversal(node.children.rightChild);
+        this.postOrder += node.value + " ";
+    }
+
     /** TESTING */
     printTree() {
         let tree = "";
@@ -77,7 +129,7 @@ class Tree {
             for(let j = 0; j < board.columns; j++) {
                 if(typeof this.nodes[i][j] !== "undefined") {
                     tree += this.nodes[i][j].value + " ";
-                }
+                } 
                 else {
                     tree += "- ";  
                 }
@@ -87,5 +139,24 @@ class Tree {
         }
 
         console.log("\n\n\n");
+    }
+
+    remake(board) {
+        /** Create temp matrix for nodes */
+        let tempMatrix = new Array(board.rows);
+        for(let i = 0; i < tempMatrix.length; i++) {
+            tempMatrix[i] = new Array(board.columns);
+        }
+        
+        /** Shift every node one unit over */
+        for(let i = 0; i < tempMatrix.length - 2; i++) {
+            for(let j = 0; j < tempMatrix[0].length - 2; j++) {
+                if(typeof this._nodes[i][j] !== "undefined") {
+                    tempMatrix[i][j+1] = this._nodes[i][j];
+                    this._nodes[i][j].cellCoords.x += 1;
+                }               
+            }   
+        }
+        this._nodes = tempMatrix;
     }
 }
