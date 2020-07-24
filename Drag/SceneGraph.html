@@ -877,8 +877,8 @@
                     }
                 }
             } else if (this.objectType == 6) {
-                this.xBoundry = [-canvas.width/200, canvas.width/200];
-                this.yBoundry = [-canvas.height/200, canvas.height/200];
+                this.xBoundry = [X_LEFT, X_RIGHT];
+                this.yBoundry = [Y_BOTTOM, Y_TOP];
                 this.isMouseWithinCanvasBoundry = function() {
                     mousePos = getMousePos(canvas, event);
                     //console.log(mousePos);
