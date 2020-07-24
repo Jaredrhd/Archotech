@@ -344,37 +344,140 @@
                     this.visualCharge.object.doDraw = function(g) {
                         switch (this.owner.object) {
                             case bufferGate:
-                                g.beginPath();
-                                g.arc(this.owner.translateX,this.owner.translateY,0.125,0,2*Math.PI);
-                                if (this.owner.connectedNode == "Not Connected") {
-                                    g.fillStyle = "White";
-                                } else if (this.owner.hasCharge) {
-                                    g.fillStyle = "green";
-                                } else if (!this.owner.hasCharge){
-                                    g.fillStyle = "black";
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
                                 }
-                                g.fill();
                                 break;
                             case notGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case andGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case nandGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case orGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case norGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case xorGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             case xnorGate:
-                                
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                }
                                 break;
                             default:
                                 break;
