@@ -345,19 +345,23 @@
                         switch (this.owner.object) {
                             case bufferGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.5, 0);
+                                    g.rotate(-Math.PI/2);
                                     g.beginPath();
                                     g.moveTo(-0.5,0);
                                     g.lineTo(0.5,0);
                                     g.lineTo(0,1);
                                     g.closePath();
                                     g.fill();
+                                    g.lineWidth = 0.025;
+                                    g.stroke();
                                 }
                                 break;
                             case notGate:
@@ -981,6 +985,7 @@
                 for (var i = 0; i < this.inputNodes.length; i++) {
                     this.inputNodes[i].draw(g);
                     this.inputNodes[i].visualCharge.draw(g);
+                    this.visualCharge.draw(g);
                 }
                 for (var i = 0; i < this.outputNodes.length; i++) {
                     this.outputNodes[i].draw(g);
