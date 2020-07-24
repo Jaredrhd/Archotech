@@ -2034,7 +2034,7 @@
         let counter = 1;
         for (let i = 0; i < world.subobjects.length; ++i) {
             if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
-                world.subobjects[i].setTranslation(X_LEFT + 1, Y_TOP - counter*1);
+                world.subobjects[i].setTranslation(X_LEFT + 1, Y_TOP - counter * ((Y_TOP - Y_BOTTOM)/(numberOfSpawners + 1)));
                 ++counter;
             }
         }
