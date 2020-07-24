@@ -39,7 +39,7 @@
     var isLoading = false;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
-    var numberOfSpawners = 10;
+    var numberOfSpawners;
     var browserDimensions = {
         x: 0,
         y: 0
@@ -1806,6 +1806,7 @@
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
         load();
+        countSpawners();
     }
 
     function updateLogicGateSpawners() {
@@ -1926,6 +1927,7 @@
             });
         }
         save();
+        countSpawners();
     }
 
     function updateScale(degreeOfScaleChange) {
@@ -2036,6 +2038,15 @@
             if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
                 world.subobjects[i].setTranslation(X_LEFT + 1, Y_TOP - counter * ((Y_TOP - Y_BOTTOM)/(numberOfSpawners + 1)));
                 ++counter;
+            }
+        }
+    }
+
+    function countSpawners() {
+        numberOfSpawners = 0;
+        for (let i = 0; i < world.subobjects.length; ++i) {
+            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
+                ++numberOfSpawners;
             }
         }
     }
