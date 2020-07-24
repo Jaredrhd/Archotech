@@ -21,7 +21,7 @@
     var frameNumber = 0;  // Current frame number. goes up by one in each frame.
 
     var world;  // A SceneGraphNode representing the entire scene. 
-    
+
     // TODO: Define global variables to represent animated objects in the scene.
 
     var selectedObject = null;
@@ -51,6 +51,7 @@
     function createWorld() {
 
         world = new CompoundObject();  // Root node for the scene graph.
+        world.add(new TransformedObject(sidePanel));
     }
     
     /**
@@ -2057,6 +2058,18 @@
     var draggableCanvas = new SceneGraphNode();
     draggableCanvas.doDraw = function(g) {
 
+    }
+
+    sidePanel = new SceneGraphNode();
+    sidePanel.doDraw = function(g) {
+        g.beginPath();
+        g.moveTo(X_LEFT,Y_TOP);
+        g.lineTo(X_LEFT,Y_BOTTOM);
+        g.lineTo(X_LEFT + 1.5,Y_BOTTOM);
+        g.lineTo(X_LEFT + 2.25,Y_BOTTOM + 0.75*Math.tan(Math.PI/4));
+        g.lineTo(X_LEFT + 2.25,Y_TOP - 0.75*Math.tan(Math.PI/4));
+        g.lineTo(X_LEFT + 1.5,Y_TOP);
+        g.stroke();
     }
 
     // ------------------------------- Logic Gates --------------------------
