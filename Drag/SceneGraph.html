@@ -186,8 +186,21 @@
     }
     CompoundObject.prototype.doDraw = function(g) {
             // Just call the sub-objects' draw() methods.
-        for (var i = 0; i < this.subobjects.length; i++)
-            this.subobjects[i].draw(g);
+        this.delayedDraws = [[],[]];
+        for (var i = 0; i < this.subobjects.length; i++) {
+            if (typeof this.subobjects[i].objectType != "undefined" && this.subobjects[i].objectType == 0) {
+                this.delayedDraws[1].push(i);
+            } else if (typeof this.subobjects[i].objectType == "undefined") {
+                this.delayedDraws[0].push(i);
+            } else {
+                this.subobjects[i].draw(g);
+            }
+        }
+        for (let i = 0; i < this.delayedDraws.length; ++i) {
+            for (let j = 0; j < this.delayedDraws[i].length; ++j) {
+                this.subobjects[this.delayedDraws[i][j]].draw(g);
+            }
+        }
     }
     
     /**
