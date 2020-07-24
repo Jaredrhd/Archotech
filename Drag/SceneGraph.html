@@ -113,6 +113,7 @@
             }
         }
     
+        //Change it from checking for logicGateRestrictions existence to executing once at the start.
         if (browserDimensions.x != window.innerWidth || browserDimensions.y != window.innerHeight || typeof logicGateRestrictions == "undefined") {
             resizeCanvas();
         }
@@ -130,6 +131,8 @@
         this.strokeColor = null; // If non-null, the default strokeStyle for this node.
         if (arguments.length == 1 && arguments[0] == true) {
             this.wireCoordinates = [0, 0];
+        } else if (arguments.length == 1) {
+            this.owner = arguments[0];
         }
     }
     SceneGraphNode.prototype.doDraw = function(g) {
@@ -533,6 +536,20 @@
                         }
                     } else if (this.objectType == 5) {
                         this.hasCharge = false;
+                        this.visualCharge = new TransformedObject(new SceneGraphNode(this)).setTranslation(this.translateX, this.translateY);
+                        this.visualCharge.object.doDraw = function(g) {
+                            g.beginPath();
+                            //Doesn't look like it's within the black outline, maybe there's a loss of information due to decimals.
+                            g.arc(this.owner.translateX,this.owner.translateY,0.125,0,2*Math.PI);
+                            if (this.owner.connectedNode == "Not Connected") {
+                                g.fillStyle = "White";
+                            } else if (this.owner.hasCharge) {
+                                g.fillStyle = "green";
+                            } else if (!this.owner.hasCharge){
+                                g.fillStyle = "black";
+                            }
+                            g.fill();
+                        }
                         this.getInputNode = function() {
                             if (this.connectedNode == "Not Connected") {
                                 return this;
@@ -819,6 +836,7 @@
             if (this.objectType === 1) {
                 for (var i = 0; i < this.inputNodes.length; i++) {
                     this.inputNodes[i].draw(g);
+                    this.inputNodes[i].visualCharge.draw(g);
                 }
                 for (var i = 0; i < this.outputNodes.length; i++) {
                     this.outputNodes[i].draw(g);
