@@ -64,7 +64,9 @@ class Node {
 
         board.context.arc(this._boardCoords.x, this._boardCoords.y, this._nodeRadius, 0, 2*Math.PI); // Draw node circle
 
-        board.context.font = "30px Arial";
+        let fontSize = String(Math.floor(Math.min(board.cellWidth, board.cellHeight)) / 2) + "px";
+
+        board.context.font = fontSize + " Arial";
         board.context.textAlign = "center"; 
         board.context.textBaseline = "middle";
         board.context.fillText(this._value, this._boardCoords.x, this._boardCoords.y); // Draw node value
@@ -78,10 +80,21 @@ class Node {
         board.context.restore();
 
         if(parent !== null) { // Draw the connecting edge from the parent to the node
-            let angleParent = this._parent.children.leftChild === this ? (150 * Math.PI / 180) : (30 * Math.PI / 180); // Parent has larger angle if child is left child
-            let angleChild = this._parent.children.leftChild === this ? (325 * Math.PI / 180) : (215 * Math.PI / 180); // Child has larger angle if child is left child
+            let deltaX = Math.abs(this._parent.cellCoords.x - this._cellCoords.x);
+            let deltaY = Math.abs(this._parent.cellCoords.y - this._cellCoords.y);
 
-            angleChild = 270 * Math.PI / 180;
+            /** Angles of the line from the centre of the child to the centre of the parent */
+            let angleChild = Math.atan(deltaY / deltaX);
+            let angleParent = Math.atan(deltaX / deltaY);
+
+            if(this.childType() === "left") {
+                angleChild = (360 * Math.PI / 180) - angleChild;
+                angleParent = (90 * Math.PI / 180) + angleParent;
+            }
+            else {
+                angleChild = Math.PI + angleChild;
+                angleParent = (90 * Math.PI / 180) - angleParent;
+            }
 
             board.context.save();
 
@@ -89,7 +102,7 @@ class Node {
             board.context.beginPath();
 
             /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
-            board.context.moveTo(this._nodeRadius*Math.cos(angleParent) +  this._parent.boardCoords.x, this._nodeRadius*Math.sin(angleParent) +  this._parent.boardCoords.y);
+            board.context.moveTo(this._nodeRadius*Math.cos(angleParent) + this._parent.boardCoords.x, this._nodeRadius*Math.sin(angleParent) +  this._parent.boardCoords.y);
             board.context.lineTo(this._nodeRadius*Math.cos(angleChild) + this._boardCoords.x, this._nodeRadius*Math.sin(angleChild) + this._boardCoords.y);
 
             board.context.stroke();
@@ -107,6 +120,14 @@ class Node {
         else {
             return "right";
         }
+    }
+
+    hasLeftChild() {
+        return this._children.leftChild !== null;
+    }
+
+    hasRightChild() {
+        return this._children.rightChild !== null;
     }
 
     isLeaf() {

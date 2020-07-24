@@ -1,12 +1,15 @@
 onload = init;
 
 /** HTML ELEMENTS */
-const nodeValue = document.getElementById("node-value");
+const nodeValueInput = document.getElementById("node-value");
 const randNodeValueCheckbox = document.getElementById("random-node-value");
 const addRootButton = document.getElementById("add-root");
 const removeNodeButton = document.getElementById("remove-node");
+/** The list of BST values shown to the student */
+const bstValueList = document.getElementById("bst-values");
 
 let canvas, context, board;
+let bstQuestion, traversalQuestion;
 
 let ROWS = 13;
 let COLS = 13;
@@ -32,6 +35,12 @@ function init() {
 
     context = canvas.getContext("2d");
     board = new Board(canvas, context, ROWS, COLS);
+
+    bstQuestion = new BSTQuestion(bstValueList, MIN_NODE_VALUE, MAX_NODE_VALUE, nodeValueInput, randNodeValueCheckbox);
+    traversalQuestion = new TraversalQuestion(nodeValueInput, randNodeValueCheckbox);
+
+    QuestionManager.addQuestion(bstQuestion);
+    QuestionManager.addQuestion(traversalQuestion);
 
     if(drawGrid) {
         board.drawGrid();
@@ -61,6 +70,8 @@ function initListeners() {
     randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
     addRootButton.addEventListener("click", addRoot);
     removeNodeButton.addEventListener("click", removeNodeAndChildren);
+
+    /** CANVAS */
     canvas.addEventListener("click", onBoardClick);
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
@@ -70,15 +81,23 @@ function randNodeValueChecked() {
     randNodeValue = this.checked;
 
     if(randNodeValue) { // If the random value checkbox is checked, disable user specified node values
-        nodeValue.disabled = true;
+        nodeValueInput.disabled = true;
     }
     else {
-        nodeValue.disabled = false;
+        nodeValueInput.disabled = false;
     }
 }
 
 function addRoot() {
-    let newNodeValue = getNewNodeValue();
+    let newNodeValue;
+
+    if(QuestionManager.currQuestion.qTypeName === "bst") {
+        newNodeValue = nodeValueInput.value;
+        nodeValueInput.value = bstQuestion.getNextNodeValue();
+    }
+    else {
+        newNodeValue = getNewNodeValue();
+    }
 
     if(!newNodeValue) return; // newNodeValue is null
 
@@ -149,7 +168,14 @@ function onBoardClick(event) {
         if(board.cellX === selectedNode.cellCoords.x) return; // Don't allow child node to be in line with parent node
         if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
 
-        let newNodeValue = getNewNodeValue();
+        let newNodeValue;
+        if(QuestionManager.currQuestion.qTypeName === "bst") {
+            newNodeValue = nodeValueInput.value;
+            nodeValueInput.value = bstQuestion.getNextNodeValue();
+        }
+        else {
+            newNodeValue = getNewNodeValue();
+        }
 
         if(!newNodeValue) return; // newNodeValue is null
 
@@ -182,7 +208,15 @@ function onBoardHover(event) {
         document.body.style.cursor = "pointer";
     }
     else if(selectedNode) { // No node in the hovered cell but an existing node is selected
-        document.body.style.cursor = "crosshair";
+        if(board.cellX == selectedNode.cellCoords.x || board.cellY <= selectedNode.cellCoords.y ||
+            (board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) ||
+                (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild())) { // Invalid cell to place new child
+
+                    document.body.style.cursor = "not-allowed";
+        }
+        else {
+            document.body.style.cursor = "crosshair";
+        }
     }
     else { // No node in the hovered cell and no node selected
         document.body.style.cursor = "default";
@@ -197,9 +231,11 @@ function getNewNodeValue() {
     let newNodeValue = null;
 
     if(!randNodeValue) { // Set the node's value to the user specified input
-        newNodeValue = nodeValue.value;
+        newNodeValue = nodeValueInput.value;
 
-        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE) return;
+        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE) {
+            return;
+        }
     }
     else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
         newNodeValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);

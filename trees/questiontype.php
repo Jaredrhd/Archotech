@@ -51,7 +51,9 @@ class qtype_trees extends question_type {
     }
 
     public function save_question_options($question) {
-        $this->save_hints($question);
+        parent::save_question_options($question);
+        $this->save_question_answers($question);
+        // $this->save_hints($question);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
