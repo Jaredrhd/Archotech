@@ -8,8 +8,8 @@ const removeNodeButton = document.getElementById("remove-node");
 
 let canvas, context, board;
 
-const ROWS = 10;
-const COLS = 13;
+let ROWS = 13;
+let COLS = 13;
 
 let tree = null;
 let selectedNode = null;
@@ -90,6 +90,10 @@ function addRoot() {
     }
 
     addRootButton.style.display = "none";
+
+    // performTraversal("in");
+    // performTraversal("pre");
+    // performTraversal("post");
 }
 
 function removeNodeAndChildren() {
@@ -142,7 +146,7 @@ function onBoardClick(event) {
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
 
-        if(board.cellX == selectedNode.cellCoords.x) return; // Don't allow child node to be in line with parent node
+        if(board.cellX === selectedNode.cellCoords.x) return; // Don't allow child node to be in line with parent node
         if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
 
         let newNodeValue = getNewNodeValue();
@@ -159,7 +163,14 @@ function onBoardClick(event) {
 
             tree.addChild(selectedNode, board, "right", Number(newNodeValue), board.cellX, board.cellY);
         }
+
+        if(board.cellX === 0 || board.cellX === board.columns - 1 || board.cellY === board.rows - 1) {
+            resizeBoard();
+        }
     }
+    // performTraversal("in");
+    // performTraversal("pre");
+    // performTraversal("post");
 }
 
 function onBoardHover(event) {
@@ -195,4 +206,36 @@ function getNewNodeValue() {
     }
 
     return newNodeValue;
+}
+
+function performTraversal(type) {
+    if(type == "in") {
+        tree.inOrderTraversal(tree.root);
+        console.clear();
+        console.log("IN-ORDER:" + tree.inOrder);
+        tree.inOrder = "";
+    }
+    if(type == "pre") {
+        tree.preOrderTraversal(tree.root);
+        console.clear();
+        console.log("PRE-ORDER:" + tree.preOrder);
+        tree.preOrder = "";
+    }
+    if(type == "post") {
+        tree.postOrderTraversal(tree.root);
+        console.clear();
+        console.log("POST-ORDER:" + tree.postOrder);
+        tree.postOrder = "";
+    }
+}
+
+/** Dynamically resize the board if a cell is made on any edge */
+function resizeBoard() {
+    ROWS += 2;
+    COLS += 2;
+
+    board = new Board(canvas, context, ROWS, COLS);
+
+    tree.remake(board);
+    redrawCanvas();
 }
