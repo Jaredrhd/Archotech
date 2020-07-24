@@ -353,14 +353,14 @@
                                         g.fillStyle = "black";
                                     }
                                     g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
                                     g.rotate(-Math.PI/2);
                                     g.beginPath();
                                     g.moveTo(-0.5,0);
                                     g.lineTo(0.5,0);
                                     g.lineTo(0,1);
                                     g.closePath();
-                                    g.fill();
-                                    g.lineWidth = 0.025;
+                                    g.fill();                            
                                     g.stroke();
                                 }
                                 break;
@@ -374,6 +374,7 @@
                                         g.fillStyle = "black";
                                     }
                                     g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
                                     g.rotate(-Math.PI/2);
                                     g.beginPath();
                                     g.moveTo(-0.5,0);
@@ -381,7 +382,6 @@
                                     g.lineTo(0,1);
                                     g.closePath();
                                     g.fill();
-                                    g.lineWidth = 0.025;
                                     g.stroke();
                                 }
                                 break;
@@ -442,12 +442,16 @@
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
                                     g.closePath();
                                     g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             case norGate:
@@ -459,12 +463,16 @@
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
                                     g.closePath();
                                     g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             case xorGate:
@@ -476,12 +484,16 @@
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
                                     g.closePath();
                                     g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             case xnorGate:
@@ -493,12 +505,16 @@
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
                                     g.closePath();
                                     g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             default:
