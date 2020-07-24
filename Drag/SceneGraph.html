@@ -340,6 +340,47 @@
                         this.outputNodes.push(outputNode);
                         return this;
                     }
+                    this.visualCharge = new TransformedObject(new SceneGraphNode(this)).setTranslation(this.translateX, this.translateY);
+                    this.visualCharge.object.doDraw = function(g) {
+                        switch (this.owner.object) {
+                            case bufferGate:
+                                g.beginPath();
+                                g.arc(this.owner.translateX,this.owner.translateY,0.125,0,2*Math.PI);
+                                if (this.owner.connectedNode == "Not Connected") {
+                                    g.fillStyle = "White";
+                                } else if (this.owner.hasCharge) {
+                                    g.fillStyle = "green";
+                                } else if (!this.owner.hasCharge){
+                                    g.fillStyle = "black";
+                                }
+                                g.fill();
+                                break;
+                            case notGate:
+                                
+                                break;
+                            case andGate:
+                                
+                                break;
+                            case nandGate:
+                                
+                                break;
+                            case orGate:
+                                
+                                break;
+                            case norGate:
+                                
+                                break;
+                            case xorGate:
+                                
+                                break;
+                            case xnorGate:
+                                
+                                break;
+                            default:
+                                break;
+                        }
+                        
+                    }
                     this.reevaluateCharge = function() {
                         var previousCharge = this.hasCharge;
                         var numberOfChargedInputNodes = 0;
@@ -850,6 +891,7 @@
             } else if (this.objectType === 4) {
                 for (var i = 0; i < this.inputNodes.length; i++) {
                     this.inputNodes[i].draw(g);
+                    this.inputNodes[i].visualCharge.draw(g);
                 }
             }
         }
