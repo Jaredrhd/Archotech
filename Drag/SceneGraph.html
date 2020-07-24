@@ -1946,9 +1946,25 @@
         });
     }
 
+    //innerWidth 1200 gives width 800.
     function resizeCanvas(){
+        if (window.innerWidth > 1200) {
+            canvas.width = 800+(window.innerWidth-1200);
+            canvas.height = ((800+(window.innerWidth-1200))/800)*600*(((numberOfSpawners*0.5)+6)/6);
+            X_LEFT = ((800+(window.innerWidth-1200))/800)*(-4);
+            X_RIGHT = ((800+(window.innerWidth-1200))/800)*4;
+            Y_BOTTOM = ((800+(window.innerWidth-1200))/800)*(-3)-(numberOfSpawners*0.25);
+            Y_TOP = ((800+(window.innerWidth-1200))/800)*3+(numberOfSpawners*0.25);
+        } else {
+            canvas.width = 800;
+            canvas.height = 600*(((numberOfSpawners*0.5)+6)/6);
+            X_LEFT = -4;
+            X_RIGHT = 4;
+            Y_BOTTOM = -3-(numberOfSpawners*0.25);
+            Y_TOP = 3+(numberOfSpawners*0.25);
+        }
         //innerWidth of 2100 gives 1200 by 900.
-        if (window.innerWidth > 2100) {
+        /*if (window.innerWidth > 2100) {
             // world.subobjects.forEach(function(item, index){
                 // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
                     // item.setTranslation(-5, item.translateY-(-5-item.translateX));
@@ -2009,7 +2025,7 @@
             X_RIGHT = 4;
             Y_BOTTOM = -3-(numberOfSpawners*0.25);
             Y_TOP = 3+(numberOfSpawners*0.25);
-        }
+        }*/
         let counter = 1;
         for (let i = 0; i < world.subobjects.length; ++i) {
             if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
@@ -2436,6 +2452,7 @@
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 selectedObject = getObject(selectedObject);
+                console.log("width: " + window.innerWidth + " Height: " + window.innerHeight);
             }
             //console.log(typeof logicGateRestrictions);
             //console.log(canvas);
