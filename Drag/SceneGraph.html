@@ -366,58 +366,76 @@
                                 break;
                             case notGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.5, 0);
+                                    g.rotate(-Math.PI/2);
                                     g.beginPath();
                                     g.moveTo(-0.5,0);
                                     g.lineTo(0.5,0);
                                     g.lineTo(0,1);
                                     g.closePath();
                                     g.fill();
+                                    g.lineWidth = 0.025;
+                                    g.stroke();
                                 }
                                 break;
                             case andGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
-                                    g.closePath();
+                                    g.moveTo(0.51, -0.5);
+                                    g.lineTo(0, -0.5);
+                                    g.lineTo(0, 0.5);
+                                    g.lineTo(0.51, 0.5);
                                     g.fill();
+                                    g.stroke();
+                                    g.beginPath();
+                                    g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+                                    g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             case nandGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
                                     } else if (!this.owner.hasCharge){
                                         g.fillStyle = "black";
                                     }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
                                     g.beginPath();
-                                    g.moveTo(-0.5,0);
-                                    g.lineTo(0.5,0);
-                                    g.lineTo(0,1);
-                                    g.closePath();
+                                    g.moveTo(0.51, -0.5);
+                                    g.lineTo(0, -0.5);
+                                    g.lineTo(0, 0.5);
+                                    g.lineTo(0.51, 0.5);
                                     g.fill();
+                                    g.stroke();
+                                    g.beginPath();
+                                    g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+                                    g.fill();
+                                    g.stroke();
                                 }
                                 break;
                             case orGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
@@ -434,7 +452,7 @@
                                 break;
                             case norGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
@@ -451,7 +469,7 @@
                                 break;
                             case xorGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
@@ -468,7 +486,7 @@
                                 break;
                             case xnorGate:
                                 if (typeof this.owner.inputNodes[0] != "undefined") {
-                                    if (this.owner.inputNodes[0] == "Not Connected") {
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
                                         g.fillStyle = "White";
                                     } else if (this.owner.hasCharge) {
                                         g.fillStyle = "green";
@@ -697,6 +715,7 @@
                                 g.fillStyle = "black";
                             }
                             g.fill();
+                            g.stroke();
                         }
                         this.getInputNode = function() {
                             if (this.connectedNode == "Not Connected") {
