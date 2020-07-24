@@ -831,7 +831,7 @@
             if (arguments[0] == null) {
                 var currentObject = null;
                 world.subobjects.forEach(function(item, index){
-                    if (selectedObject !== item && item.isMouseWithinObjectRadius() && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                    if (typeof item.objectType != "undefined" && selectedObject !== item && item.isMouseWithinObjectRadius() && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
                         currentObject = item;
                     }
                 });
@@ -2069,6 +2069,10 @@
         g.lineTo(X_LEFT + 2.25,Y_BOTTOM + 0.75*Math.tan(Math.PI/4));
         g.lineTo(X_LEFT + 2.25,Y_TOP - 0.75*Math.tan(Math.PI/4));
         g.lineTo(X_LEFT + 1.5,Y_TOP);
+        g.lineTo(X_LEFT,Y_TOP);
+        g.fillStyle = "grey";
+        g.fill();
+        g.lineWidth = 0.046875;
         g.stroke();
     }
 
