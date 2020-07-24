@@ -40,6 +40,7 @@
     //var resetToOrigin = true;
     var updateSpawners = false;
     var canvasObjectsScale = 1;
+    var numberOfSpawners = 0;
     var browserDimensions = {
         x: 0,
         y: 0
@@ -1946,14 +1947,12 @@
                     item.setTranslation(-5, item.translateY-(-5-item.translateX));
                 }
             });
-            let soe = [1,(4/3)];
-            let soi = 0;
             canvas.width = 1200;
-            canvas.height = 900*soe[soi];
+            canvas.height = 900*(((numberOfSpawners*0.5)+9)/9);
             X_LEFT = -6;
             X_RIGHT = 6;
-            Y_BOTTOM = -4.5*soe[soi];
-            Y_TOP = 4.5*soe[soi];
+            Y_BOTTOM = -4.5-(numberOfSpawners*0.25);
+            Y_TOP = 4.5+(numberOfSpawners*0.25);
             
         } else if (window.innerWidth > 2000) {
             world.subobjects.forEach(function(item, index){
@@ -1962,11 +1961,11 @@
                 }
             });
             canvas.width = 1100;
-            canvas.height = 825;
+            canvas.height = 825*(((numberOfSpawners*0.5)+8.25)/8.25);
             X_LEFT = -5.5;
             X_RIGHT = 5.5;
-            Y_BOTTOM = -4.125;
-            Y_TOP = 4.125;
+            Y_BOTTOM = -4.125-(numberOfSpawners*0.25);
+            Y_TOP = 4.125+(numberOfSpawners*0.25);
         } else if (window.innerWidth > 1900) {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 0) {
@@ -1974,11 +1973,11 @@
                 }
             });
             canvas.width = 1000;
-            canvas.height = 750;
+            canvas.height = 750*(((numberOfSpawners*0.5)+7.5)/7.5);
             X_LEFT = -5;
             X_RIGHT = 5;
-            Y_BOTTOM = -3.75;
-            Y_TOP = 3.75;
+            Y_BOTTOM = -3.75-(numberOfSpawners*0.25);
+            Y_TOP = 3.75+(numberOfSpawners*0.25);
         } else if (window.innerWidth > 1800) {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 0) {
@@ -1986,11 +1985,11 @@
                 }
             });
             canvas.width = 900;
-            canvas.height = 675;
+            canvas.height = 675*(((numberOfSpawners*0.5)+6.75)/6.75);
             X_LEFT = -4.5;
             X_RIGHT = 4.5;
-            Y_BOTTOM = -3.375;
-            Y_TOP = 3.375;
+            Y_BOTTOM = -3.375-(numberOfSpawners*0.25);
+            Y_TOP = 3.375+(numberOfSpawners*0.25);
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 0) {
@@ -1998,11 +1997,11 @@
                 }
             });
             canvas.width = 800;
-            canvas.height = 600;
+            canvas.height = 600*(((numberOfSpawners*0.5)+6)/6);
             X_LEFT = -4;
             X_RIGHT = 4;
-            Y_BOTTOM = -3;
-            Y_TOP = 3;
+            Y_BOTTOM = -3-(numberOfSpawners*0.25);
+            Y_TOP = 3+(numberOfSpawners*0.25);
         }   
     }
     
