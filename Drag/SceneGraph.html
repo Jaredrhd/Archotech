@@ -108,8 +108,8 @@
             }
             if (updateSpawners == true) {
                 updateSpawners = false;
-                resizeCanvas();
                 updateLogicGateSpawners();
+                resizeCanvas();
             }
         }
     
@@ -1809,7 +1809,7 @@
     }
 
     function updateLogicGateSpawners() {
-        var logicGateRestrictionsCounter = 1;
+        // var logicGateRestrictionsCounter = 1;
         var removingCounter = [];
         //I'm removing items from an array as I'm looping through it, what was I thinking.
         world.subobjects.forEach(function(item, index){
@@ -1824,15 +1824,16 @@
             world.subobjects.splice(removingCounter[i]-i, 1);
         }
 
-        endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
-            if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
-                return true;;
-            } 
-        });
+        // endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
+            // if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
+                // return true;;
+            // } 
+        // });
         if (logicGateRestrictions[0] == true) {
-            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            // var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(bufferGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
@@ -1841,9 +1842,10 @@
             });
         }
         if (logicGateRestrictions[1] == true) {
-            var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(notGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === notGate) {
@@ -1852,9 +1854,10 @@
             });
         }
         if (logicGateRestrictions[2] == true) {
-            var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(andGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === andGate) {
@@ -1863,9 +1866,10 @@
             });
         }
         if (logicGateRestrictions[3] == true) {
-            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(nandGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === nandGate) {
@@ -1874,9 +1878,10 @@
             });
         }
         if (logicGateRestrictions[4] == true) {
-            var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(orGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === orGate) {
@@ -1885,9 +1890,10 @@
             });
         }
         if (logicGateRestrictions[5] == true) {
-            var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(norGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === norGate) {
@@ -1896,9 +1902,10 @@
             });
         }
         if (logicGateRestrictions[6] == true) {
-            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(xorGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xorGate) {
@@ -1907,9 +1914,10 @@
             });
         }
         if (logicGateRestrictions[7] == true) {
-            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(xnorGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xnorGate) {
