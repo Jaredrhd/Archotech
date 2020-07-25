@@ -2465,14 +2465,18 @@
     var startNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     startNode.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
         g.stroke();
     }
 
     var endNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     endNode.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
         g.stroke();
     }
 
@@ -2525,6 +2529,16 @@
         g.lineTo(0,1);
         g.closePath();
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.fill();                            
+        g.stroke();
     }
 
     var notGate = new SceneGraphNode(); // Stroked triangle, two line segments and a stroked circle. One input, one output.
@@ -2555,6 +2569,16 @@
         g.lineTo(0.5,0);
         g.lineTo(0,1);
         g.closePath();
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.fill();                            
         g.stroke();
     }
 
@@ -2592,6 +2616,20 @@
         g.moveTo(0.5, -0.5);
         g.lineTo(0, -0.5);
         g.lineTo(0, 0.51);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0.51, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.5);
+        g.lineTo(0.51, 0.5);
+        g.fill();
+        g.stroke();
+        g.beginPath();
+        g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        g.fill();
         g.stroke();
     }
 
@@ -2637,6 +2675,20 @@
         g.lineTo(0, -0.5);
         g.lineTo(0, 0.51);
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0.51, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.5);
+        g.lineTo(0.51, 0.5);
+        g.fill();
+        g.stroke();
+        g.beginPath();
+        g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        g.fill();
+        g.stroke();
     }
 
     var orGate = new SceneGraphNode(); // Three bezier curves and three line segments. Two inputs, one output.
@@ -2660,6 +2712,17 @@
         g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
         g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
 
@@ -2692,6 +2755,17 @@
         g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
+        g.stroke();
     }
 
     var xorGate = new SceneGraphNode(); // Four bezier curves and three line segments. Two inputs, one output.
@@ -2717,6 +2791,17 @@
         g.closePath();
         g.moveTo(-0.1, -0.5);
         g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
 
@@ -2750,6 +2835,17 @@
         g.closePath();
         g.moveTo(-0.1, -0.5);
         g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
     
