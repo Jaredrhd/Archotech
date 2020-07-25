@@ -5,6 +5,13 @@ const nodeValueInput = document.getElementById("node-value");
 const randNodeValueCheckbox = document.getElementById("random-node-value");
 const addRootButton = document.getElementById("add-root");
 const removeNodeButton = document.getElementById("remove-node");
+var curatedData = document.getElementById("curated_data");
+
+var questionTypes = {
+    TRAVERSAL: 1,
+    BST: 2
+}
+
 /** The list of BST values shown to the student */
 const bstValueList = document.getElementById("bst-values");
 
@@ -110,9 +117,24 @@ function addRoot() {
 
     addRootButton.style.display = "none";
 
+    performTraversal();
+
     // performTraversal("in");
     // performTraversal("pre");
     // performTraversal("post");
+}
+
+function performTraversal() {
+    if(QuestionManager.currQuestion.qTypeName === "traversal") {
+        traversalQuestion.tree = tree;
+        if(!traversalQuestion.tree) return;
+    
+            if(traversalQuestion.preOrderCheckbox.checked) {
+                tree.preOrderTraversal(tree.root);
+                curatedData.value = tree.preOrder;
+                tree.preOrder = "";
+            }
+    }
 }
 
 function removeNodeAndChildren() {
@@ -193,10 +215,11 @@ function onBoardClick(event) {
         if(board.cellX === 0 || board.cellX === board.columns - 1 || board.cellY === board.rows - 1) {
             resizeBoard();
         }
+
+        if(QuestionManager.currQuestion.qTypeName === "traversal") {
+            performTraversal();
+        }
     }
-    // performTraversal("in");
-    // performTraversal("pre");
-    // performTraversal("post");
 }
 
 function onBoardHover(event) {
@@ -244,29 +267,10 @@ function getNewNodeValue() {
     return newNodeValue;
 }
 
-function performTraversal(type) {
-    if(type == "in") {
-        tree.inOrderTraversal(tree.root);
-        console.clear();
-        console.log("IN-ORDER:" + tree.inOrder);
-        tree.inOrder = "";
-    }
-    if(type == "pre") {
-        tree.preOrderTraversal(tree.root);
-        console.clear();
-        console.log("PRE-ORDER:" + tree.preOrder);
-        tree.preOrder = "";
-    }
-    if(type == "post") {
-        tree.postOrderTraversal(tree.root);
-        console.clear();
-        console.log("POST-ORDER:" + tree.postOrder);
-        tree.postOrder = "";
-    }
-}
-
 /** Dynamically resize the board if a cell is made on any edge */
 function resizeBoard() {
+    if(ROWS == 19) return;
+
     ROWS += 2;
     COLS += 2;
 

@@ -100,7 +100,7 @@ class Tree {
 
     inOrderTraversal(node) {
         if(!node) return;
-    
+
         this.inOrderTraversal(node.children.leftChild);
         this.inOrder += node.value + " ";
         this.inOrderTraversal(node.children.rightChild);

@@ -39,6 +39,7 @@ class qtype_trees_renderer extends qtype_renderer {
             question_display_options $options) {
 
         $question = $qa->get_question();
+        $answer = $qa->get_last_qt_var('answer');
 
         $questiontext = $question->format_questiontext($qa);
         

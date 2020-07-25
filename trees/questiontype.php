@@ -40,6 +40,10 @@ require_once($CFG->dirroot . '/question/type/trees/question.php');
  */
 class qtype_trees extends question_type {
 
+    public function extra_question_fields() {
+        return array('qtype_trees_options', 'curated_data');
+    }
+
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
