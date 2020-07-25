@@ -1970,7 +1970,62 @@
         draggableCanvasObject.dragOutputNodeWireButIfNoneDragLogicGate();
 
         if (sandboxMode) {
-            
+            let spawnersToCompareAgainst = ["bufferGate", "notGate", "andGate", "nandGate", "orGate", "norGate", "xorGate", "xnorGate", "startNode", "endNode"];
+            spawnersToCompareAgainst.forEach(function(item, index) {
+                let tempSpawner = item;
+                let isPresent = false;
+                presentSpawners.forEach(function(item, index) {
+                    if (tempSpawner == item) {
+                        isPresent = true;
+                    }
+                });
+                if (!isPresent) {
+                    switch(item) {
+                        case "bufferGate":
+                            var loadedObject = new TransformedObject(bufferGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "notGate":
+                            var loadedObject = new TransformedObject(notGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "andGate":
+                            var loadedObject = new TransformedObject(andGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "nandGate":
+                            var loadedObject = new TransformedObject(nandGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "orGate":
+                            var loadedObject = new TransformedObject(orGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "norGate":
+                            var loadedObject = new TransformedObject(norGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "xorGate":
+                            var loadedObject = new TransformedObject(xorGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "xnorGate":
+                            var loadedObject = new TransformedObject(xnorGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "startNode":
+                            var loadedObject = new TransformedObject(startNode, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "endNode":
+                            var loadedObject = new TransformedObject(endNode, 0);
+                            world.add(loadedObject);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
         }
         isLoading = false;
     }
@@ -2479,7 +2534,9 @@
     var node = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     node.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
         g.stroke();
     }
     var startNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
