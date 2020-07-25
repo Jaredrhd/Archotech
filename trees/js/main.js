@@ -94,7 +94,7 @@ function randNodeValueChecked() {
 function addRoot() {
     let newNodeValue;
 
-    if(QuestionManager.currQuestion.qTypeName === "bst") {
+    if(QuestionManager.currQuestion === bstQuestion) {
         newNodeValue = nodeValueInput.value;
         nodeValueInput.value = bstQuestion.getNextNodeValue();
     }
@@ -113,7 +113,7 @@ function addRoot() {
 
     addRootButton.style.display = "none";
 
-    if(QuestionManager.currQuestion.qTypeName === "traversal") {
+    if(QuestionManager.currQuestion === traversalQuestion) {
         traversalQuestion.performTraversal();
     }
 }
@@ -172,7 +172,7 @@ function onBoardClick(event) {
         if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
 
         let newNodeValue;
-        if(QuestionManager.currQuestion.qTypeName === "bst") {
+        if(QuestionManager.currQuestion === bstQuestion) {
             newNodeValue = nodeValueInput.value;
             nodeValueInput.value = bstQuestion.getNextNodeValue();
         }
@@ -198,7 +198,7 @@ function onBoardClick(event) {
             resizeBoard();
         }
 
-        if(QuestionManager.currQuestion.qTypeName === "traversal") {
+        if(QuestionManager.currQuestion === traversalQuestion) {
             traversalQuestion.performTraversal();
         }
     }

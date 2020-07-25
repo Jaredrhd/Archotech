@@ -119,8 +119,8 @@ class Tree {
     preOrderTraversal(node) {
         if(!node) return;
         
-        this.preOrder += node.value;
-        addDelimeter(this.preOrder);
+        this.preOrder += node.value + this.addDelimeter(this.preOrder);
+        //this.addDelimeter(this.preOrder);
 
         this.preOrderTraversal(node.children.leftChild);
         this.preOrderTraversal(node.children.rightChild);
@@ -131,8 +131,8 @@ class Tree {
 
         this.inOrderTraversal(node.children.leftChild);
 
-        this.inOrder += node.value;
-        addDelimeter(this.inOrder);
+        this.inOrder += node.value + this.addDelimeter(this.inOrder);
+        //this.addDelimeter(this.inOrder);
 
         this.inOrderTraversal(node.children.rightChild);
     }
@@ -143,14 +143,22 @@ class Tree {
         this.postOrderTraversal(node.children.leftChild);
         this.postOrderTraversal(node.children.rightChild);
 
-        this.postOrder += node.value;
-        addDelimeter(this.postOrder);
+        this.postOrder += node.value + this.addDelimeter(this.postOrder);
     }
 
     addDelimeter(string) {
-        if(string.split(",").length < this.numNodes) {
-            string += ",";
+        let delimeter = "";
+
+        if(!string && this.numNodes > 1) { // This accounts for adding at least one non-empty delimeter so that if there is more than one node, the second condition can be checked correctly
+            delimeter = ",";
         }
+        else {
+            if(string.split(",").length < this.numNodes) { // Not the last node so add non-empty delimeter
+                delimeter = ",";
+            }
+        }
+
+        return delimeter;
     }
 
     /** TESTING */

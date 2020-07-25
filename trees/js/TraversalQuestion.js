@@ -32,9 +32,12 @@ class TraversalQuestion {
     }
 
     updateQuestionType() {
+        if(QuestionManager.currQuestion === bstQuestion) {
+            bstValueList.style.display = "none";
+        }
+
         QuestionManager.currQuestion = this;
 
-        nodeValueInput = "none";
         nodeValueInput.disabled = false;
         nodeValueInput.value = "";
         nodeValueInput.style.color = "#000000";
@@ -43,14 +46,27 @@ class TraversalQuestion {
     }
 
     performTraversal() {
-        // traversalQuestion.tree = tree;
-        // if(!traversalQuestion.tree) return;
-    
-        //     if(traversalQuestion.preOrderCheckbox.checked) {
-        //         tree.preOrderTraversal(tree.root);
-        //         console.log(tree.preOrder);
-        //         curatedData.value = tree.preOrder;
-        //         tree.preOrder = "";
-        // }
+        if(!tree) return;
+
+        if(this.preOrderCheckbox.checked) {
+            tree.preOrderTraversal(tree.root);
+            console.log(tree.preOrder);
+            // curatedData.value = tree.preOrder;
+            tree.preOrder = "";
+        }
+
+        if(this.inOrderCheckbox.checked) {
+            tree.inOrderTraversal(tree.root);
+            console.log(tree.inOrder);
+            // curatedData.value = tree.preOrder;
+            tree.inOrder = "";
+        }
+
+        if(this.postOrderCheckbox.checked) {
+            tree.postOrderTraversal(tree.root);
+            console.log(tree.postOrder);
+            // curatedData.value = tree.preOrder;
+            tree.postOrder = "";
+        }
     }
 }
