@@ -1,31 +1,27 @@
 onload = init;
 
 /** HTML ELEMENTS */
-const nodeValueInput = document.getElementById("node-value");
-const randNodeValueCheckbox = document.getElementById("random-node-value");
-const addRootButton = document.getElementById("add-root");
-const removeNodeButton = document.getElementById("remove-node");
+var nodeValueInput = document.getElementById("node-value");
+var randNodeValueCheckbox = document.getElementById("random-node-value");
+var addRootButton = document.getElementById("add-root");
+var removeNodeButton = document.getElementById("remove-node");
+
 var curatedData = document.getElementById("curated_data");
 
-var questionTypes = {
-    TRAVERSAL: 1,
-    BST: 2
-}
-
 /** The list of BST values shown to the student */
-const bstValueList = document.getElementById("bst-values");
+var bstValueList = document.getElementById("bst-values");
 
-let canvas, context, board;
-let bstQuestion, traversalQuestion;
+var canvas, context, board;
+var bstQuestion, traversalQuestion;
 
-let ROWS = 13;
-let COLS = 13;
+var ROWS = 13;
+var COLS = 13;
 
 let tree = null;
 let selectedNode = null;
 
-const MAX_NODE_VALUE = 99;
-const MIN_NODE_VALUE = 0;
+var MAX_NODE_VALUE = 99;
+var MIN_NODE_VALUE = 0;
 
 /** Boolean indicating whether a new node's value should be taken from user input or randomised */
 let randNodeValue = false;
@@ -41,10 +37,10 @@ function init() {
     }
 
     context = canvas.getContext("2d");
-    board = new Board(canvas, context, ROWS, COLS);
+    board = new Board();
 
-    bstQuestion = new BSTQuestion(bstValueList, MIN_NODE_VALUE, MAX_NODE_VALUE, nodeValueInput, randNodeValueCheckbox);
-    traversalQuestion = new TraversalQuestion(nodeValueInput, randNodeValueCheckbox);
+    bstQuestion = new BSTQuestion();
+    traversalQuestion = new TraversalQuestion();
 
     QuestionManager.addQuestion(bstQuestion);
     QuestionManager.addQuestion(traversalQuestion);
@@ -60,10 +56,10 @@ function redrawCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     /** Redraw the tree */
-    for(let i = 0; i < board.rows; i++) {
-        for(let j = 0; j < board.columns; j++) {
+    for(let i = 0; i < ROWS; i++) {
+        for(let j = 0; j < COLS; j++) {
             if(typeof tree.nodes[i][j] !== "undefined") {
-                tree.nodes[i][j].draw(board, tree.nodes[i][j].parent, tree.nodes[i][j].cellCoords.x, tree.nodes[i][j].cellCoords.y);
+                tree.nodes[i][j].draw(tree.nodes[i][j].parent, tree.nodes[i][j].cellCoords.x, tree.nodes[i][j].cellCoords.y);
             }
         }
     }
@@ -117,23 +113,8 @@ function addRoot() {
 
     addRootButton.style.display = "none";
 
-    performTraversal();
-
-    // performTraversal("in");
-    // performTraversal("pre");
-    // performTraversal("post");
-}
-
-function performTraversal() {
     if(QuestionManager.currQuestion.qTypeName === "traversal") {
-        traversalQuestion.tree = tree;
-        if(!traversalQuestion.tree) return;
-    
-            if(traversalQuestion.preOrderCheckbox.checked) {
-                tree.preOrderTraversal(tree.root);
-                curatedData.value = tree.preOrder;
-                tree.preOrder = "";
-            }
+        traversalQuestion.performTraversal();
     }
 }
 
@@ -204,20 +185,21 @@ function onBoardClick(event) {
         if(board.cellX < selectedNode.cellCoords.x) { // Adding a left child
             if(selectedNode.children.leftChild) return; // Parent already has a left child
 
-            tree.addChild(selectedNode, board, "left", Number(newNodeValue), board.cellX, board.cellY);
+            tree.addChild(selectedNode, "left", Number(newNodeValue), board.cellX, board.cellY);
         }
         else { // Adding a right child
             if(selectedNode.children.rightChild) return; // Parent already has a right child
 
-            tree.addChild(selectedNode, board, "right", Number(newNodeValue), board.cellX, board.cellY);
+            tree.addChild(selectedNode, "right", Number(newNodeValue), board.cellX, board.cellY);
         }
 
-        if(board.cellX === 0 || board.cellX === board.columns - 1 || board.cellY === board.rows - 1) {
+        /** RESIZING BOARD */
+        if(board.cellX === 0 || board.cellX === COLS - 1 || board.cellY === ROWS - 1) {
             resizeBoard();
         }
 
         if(QuestionManager.currQuestion.qTypeName === "traversal") {
-            performTraversal();
+            traversalQuestion.performTraversal();
         }
     }
 }
@@ -269,13 +251,13 @@ function getNewNodeValue() {
 
 /** Dynamically resize the board if a cell is made on any edge */
 function resizeBoard() {
-    if(ROWS == 19) return;
+    if(ROWS === 19) return; // Set max on number of resizes
 
     ROWS += 2;
     COLS += 2;
 
-    board = new Board(canvas, context, ROWS, COLS);
+    board = new Board();
 
-    tree.remake(board);
+    tree.remake();
     redrawCanvas();
 }

@@ -1,33 +1,13 @@
 class Board {
-    constructor(canvas, context, rows, columns) {
-        this._canvas = canvas;
-        this._context = context;
-        this._rows = rows;
-        this._columns = columns;
-        this._cellWidth = canvas.width / columns;
-        this._cellHeight = canvas.height / rows;
+    constructor() {
+        this._cellWidth = canvas.width / COLS;
+        this._cellHeight = canvas.height / ROWS;
         this._mouseX;
         this._mouseY;
         this._cellX;
         this._cellY;
         this._selectedBoardCoords = {x: null, y: null};
         this._canvasPixels;
-    }
-
-    get canvas() {
-        return this._canvas;
-    }
-
-    get context() {
-        return this._context;
-    }
-
-    get rows() {
-        return this._rows;
-    }
-
-    get columns() { 
-        return this._columns;
     }
 
     get cellWidth() {
@@ -50,47 +30,59 @@ class Board {
         return this._selectedBoardCoords;
     }
 
+    set cellX(value) {
+        this._cellX = value;
+    }
+
+    set cellY(value) {
+        this._cellY = value;
+    }
+
     drawGrid() {
-        for(let i = 1; i < this._rows; i++) {
-            this._context.save();
-            this._context.lineWidth = 2;
-            this._context.globalAlpha = 0.2
-            this._context.setLineDash([2, 3]);
-            this._context.beginPath();
-            this._context.moveTo(0, this._cellHeight * i);
-            this._context.lineTo(this._canvas.width, this._cellHeight * i);
-            this._context.stroke();
-            this._context.restore();
+        for(let i = 1; i < ROWS; i++) {
+            context.save();
+
+            context.lineWidth = 2;
+            context.globalAlpha = 0.2
+            context.setLineDash([2, 3]);
+            context.beginPath();
+            context.moveTo(0, this.cellHeight * i);
+            context.lineTo(canvas.width, this.cellHeight * i);
+            context.stroke();
+
+            context.restore();
         }
 
-        for(let j = 1; j < this._columns; j++) {
-            this._context.save();
-            this._context.lineWidth = 2;
-            this._context.globalAlpha = 0.2
-            this._context.setLineDash([2, 3]);
-            this._context.beginPath();
-            this._context.moveTo(this._cellWidth * j, 0);
-            this._context.lineTo(this._cellWidth * j, this._canvas.height);
-            this._context.stroke();
-            this._context.restore();
+        for(let j = 1; j < COLS; j++) {
+            context.save();
+
+            context.lineWidth = 2;
+            context.globalAlpha = 0.2
+            context.setLineDash([2, 3]);
+            context.beginPath();
+            context.moveTo(this.cellWidth * j, 0);
+            context.lineTo(this.cellWidth * j, canvas.height);
+            context.stroke();
+
+            context.restore();
         }
     }
 
     cellToBoardCoords(cellX, cellY) {
-        return {x: (cellX * this._cellWidth) + this._cellWidth * 0.5, 
-                    y: (cellY * this._cellHeight) + this._cellHeight * 0.5};
+        return {x: (cellX * this.cellWidth) + this.cellWidth * 0.5, 
+                    y: (cellY * this.cellHeight) + this.cellHeight * 0.5};
     }
 
     boardCoordsFromMouse(event) {
-        this._canvasPixels = this._canvas.getBoundingClientRect(); // Size of canvas in CSS pixels
+        this._canvasPixels = canvas.getBoundingClientRect(); // Size of canvas in CSS pixels
         
         this._mouseX = event.clientX - this._canvasPixels.left;
         this._mouseY = event.clientY - this._canvasPixels.top;
 
-        this._cellX = Math.floor(this._mouseX / this._cellWidth);
-        this._cellY = Math.floor(this._mouseY / this._cellHeight);
+        this.cellX = Math.floor(this._mouseX / this.cellWidth);
+        this.cellY = Math.floor(this._mouseY / this.cellHeight);
 
-        this._selectedBoardCoords.x = (this._cellX * this._cellWidth) + this._cellWidth * 0.5;
-        this._selectedBoardCoords.y = (this._cellY * this._cellHeight) + this._cellHeight * 0.5;
+        this.selectedBoardCoords.x = (this.cellX * this.cellWidth) + this.cellWidth * 0.5;
+        this.selectedBoardCoords.y = (this.cellY * this.cellHeight) + this.cellHeight * 0.5;
     }
 }
