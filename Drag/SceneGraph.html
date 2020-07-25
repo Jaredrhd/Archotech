@@ -38,6 +38,7 @@
     var logicGateRestrictions;
     var isLoading = false;
     var updateSpawners = false;
+    var lockCanvas = false;
     var canvasObjectsScale = 1;
     var numberOfSpawners;
     var browserDimensions = {
@@ -881,8 +882,7 @@
                 this.yBoundry = [Y_BOTTOM, Y_TOP];
                 this.isMouseWithinCanvasBoundry = function() {
                     mousePos = getMousePos(canvas, event);
-                    //console.log(mousePos);
-                    return mousePos.x >= this.xBoundry[0] && mousePos.x <= this.xBoundry[1] && mousePos.y >= this.xBoundry[0] && mousePos.y <= this.yBoundry[1];
+                    return mousePos.x >= this.xBoundry[0] && mousePos.x <= this.xBoundry[1] && mousePos.y >= this.yBoundry[0] && mousePos.y <= this.yBoundry[1];
                 }
                 this.getCoordinates = function() {
                     return [this.translateX, this.translateY];
@@ -1051,7 +1051,7 @@
                         currentObject = item;
                     }
                 });
-                if (currentObject != null) {
+                if (currentObject != null && (!lockCanvas || (lockCanvas && isLoading))) {
                     //console.log("Object isn't null");
                     return getObject(currentObject);
                 } else {
@@ -2399,6 +2399,10 @@
             if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
                 world.subobjects[i].setTranslation(X_LEFT + 1, Y_TOP - counter * ((Y_TOP - Y_BOTTOM)/(numberOfSpawners + 1)));
                 ++counter;
+            }
+            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 6) {
+                world.subobjects[i].xBoundry = [X_LEFT, X_RIGHT];
+                world.subobjects[i].yBoundry = [Y_BOTTOM, Y_TOP];
             }
         }
     }
