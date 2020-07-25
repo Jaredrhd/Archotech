@@ -39,6 +39,7 @@
     var isLoading = false;
     var updateSpawners = false;
     var lockCanvas = false;
+    var sandboxMode = true;
     var canvasObjectsScale = 1;
     var numberOfSpawners;
     var browserDimensions = {
@@ -1337,6 +1338,7 @@
             logicGateRestrictions = [false, false, false, false, false, false, false, false];
         }
         isLoading = true;
+        let presentSpawners = [];
         loadData = dataToLoad.split("|");
         for (var i = 0; i < loadData.length; ++i) { 
             loadData[i] = loadData[i].split(":");
@@ -1392,42 +1394,52 @@
                 case 0:
                     switch(item[1]) {
                         case "bufferGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "notGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(notGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "andGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(andGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "nandGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(nandGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "orGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(orGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "norGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(norGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "xorGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(xorGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "xnorGate":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "startNode":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(startNode, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "endNode":
+                            presentSpawners.push(item[1]);
                             var loadedObject = new TransformedObject(endNode, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
@@ -1956,6 +1968,10 @@
         });
         //console.log("I should run once.");
         draggableCanvasObject.dragOutputNodeWireButIfNoneDragLogicGate();
+
+        if (sandboxMode) {
+            
+        }
         isLoading = false;
     }
 
