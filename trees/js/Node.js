@@ -50,6 +50,14 @@ class Node {
         this._parent = node;
     }
 
+    set value(value){ // value setter for editting node values
+        this._value = value;
+    }
+
+    set cellCoords(value){
+        this._cellCoords = value;
+    }
+
     /** Draws a node on the canvas */
     draw(board, parent, cellX, cellY) { 
         board.context.save();
