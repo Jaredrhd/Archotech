@@ -7,6 +7,7 @@ const addRootButton = document.getElementById("add-root");
 const removeNodeButton = document.getElementById("remove-node");
 /** The list of BST values shown to the student */
 const bstValueList = document.getElementById("bst-values");
+const editNodeValueButton = document.getElementById("edit-node");
 
 let canvas, context, board;
 let bstQuestion, traversalQuestion;
@@ -16,6 +17,9 @@ let COLS = 13;
 
 let tree = null;
 let selectedNode = null;
+
+let prevX, prevY;
+prevX, prevY = null;
 
 const MAX_NODE_VALUE = 99;
 const MIN_NODE_VALUE = 0;
@@ -70,11 +74,13 @@ function initListeners() {
     randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
     addRootButton.addEventListener("click", addRoot);
     removeNodeButton.addEventListener("click", removeNodeAndChildren);
+    editNodeValueButton.addEventListener("click", editNodeValue);
 
     /** CANVAS */
     canvas.addEventListener("click", onBoardClick);
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
+    canvas.addEventListener("mousedown", beginDrag);
 }
 
 function randNodeValueChecked() {
@@ -115,6 +121,21 @@ function addRoot() {
     // performTraversal("post");
 }
 
+function editNodeValue(){
+    let newNodeValue = getNewNodeValue();
+
+    if(!newNodeValue) return; // newNodeValue is null
+    
+    if(selectedNode !== null) { // There is a node selected
+        selectedNode.value = newNodeValue;
+    }
+    else {
+        return;
+    }
+
+    redrawCanvas();
+}
+
 function removeNodeAndChildren() {
     if(!selectedNode.isLeaf()) {
         if(confirm("This will remove all subtrees")) {
@@ -135,6 +156,13 @@ function removeNodeAndChildren() {
     redrawCanvas();
     selectedNode = null;
     removeNodeButton.style.display = "none";
+}
+
+function beginDrag(event){
+    board.boardCoordsFromMouse(event);
+    
+    prevX = board.cellX;
+    prevY = board.cellY;
 }
 
 function onBoardClick(event) {
@@ -161,6 +189,32 @@ function onBoardClick(event) {
         redrawCanvas();
 
         removeNodeButton.style.display = "block";
+    }
+    if(board.cellX != prevX || board.cellY != prevY){ // If dragging
+        
+        if(board.cellY <= selectedNode.parent.cellCoords.y) return; // don't let selected node be above or in line with parent
+        
+        if(prevX < selectedNode.parent.cellCoords.x){ // If node is a left child, keep it as a left child
+            if(board.cellX >= selectedNode.parent.cellCoords.x) return;
+        }
+        if(prevX > selectedNode.parent.cellCoords.x){ // If node is a right child, keep it as a right child
+            if(board.cellX <= selectedNode.parent.cellCoords.x) return;
+        }
+        if(prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y) return; //If dragging doesn't start at a node, but a node is selected
+        if(selectedNode.children.leftChild != null){ // selected node can't pass beyond left child
+            if(selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY) return; // Keep selected node's left child to its left
+        }
+        if(selectedNode.children.rightChild != null){ // selected node can't pass beyond right child
+            if(selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY) return; // Keep selected node's right child to its right
+        }
+        
+        selectedNode.cellCoords.x = board.cellX; // set new coordinates after dragging
+        selectedNode.cellCoords.y = board.cellY;
+        tree.nodes[board.cellY][board.cellX] = selectedNode; // Make the new transformed node selectable
+        tree.nodes[prevY][prevX] = undefined; // Set previous spot to say there is no node at that spot.
+        
+        redrawCanvas();
+        return;
     }
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
