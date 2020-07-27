@@ -68,6 +68,24 @@ class Board {
         }
     }
 
+    canGrow() {
+        return ROWS < 25 && COLS < 25;
+    }
+
+    canShrink() {
+        if(ROWS === 13 && COLS === 13) return false;
+
+        for(let i = 0; i < ROWS; i++) {
+            for(let j = 0; j < COLS; j++) {
+                if(j < 2 || j > COLS - 3 || i > ROWS - 4) {
+                    if(typeof tree.nodes[i][j] !== "undefined") return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     cellToBoardCoords(cellX, cellY) {
         return {x: (cellX * this.cellWidth) + this.cellWidth * 0.5, 
                     y: (cellY * this.cellHeight) + this.cellHeight * 0.5};

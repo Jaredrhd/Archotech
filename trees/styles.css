@@ -6,8 +6,6 @@
     justify-content: flex-start;
     align-items: center;
     align-content: space-around;
-    /* border: 2px solid black;
-    margin-left: 100px; */
     text-align: center;
 }
 
@@ -23,10 +21,6 @@
     font-size: large;
     font-weight: bold;
     text-align: center;
-}
-
-canvas {
-    /* pointer-events: none; */
 }
 
 

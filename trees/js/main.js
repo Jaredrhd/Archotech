@@ -135,7 +135,12 @@ function removeNodeAndChildren() {
         addRootButton.style.display = "block";
     }
 
+    while(board.canShrink()) {
+        resizeBoard("shrink");
+    }
+
     redrawCanvas();
+
     selectedNode = null;
     removeNodeButton.style.display = "none";
 }
@@ -193,9 +198,11 @@ function onBoardClick(event) {
             tree.addChild(selectedNode, "right", Number(newNodeValue), board.cellX, board.cellY);
         }
 
-        /** RESIZING BOARD */
+        /** INCREASE SIZE OF BOARD */
         if(board.cellX === 0 || board.cellX === COLS - 1 || board.cellY === ROWS - 1) {
-            resizeBoard();
+            if(board.canGrow()) {
+                resizeBoard("grow");
+            }
         }
 
         if(QuestionManager.currQuestion === traversalQuestion) {
@@ -250,14 +257,22 @@ function getNewNodeValue() {
 }
 
 /** Dynamically resize the board if a cell is made on any edge */
-function resizeBoard() {
-    if(ROWS === 19) return; // Set max on number of resizes
+function resizeBoard(direction) {
+    if(direction === "grow") {
+        ROWS += 2;
+        COLS += 2;
 
-    ROWS += 2;
-    COLS += 2;
+        board = new Board();
+        tree.remake(direction);
+    }
+    else if(direction === "shrink") {
+        tree.remake(direction);
 
-    board = new Board();
+        ROWS -= 2;
+        COLS -= 2;
 
-    tree.remake();
+        board = new Board();
+    }
+
     redrawCanvas();
 }

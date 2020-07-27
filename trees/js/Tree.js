@@ -101,6 +101,7 @@ class Tree {
             else {
                 selectedNode.parent.children.rightChild = null;
             }
+            this.numNodes--;
         }
         else {
             this.root = null;
@@ -120,7 +121,6 @@ class Tree {
         if(!node) return;
         
         this.preOrder += node.value + this.addDelimeter(this.preOrder);
-        //this.addDelimeter(this.preOrder);
 
         this.preOrderTraversal(node.children.leftChild);
         this.preOrderTraversal(node.children.rightChild);
@@ -132,7 +132,6 @@ class Tree {
         this.inOrderTraversal(node.children.leftChild);
 
         this.inOrder += node.value + this.addDelimeter(this.inOrder);
-        //this.addDelimeter(this.inOrder);
 
         this.inOrderTraversal(node.children.rightChild);
     }
@@ -180,19 +179,21 @@ class Tree {
         console.log("\n\n\n");
     }
 
-    remake() {
+    remake(direction) {
         /** Create temp matrix for nodes */
         let tempMatrix = new Array(ROWS);
         for(let i = 0; i < tempMatrix.length; i++) {
             tempMatrix[i] = new Array(COLS);
         }
+
+        let resizeFactor = direction === "grow" ? 1 : -1;
         
         /** Shift every node one unit over */
         for(let i = 0; i < tempMatrix.length - 2; i++) {
             for(let j = 0; j < tempMatrix[0].length - 2; j++) {
                 if(typeof this.nodes[i][j] !== "undefined") {
-                    tempMatrix[i][j+1] = this.nodes[i][j];
-                    this.nodes[i][j].cellCoords.x += 1;
+                    tempMatrix[i][j+resizeFactor] = this.nodes[i][j];
+                    this.nodes[i][j].cellCoords.x += resizeFactor;
                 }               
             }   
         }

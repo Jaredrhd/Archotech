@@ -8,6 +8,10 @@ class TraversalQuestion {
         this._inOrderCheckbox = document.querySelector('[traversal_type="inorder"]');
         this._postOrderCheckbox = document.querySelector('[traversal_type="postorder"]');
 
+        this._preOrderCheckbox.parentElement.style.marginLeft = "21px";
+        this._inOrderCheckbox.parentElement.style.marginLeft = "21px";
+        this._postOrderCheckbox.parentElement.style.marginLeft = "21px";
+
         this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
     }
 
@@ -50,21 +54,18 @@ class TraversalQuestion {
 
         if(this.preOrderCheckbox.checked) {
             tree.preOrderTraversal(tree.root);
-            console.log(tree.preOrder);
             // curatedData.value = tree.preOrder;
             tree.preOrder = "";
         }
 
         if(this.inOrderCheckbox.checked) {
             tree.inOrderTraversal(tree.root);
-            console.log(tree.inOrder);
             // curatedData.value = tree.preOrder;
             tree.inOrder = "";
         }
 
         if(this.postOrderCheckbox.checked) {
             tree.postOrderTraversal(tree.root);
-            console.log(tree.postOrder);
             // curatedData.value = tree.preOrder;
             tree.postOrder = "";
         }
