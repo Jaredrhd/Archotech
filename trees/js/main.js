@@ -18,8 +18,7 @@ let COLS = 13;
 let tree = null;
 let selectedNode = null;
 
-let prevX, prevY;
-prevX, prevY = null;
+let prevX, prevY, dragging = null;
 
 const MAX_NODE_VALUE = 99;
 const MIN_NODE_VALUE = 0;
@@ -161,6 +160,7 @@ function removeNodeAndChildren() {
 function beginDrag(event){
     board.boardCoordsFromMouse(event);
     
+    dragging = 1;
     prevX = board.cellX;
     prevY = board.cellY;
 }
@@ -170,6 +170,7 @@ function onBoardClick(event) {
 
     board.boardCoordsFromMouse(event); 
 
+    dragging = null;
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node at the selected cell
         if(tree.nodes[board.cellY][board.cellX] == selectedNode) { // If the current selected node is selected again
             selectedNode.selected = false;
@@ -192,22 +193,13 @@ function onBoardClick(event) {
     }
     if(board.cellX != prevX || board.cellY != prevY){ // If dragging
         
-        if(board.cellY <= selectedNode.parent.cellCoords.y) return; // don't let selected node be above or in line with parent
-        
-        if(prevX < selectedNode.parent.cellCoords.x){ // If node is a left child, keep it as a left child
-            if(board.cellX >= selectedNode.parent.cellCoords.x) return;
-        }
-        if(prevX > selectedNode.parent.cellCoords.x){ // If node is a right child, keep it as a right child
-            if(board.cellX <= selectedNode.parent.cellCoords.x) return;
-        }
-        if(prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y) return; //If dragging doesn't start at a node, but a node is selected
-        if(selectedNode.children.leftChild != null){ // selected node can't pass beyond left child
-            if(selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY) return; // Keep selected node's left child to its left
-        }
-        if(selectedNode.children.rightChild != null){ // selected node can't pass beyond right child
-            if(selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY) return; // Keep selected node's right child to its right
-        }
-        
+        if(board.cellY <= selectedNode.parent.cellCoords.y || // Cannot be dragged in line or above parent
+            (prevX < selectedNode.parent.cellCoords.x && board.cellX >= selectedNode.parent.cellCoords.x) || // Cannot be dragged across parent to become the opposing child
+            (prevX > selectedNode.parent.cellCoords.x && board.cellX <= selectedNode.parent.cellCoords.x) ||
+            (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) || // keep its children to the left or right and below
+            (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY)) ||
+            (prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y)) return; // If dragging doesn't start at a node
+            
         selectedNode.cellCoords.x = board.cellX; // set new coordinates after dragging
         selectedNode.cellCoords.y = board.cellY;
         tree.nodes[board.cellY][board.cellX] = selectedNode; // Make the new transformed node selectable
@@ -262,14 +254,28 @@ function onBoardHover(event) {
         document.body.style.cursor = "pointer";
     }
     else if(selectedNode) { // No node in the hovered cell but an existing node is selected
-        if(board.cellX == selectedNode.cellCoords.x || board.cellY <= selectedNode.cellCoords.y ||
-            (board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) ||
-                (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild())) { // Invalid cell to place new child
-
-                    document.body.style.cursor = "not-allowed";
+        if(dragging == 1) { // No node in the hovered cell but an existing node is selected
+            if(board.cellY <= selectedNode.parent.cellCoords.y || 
+                (prevX < selectedNode.parent.cellCoords.x && board.cellX >= selectedNode.parent.cellCoords.x) || 
+                (prevX > selectedNode.parent.cellCoords.x && board.cellX <= selectedNode.parent.cellCoords.x) ||
+                (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) ||
+                (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY))){
+                document.body.style.cursor = "not-allowed";
+            }
+            else{
+                document.body.style.cursor = "crosshair";
+            }
         }
-        else {
-            document.body.style.cursor = "crosshair";
+        else{
+            if(board.cellX == selectedNode.cellCoords.x || board.cellY <= selectedNode.cellCoords.y ||
+                (board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) ||
+                    (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild())) { // Invalid cell to place new child
+
+                        document.body.style.cursor = "not-allowed";
+            }
+            else {
+                document.body.style.cursor = "crosshair";
+            }
         }
     }
     else { // No node in the hovered cell and no node selected
