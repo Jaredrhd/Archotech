@@ -1,11 +1,16 @@
 class TraversalQuestion {
-    constructor(valueInput, randomInput) {
+    constructor() {
         QuestionManager.currQuestion = this; // Initially set as the current question (traversal is the default question type)
 
         this._qTypeName = "traversal";
         this._radioElement = document.querySelector('[qtype_name="traversal"]');
-        this._valueInput = valueInput;
-        this._randomInput = randomInput;
+        this._preOrderCheckbox = document.querySelector('[traversal_type="preorder"]');
+        this._inOrderCheckbox = document.querySelector('[traversal_type="inorder"]');
+        this._postOrderCheckbox = document.querySelector('[traversal_type="postorder"]');
+
+        this._preOrderCheckbox.parentElement.style.marginLeft = "21px";
+        this._inOrderCheckbox.parentElement.style.marginLeft = "21px";
+        this._postOrderCheckbox.parentElement.style.marginLeft = "21px";
 
         this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
     }
@@ -18,23 +23,51 @@ class TraversalQuestion {
         return this._radioElement;
     }
 
-    get valueInput() {
-        return this._valueInput;
+    get preOrderCheckbox() {
+        return this._preOrderCheckbox;
     }
 
-    get randomInput() {
-        return this._randomInput;
+    get inOrderCheckbox() {
+        return this._inOrderCheckbox;
+    }
+
+    get postOrderCheckbox() {
+        return this._postOrderCheckbox;
     }
 
     updateQuestionType() {
+        if(QuestionManager.currQuestion === bstQuestion) {
+            bstValueList.style.display = "none";
+        }
+
         QuestionManager.currQuestion = this;
 
-        QuestionManager.getBSTQuestion().valuesElement.style.display = "none";
+        nodeValueInput.disabled = false;
+        nodeValueInput.value = "";
+        nodeValueInput.style.color = "#000000";
 
-        this.valueInput.disabled = false;
-        this.randomInput.disabled = false;
-        this.valueInput.value = "";
-        this.valueInput.style.color = "#000000";
+        randNodeValueCheckbox.disabled = false;
     }
 
+    performTraversal() {
+        if(!tree) return;
+
+        if(this.preOrderCheckbox.checked) {
+            tree.preOrderTraversal(tree.root);
+            // curatedData.value = tree.preOrder;
+            tree.preOrder = "";
+        }
+
+        if(this.inOrderCheckbox.checked) {
+            tree.inOrderTraversal(tree.root);
+            // curatedData.value = tree.preOrder;
+            tree.inOrder = "";
+        }
+
+        if(this.postOrderCheckbox.checked) {
+            tree.postOrderTraversal(tree.root);
+            // curatedData.value = tree.preOrder;
+            tree.postOrder = "";
+        }
+    }
 }
