@@ -1,20 +1,30 @@
 onload = init;
 
 /** HTML ELEMENTS */
+{
 var nodeValueInput = document.getElementById("node-value");
 var randNodeValueCheckbox = document.getElementById("random-node-value");
 var addRootButton = document.getElementById("add-root");
 var removeNodeButton = document.getElementById("remove-node");
-
+var editNodeValueButton = document.getElementById("edit-node");
 var curatedData = document.getElementById("curated_data");
-
 /** The list of BST values shown to the student */
-const bstValueList = document.getElementById("bst-values");
-const editNodeValueButton = document.getElementById("edit-node");
 var bstValueList = document.getElementById("bst-values");
+var bstValueList = document.getElementById("bst-values");
+}
 
-var canvas, context, board;
-var bstQuestion, traversalQuestion;
+/** BOARD MISC */
+{
+var canvas;
+var context;
+var board;
+}
+
+/** QUESTIONS */
+{
+var bstQuestion;
+var traversalQuestion;
+}
 
 var ROWS = 13;
 var COLS = 13;
@@ -22,7 +32,8 @@ var COLS = 13;
 let tree = null;
 let selectedNode = null;
 
-let prevX, prevY, dragging = null;
+/** DRAGGING */
+var prevX, prevY, dragging = false;
 
 var MAX_NODE_VALUE = 99;
 var MIN_NODE_VALUE = 0;
@@ -84,6 +95,7 @@ function initListeners() {
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
     canvas.addEventListener("mousedown", beginDrag);
+    canvas.addEventListener("mouseup", exitDrag);
 }
 
 function randNodeValueChecked() {
@@ -129,12 +141,9 @@ function editNodeValue(){
 
     if(!newNodeValue) return; // newNodeValue is null
     
-    if(selectedNode !== null) { // There is a node selected
-        selectedNode.value = newNodeValue;
-    }
-    else {
-        return;
-    }
+    if(!selectedNode) return; // There is no node selected
+        
+    selectedNode.value = newNodeValue;
 
     redrawCanvas();
 }
@@ -169,9 +178,13 @@ function removeNodeAndChildren() {
 function beginDrag(event){
     board.boardCoordsFromMouse(event);
     
-    dragging = 1;
+    dragging = true;
     prevX = board.cellX;
     prevY = board.cellY;
+}
+
+function exitDrag() {
+    dragging = false;
 }
 
 function onBoardClick(event) {
@@ -179,7 +192,6 @@ function onBoardClick(event) {
 
     board.boardCoordsFromMouse(event); 
 
-    dragging = null;
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node at the selected cell
         if(tree.nodes[board.cellY][board.cellX] == selectedNode) { // If the current selected node is selected again
             selectedNode.selected = false;
@@ -200,22 +212,18 @@ function onBoardClick(event) {
 
         removeNodeButton.style.display = "block";
     }
-    if(board.cellX != prevX || board.cellY != prevY){ // If dragging
-        
-        if(board.cellY <= selectedNode.parent.cellCoords.y || // Cannot be dragged in line or above parent
-            (prevX < selectedNode.parent.cellCoords.x && board.cellX >= selectedNode.parent.cellCoords.x) || // Cannot be dragged across parent to become the opposing child
-            (prevX > selectedNode.parent.cellCoords.x && board.cellX <= selectedNode.parent.cellCoords.x) ||
-            (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) || // keep its children to the left or right and below
-            (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY)) ||
-            (prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y)) return; // If dragging doesn't start at a node
-            
-        selectedNode.cellCoords.x = board.cellX; // set new coordinates after dragging
-        selectedNode.cellCoords.y = board.cellY;
-        tree.nodes[board.cellY][board.cellX] = selectedNode; // Make the new transformed node selectable
-        tree.nodes[prevY][prevX] = undefined; // Set previous spot to say there is no node at that spot.
-        
-        redrawCanvas();
-        return;
+    else if(board.cellX != prevX || board.cellY != prevY){ // If dragging
+        if(canDrag()) {
+            selectedNode.cellCoords.x = board.cellX; // Set new coordinates after dragging
+            selectedNode.cellCoords.y = board.cellY;
+            tree.nodes[board.cellY][board.cellX] = selectedNode; // Make the new transformed node selectable
+            tree.nodes[prevY][prevX] = undefined; // Set previous spot to say there is no node at that spot
+
+            redrawCanvas();
+        }
+        else {
+            return;
+        }
     }
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
@@ -267,16 +275,12 @@ function onBoardHover(event) {
         document.body.style.cursor = "pointer";
     }
     else if(selectedNode) { // No node in the hovered cell but an existing node is selected
-        if(dragging == 1) { // No node in the hovered cell but an existing node is selected
-            if(board.cellY <= selectedNode.parent.cellCoords.y || 
-                (prevX < selectedNode.parent.cellCoords.x && board.cellX >= selectedNode.parent.cellCoords.x) || 
-                (prevX > selectedNode.parent.cellCoords.x && board.cellX <= selectedNode.parent.cellCoords.x) ||
-                (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) ||
-                (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY))){
-                document.body.style.cursor = "not-allowed";
+        if(dragging) { 
+            if(canDrag()) {
+                document.body.style.cursor = "move";
             }
-            else{
-                document.body.style.cursor = "crosshair";
+            else {
+                document.body.style.cursor = "not-allowed";
             }
         }
         else{
@@ -315,6 +319,22 @@ function getNewNodeValue() {
     }
 
     return newNodeValue;
+}
+
+/** Checks whether a node can be dragged to the required position on the board */
+function canDrag() {
+    if(!selectedNode) return false; // Cannot drag a node without selecting it
+
+    if(selectedNode.isRoot) return false; // Cannot drag the root
+
+    if(board.cellY <= selectedNode.parent.cellCoords.y || // Cannot be dragged in line or above parent
+        (prevX < selectedNode.parent.cellCoords.x && board.cellX >= selectedNode.parent.cellCoords.x) || // Cannot be dragged across parent to become the opposing child
+        (prevX > selectedNode.parent.cellCoords.x && board.cellX <= selectedNode.parent.cellCoords.x) ||
+        (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) || // Keep its children to the left or right and below
+        (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY)) ||
+        (prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y)) return false; // If dragging doesn't start at a node
+
+    return true;
 }
 
 /** Dynamically resize the board if a cell is made on any edge */

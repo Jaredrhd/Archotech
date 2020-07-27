@@ -56,6 +56,8 @@ class Node {
 
     set cellCoords(value){
         this._cellCoords = value;
+    }
+    
     set boardCoords(value) {
         this._boardCoords = value;
     }
