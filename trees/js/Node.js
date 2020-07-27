@@ -50,38 +50,46 @@ class Node {
         this._parent = node;
     }
 
+    set boardCoords(value) {
+        this._boardCoords = value;
+    }
+
+    set nodeRadius(value) {
+        this._nodeRadius = value;
+    }
+
     /** Draws a node on the canvas */
-    draw(board, parent, cellX, cellY) { 
-        board.context.save();
+    draw(parent, cellX, cellY) { 
+        context.save();
         
-        board.context.lineWidth = 2;
-        board.context.beginPath();
+        context.lineWidth = 2;
+        context.beginPath();
 
-        this._cellCoords.x = cellX;
-        this._cellCoords.y = cellY;
-        this._boardCoords = board.cellToBoardCoords(this._cellCoords.x, this._cellCoords.y);
-        this._nodeRadius = board.cellWidth * 0.45;
+        this.cellCoords.x = cellX;
+        this.cellCoords.y = cellY;
+        this.boardCoords = board.cellToBoardCoords(this.cellCoords.x, this.cellCoords.y);
+        this.nodeRadius = board.cellWidth * 0.45;
 
-        board.context.arc(this._boardCoords.x, this._boardCoords.y, this._nodeRadius, 0, 2*Math.PI); // Draw node circle
+        context.arc(this.boardCoords.x, this.boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node circle
 
         let fontSize = String(Math.floor(Math.min(board.cellWidth, board.cellHeight)) / 2) + "px";
 
-        board.context.font = fontSize + " Arial";
-        board.context.textAlign = "center"; 
-        board.context.textBaseline = "middle";
-        board.context.fillText(this._value, this._boardCoords.x, this._boardCoords.y); // Draw node value
+        context.font = fontSize + " Arial";
+        context.textAlign = "center"; 
+        context.textBaseline = "middle";
+        context.fillText(this.value, this.boardCoords.x, this.boardCoords.y); // Draw node value
 
-        if(this._selected) {
-            board.context.strokeStyle = "red";
+        if(this.selected) {
+            context.strokeStyle = "red";
         }
 
-        board.context.stroke();
+        context.stroke();
 
-        board.context.restore();
+        context.restore();
 
         if(parent !== null) { // Draw the connecting edge from the parent to the node
-            let deltaX = Math.abs(this._parent.cellCoords.x - this._cellCoords.x);
-            let deltaY = Math.abs(this._parent.cellCoords.y - this._cellCoords.y);
+            let deltaX = Math.abs(this.parent.cellCoords.x - this.cellCoords.x);
+            let deltaY = Math.abs(this.parent.cellCoords.y - this.cellCoords.y);
 
             /** Angles of the line from the centre of the child to the centre of the parent */
             let angleChild = Math.atan(deltaY / deltaX);
@@ -96,18 +104,18 @@ class Node {
                 angleParent = (90 * Math.PI / 180) - angleParent;
             }
 
-            board.context.save();
+            context.save();
 
-            board.context.lineWidth = 2;
-            board.context.beginPath();
+            context.lineWidth = 2;
+            context.beginPath();
 
             /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
-            board.context.moveTo(this._nodeRadius*Math.cos(angleParent) + this._parent.boardCoords.x, this._nodeRadius*Math.sin(angleParent) +  this._parent.boardCoords.y);
-            board.context.lineTo(this._nodeRadius*Math.cos(angleChild) + this._boardCoords.x, this._nodeRadius*Math.sin(angleChild) + this._boardCoords.y);
+            context.moveTo(this.nodeRadius*Math.cos(angleParent) + this.parent.boardCoords.x, this.nodeRadius*Math.sin(angleParent) +  this.parent.boardCoords.y);
+            context.lineTo(this.nodeRadius*Math.cos(angleChild) + this.boardCoords.x, this.nodeRadius*Math.sin(angleChild) + this.boardCoords.y);
 
-            board.context.stroke();
+            context.stroke();
 
-            board.context.restore();
+            context.restore();
         }
     }
 
@@ -123,14 +131,14 @@ class Node {
     }
 
     hasLeftChild() {
-        return this._children.leftChild !== null;
+        return this.children.leftChild !== null;
     }
 
     hasRightChild() {
-        return this._children.rightChild !== null;
+        return this.children.rightChild !== null;
     }
 
     isLeaf() {
-        return this._children.leftChild === null && this._children.rightChild === null;
+        return this.children.leftChild === null && this.children.rightChild === null;
     }
 }

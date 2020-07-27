@@ -1,16 +1,11 @@
 class BSTQuestion {
-    constructor(values, min, max, valueInput, randomInput) {
+    constructor() {
         this._qTypeName = "bst";
-        this._valuesElement = values;
         this._radioElement = document.querySelector('[qtype_name="bst"]');
         this._nodeAmountElement = document.getElementById("id_node_amount");
-        this._nodeAmount = Number(this.nodeAmountElement.value);
+        this._nodeAmount = Number(this._nodeAmountElement.value);
         this._bstValues = [];
         this._addedValues = [];
-        this._minValue = min;
-        this._maxValue = max;
-        this._valueInput = valueInput;
-        this._randomInput = randomInput;
 
         this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
         this._nodeAmountElement.addEventListener("input", this.updateBSTValues.bind(this));
@@ -18,10 +13,6 @@ class BSTQuestion {
 
     get qTypeName() {
         return this._qTypeName;
-    }
-
-    get valuesElement() {
-        return this._valuesElement;
     }
 
     get radioElement() {
@@ -44,28 +35,8 @@ class BSTQuestion {
         return this._addedValues;
     }
 
-    get minValue() {
-        return this._minValue;
-    }
-
-    get maxValue() {
-        return this._maxValue;
-    }
-
-    get valueInput() {
-        return this._valueInput;
-    }
-
-    get randomInput() {
-        return this._randomInput;
-    }
-
     set nodeAmount(value) {
         this._nodeAmount = value;
-    }
-
-    set valuesElement(value) {
-        this._valuesElement = value;
     }
 
     /** Called when 'Construct BST' radio button is checked */
@@ -73,35 +44,35 @@ class BSTQuestion {
         QuestionManager.currQuestion = this;
 
         this.updateBSTValues();
-        this.valuesElement.style.display = "block";
+        bstValueList.style.display = "block";
 
-        this.valueInput.disabled = true;
-        this.randomInput.disabled = true;
+        nodeValueInput.disabled = true;
+        randNodeValueCheckbox.disabled = true;
 
-        this.valueInput.value = this.getNextNodeValue();
-        this.valueInput.style.color = "#ff0000";
+        nodeValueInput.value = this.getNextNodeValue();
+        nodeValueInput.style.color = "#ff0000";
     }
 
     updateBSTValues() {
-        this.valuesElement.value = "";
+        bstValueList.value = "";
         this.bstValues.length = 0; // Reset the list of previous BST values
         this.addedValues.length = 0;
         this.nodeAmount = Number(this.nodeAmountElement.value);
 
-        if(this.nodeAmount > (this.maxValue - this.minValue)) return; // If number of requested nodes is greater than possible unique values
+        if(this.nodeAmount > (MAX_NODE_VALUE - MIN_NODE_VALUE)) return; // If number of requested nodes is greater than possible unique values
 
         for(let i = 0; i < this.nodeAmount; i++) {
-            let newValue = Math.floor(Math.random() * (this.maxValue - this.minValue) + this.minValue);
+            let newValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);
 
             while(this.bstValues.includes(newValue)) { // No duplicate values in BST
-                newValue = Math.floor(Math.random() * (this.maxValue - this.minValue) + this.minValue);
+                newValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);
             }
 
             this.bstValues.push(newValue);
-            this.valuesElement.value += newValue;
+            bstValueList.value += newValue;
             
             if(i !== this.nodeAmount - 1) {
-                this.valuesElement.value += ", ";
+                bstValueList.value += ", ";
             }
         }
     }

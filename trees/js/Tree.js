@@ -1,15 +1,17 @@
 class Tree {
-    constructor(rootValue, board) {
+    constructor(rootValue) {
         // Create matrix for nodes
-        this._nodes = new Array(board.rows);
+        this._nodes = new Array(ROWS);
         for(let i = 0; i < this._nodes.length; i++) {
-            this._nodes[i] = new Array(board.columns);
+            this._nodes[i] = new Array(COLS);
         }
 
         this._root = new Node(rootValue);
         this._root.parent = null;
-        this._root.draw(board, null, (board.columns - 1) * 0.5, 0); // board, parent, cellX, cellY
+        this._root.draw(null, (COLS - 1) * 0.5, 0); // board, parent, cellX, cellY
         this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+
+        this._numNodes = 1;
 
         this._inOrder = "";
         this._preOrder = "";
@@ -22,6 +24,10 @@ class Tree {
 
     get nodes() {
         return this._nodes;
+    }
+
+    get numNodes() {
+        return this._numNodes;
     }
 
     get inOrder() {
@@ -40,6 +46,14 @@ class Tree {
         this._root = value;
     }
 
+    set nodes(value) {
+        this._nodes = value;
+    }
+
+    set numNodes(value) {
+        this._numNodes = value;
+    }
+
     set inOrder(value) {
         this._inOrder = value;
     }
@@ -52,7 +66,7 @@ class Tree {
         this._postOrder = value;
     }
 
-    addChild(selectedNode, board, childType, childValue, childCellX, childCellY) {
+    addChild(selectedNode, childType, childValue, childCellX, childCellY) {
         let newChild;
 
         if(childType === "left") {
@@ -66,8 +80,10 @@ class Tree {
             newChild = selectedNode.children.rightChild;
         }
 
-        newChild.draw(board, selectedNode, childCellX, childCellY);
-        this._nodes[childCellY][childCellX] = newChild;
+        newChild.draw(selectedNode, childCellX, childCellY);
+        this.nodes[childCellY][childCellX] = newChild;
+
+        this.numNodes++;
     }
 
     removeNodeAndChildren(selectedNode) {
@@ -85,33 +101,39 @@ class Tree {
             else {
                 selectedNode.parent.children.rightChild = null;
             }
+            this.numNodes--;
         }
         else {
-            this._root = null;
+            this.root = null;
+            this.numNodes = 0;
         }
     }
 
-    setNewRoot(rootValue, board) {
-        this._root = new Node(rootValue);
-        this._root.parent = null;
-        this._root.draw(board, null, (board.columns - 1) * 0.5, 0); // board, parent, cellX, cellY
-        this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+    setNewRoot(rootValue) {
+        this.root = new Node(rootValue);
+        this.root.parent = null;
+        this.root.draw(null, (COLS - 1) * 0.5, 0); // board, parent, cellX, cellY
+        this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+        this.numNodes++;
     }
 
-    inOrderTraversal(node) {
-        if(!node) return;
-    
-        this.inOrderTraversal(node.children.leftChild);
-        this.inOrder += node.value + " ";
-        this.inOrderTraversal(node.children.rightChild);
-    }
-    
     preOrderTraversal(node) {
         if(!node) return;
-    
-        this.preOrder += node.value + " ";
+        
+        this.preOrder += node.value + this.addDelimeter(this.preOrder);
+
         this.preOrderTraversal(node.children.leftChild);
         this.preOrderTraversal(node.children.rightChild);
+    }
+    
+    inOrderTraversal(node) {
+        if(!node) return;
+
+        this.inOrderTraversal(node.children.leftChild);
+
+        this.inOrder += node.value + this.addDelimeter(this.inOrder);
+
+        this.inOrderTraversal(node.children.rightChild);
     }
     
     postOrderTraversal(node) {
@@ -119,14 +141,30 @@ class Tree {
     
         this.postOrderTraversal(node.children.leftChild);
         this.postOrderTraversal(node.children.rightChild);
-        this.postOrder += node.value + " ";
+
+        this.postOrder += node.value + this.addDelimeter(this.postOrder);
+    }
+
+    addDelimeter(string) {
+        let delimeter = "";
+
+        if(!string && this.numNodes > 1) { // This accounts for adding at least one non-empty delimeter so that if there is more than one node, the second condition can be checked correctly
+            delimeter = ",";
+        }
+        else {
+            if(string.split(",").length < this.numNodes) { // Not the last node so add non-empty delimeter
+                delimeter = ",";
+            }
+        }
+
+        return delimeter;
     }
 
     /** TESTING */
     printTree() {
         let tree = "";
-        for(let i = 0; i < board.rows; i++) {
-            for(let j = 0; j < board.columns; j++) {
+        for(let i = 0; i < ROWS; i++) {
+            for(let j = 0; j < COLS; j++) {
                 if(typeof this.nodes[i][j] !== "undefined") {
                     tree += this.nodes[i][j].value + " ";
                 } 
@@ -141,22 +179,24 @@ class Tree {
         console.log("\n\n\n");
     }
 
-    remake(board) {
+    remake(direction) {
         /** Create temp matrix for nodes */
-        let tempMatrix = new Array(board.rows);
+        let tempMatrix = new Array(ROWS);
         for(let i = 0; i < tempMatrix.length; i++) {
-            tempMatrix[i] = new Array(board.columns);
+            tempMatrix[i] = new Array(COLS);
         }
+
+        let resizeFactor = direction === "grow" ? 1 : -1;
         
         /** Shift every node one unit over */
         for(let i = 0; i < tempMatrix.length - 2; i++) {
             for(let j = 0; j < tempMatrix[0].length - 2; j++) {
-                if(typeof this._nodes[i][j] !== "undefined") {
-                    tempMatrix[i][j+1] = this._nodes[i][j];
-                    this._nodes[i][j].cellCoords.x += 1;
+                if(typeof this.nodes[i][j] !== "undefined") {
+                    tempMatrix[i][j+resizeFactor] = this.nodes[i][j];
+                    this.nodes[i][j].cellCoords.x += resizeFactor;
                 }               
             }   
         }
-        this._nodes = tempMatrix;
+        this.nodes = tempMatrix;
     }
 }
