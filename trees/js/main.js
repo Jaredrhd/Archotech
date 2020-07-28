@@ -219,7 +219,22 @@ function onBoardClick(event) {
             tree.nodes[board.cellY][board.cellX] = selectedNode; // Make the new transformed node selectable
             tree.nodes[prevY][prevX] = undefined; // Set previous spot to say there is no node at that spot
 
-            redrawCanvas();
+            if(board.cellX === 0 || board.cellX === COLS - 1 || board.cellY === ROWS - 1) {
+                if(board.canGrow()) {
+                    resizeBoard("grow");
+                }
+                else {
+                    redrawCanvas();
+                }
+            }
+            else if(board.canShrink()) {
+                while(board.canShrink()) {
+                    resizeBoard("shrink");
+                }
+            }
+            else {
+                redrawCanvas();
+            }
         }
         else {
             return;
