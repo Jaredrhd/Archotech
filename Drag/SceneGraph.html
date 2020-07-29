@@ -116,8 +116,7 @@
             }
         }
     
-        //Change it from checking for logicGateRestrictions existence to executing once at the start.
-        if (browserDimensions.x != window.innerWidth || browserDimensions.y != window.innerHeight || typeof logicGateRestrictions == "undefined") {
+        if (browserDimensions.x != window.innerWidth || browserDimensions.y != window.innerHeight) {
             resizeCanvas();
         }
 
