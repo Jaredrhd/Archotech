@@ -68,7 +68,6 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
-            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -327,7 +326,6 @@
                     this.scaleY = canvasObjectsScale * 1;
                     this.dragRadius = this.scaleX * 1.125;
                     this.hasCharge = false;
-                    this.previousCharge = this.hasCharge;
                     this.inputNodes = [];
                     this.outputNodes = [];
                     this.addInputNode = function(x, y){
@@ -368,17 +366,12 @@
                                     g.closePath();
                                     g.fill();                            
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case notGate:
@@ -401,17 +394,12 @@
                                     g.closePath();
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case andGate:
@@ -437,17 +425,12 @@
                                     g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case nandGate:
@@ -473,17 +456,12 @@
                                     g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case orGate:
@@ -506,17 +484,12 @@
                                     g.closePath();
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case norGate:
@@ -539,17 +512,12 @@
                                     g.closePath();
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case xorGate:
@@ -572,20 +540,12 @@
                                     g.closePath();
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        console.log("logicGate: " + this.owner.hasCharge);
-                                        console.log("InputNode 0: " + this.owner.inputNodes[0].hasCharge);
-                                        console.log("InputNode 1: " + this.owner.inputNodes[1].hasCharge);
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             case xnorGate:
@@ -608,17 +568,12 @@
                                     g.closePath();
                                     g.fill();
                                     g.stroke();
-                                    if (this.owner.previousCharge != this.owner.hasCharge || true) {
-                                        var tempLogicGate = this.owner;
-                                        this.owner.outputNodes.forEach(function(item, index){
-                                            if (item.connectedNode != "Not Connected") {
-                                                item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                            }
-                                        });
-                                        this.owner.previousCharge = this.owner.hasCharge;
-                                    } else {
-                                        this.owner.reevaluateCharge();
-                                    }
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
                                 }
                                 break;
                             default:
@@ -626,9 +581,7 @@
                         }
                         
                     }
-                    //Possibly fix bug here.
                     this.reevaluateCharge = function() {
-                        //var previousCharge = this.hasCharge;
                         var numberOfChargedInputNodes = 0;
                         let allInputNodesConnected = true;
                         this.inputNodes.forEach(function(item, index) {
@@ -637,75 +590,65 @@
                                 allInputNodesConnected = false;
                             }
                         });
-                        if (true) {
-                            switch (this.object) {
-                                case bufferGate:
-                                    if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case notGate:
-                                    if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case andGate:
-                                    if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case nandGate:
-                                    if (numberOfChargedInputNodes == 0 && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case orGate:
-                                    if (numberOfChargedInputNodes != 0 && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case norGate:
-                                    if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case xorGate:
-                                    if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                case xnorGate:
-                                    if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
-                                        this.hasCharge = true;
-                                    } else {
-                                        this.hasCharge = false;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-                            /*if (previousCharge != this.hasCharge) {
-                                var tempLogicGate = this;
-                                this.outputNodes.forEach(function(item, index){
-                                    if (item.connectedNode != "Not Connected") {
-                                        item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                    }
-                                });
-                            }*/
+                        switch (this.object) {
+                            case bufferGate:
+                                if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case notGate:
+                                if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case andGate:
+                                if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case nandGate:
+                                if (numberOfChargedInputNodes == 0 && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case orGate:
+                                if (numberOfChargedInputNodes != 0 && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case norGate:
+                                if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case xorGate:
+                                if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            case xnorGate:
+                                if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
+                                    this.hasCharge = true;
+                                } else {
+                                    this.hasCharge = false;
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
                     this.removeLogicGate = function() {
@@ -854,11 +797,7 @@
                             }
                         }
                         this.updateInputNodeCharge = function(charged) {
-                            //var previousCharge = this.hasCharge;
                             this.hasCharge = charged;
-                            /*if (previousCharge != this.hasCharge || true) {
-                                this.nodeOfObject.reevaluateCharge();
-                            }*/
                         }
                     }
                     this.getCoordinates = function() {
