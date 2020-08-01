@@ -39,8 +39,13 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
 
+        $mform->addElement('header', 'Gates', "Setup Question");
+
+        //Set question mode
+        $mform->addElement('radio', 'question_type', '', "Question Mode", 0, array());
+        $mform->addElement('radio', 'question_type', '', "Sandbox Mode", 1, array());
+        
         //Adds checkboxes for logic gates
-        $mform->addElement('header', 'Gates', "Enable/Disable Gates");
         $mform->addElement('advcheckbox', 'buffergate', "", "Buffer Gate", array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'notgate', "", "Not Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'andgate', "", "And Gate",  array('group' => 1), array(0, 1));
@@ -49,10 +54,20 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'norgate', "", "Nor Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'xorgate', "", "Xor Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
+
+        //Hide checkboxex if not question mode
+        $mform->hideIf('buffergate','question_type', "eq", 1);
+        $mform->hideIf('notgate','question_type', "eq", 1);
+        $mform->hideIf('andgate','question_type', "eq", 1);
+        $mform->hideIf('nandgate','question_type', "eq", 1);
+        $mform->hideIf('orgate','question_type', "eq", 1);
+        $mform->hideIf('norgate','question_type', "eq", 1);
+        $mform->hideIf('xorgate','question_type', "eq", 1);
+        $mform->hideIf('xnorgate','question_type', "eq", 1);
         //$this->add_checkbox_controller(1, NULL, NULL, 0);
 
         #The Numerical limits
-        $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount, disable the gate above to overide these values. Note this only affects the student.</p>');
+        $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount. Note this only affects the student.</p>');
         $mform->addElement('float', 'buffergateamount', "Buffer Gate Limit", array('value'=>0));
         $mform->addElement('float', 'notgateamount', "Not Gate Limit", array('value'=>0));
         $mform->addElement('float', 'andgateamount', "And Gate Limit", array('value'=>0));
@@ -62,8 +77,20 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('float', 'xorgateamount', "Xor Gate Limit", array('value'=>0));
         $mform->addElement('float', 'xnorgateamount', "Xnor Gate Limit", array('value'=>0));
 
+        //Hide numericals if not selected
+        $mform->hideIf('buffergateamount', 'buffergate');
+        $mform->hideIf('notgateamount', 'notgate');
+        $mform->hideIf('andgateamount', 'andgate');
+        $mform->hideIf('nandgateamount', 'nandgate');
+        $mform->hideIf('orgateamount', 'orgate');
+        $mform->hideIf('norgateamount', 'norgate');
+        $mform->hideIf('xorgateamount', 'xorgate');
+        $mform->hideIf('xnorgateamount', 'xnorgate');
+
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
+
+        //Add canvas
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
         $mform->addElement('hidden', 'curated_data','',array('id'=>'curated_data'));
 
