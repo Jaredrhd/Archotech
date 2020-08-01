@@ -57,7 +57,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'xorgate', "", "Xor Gate",  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
 
-        //Hide checkboxex if not question mode
+        //Hide checkboxes if not question mode
         $mform->hideIf('buffergate','questiontype', "eq", 1);
         $mform->hideIf('notgate','questiontype', "eq", 1);
         $mform->hideIf('andgate','questiontype', "eq", 1);
@@ -79,7 +79,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('float', 'xorgateamount', "Xor Gate Limit", array('value'=>0));
         $mform->addElement('float', 'xnorgateamount', "Xnor Gate Limit", array('value'=>0));
 
-        //Hide numericals if not selected
+        //Hide numerical values if not selected
         $mform->hideIf('buffergateamount', 'buffergate');
         $mform->hideIf('notgateamount', 'notgate');
         $mform->hideIf('andgateamount', 'andgate');
@@ -89,7 +89,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->hideIf('xorgateamount', 'xorgate');
         $mform->hideIf('xnorgateamount', 'xnorgate');
 
-        //Hide numericals if sandbox mode
+        //Hide numerical values if sandbox mode
         $mform->hideIf('buffergateamount','questiontype', "eq", 1);
         $mform->hideIf('notgateamount','questiontype', "eq", 1);
         $mform->hideIf('andgateamount','questiontype', "eq", 1);

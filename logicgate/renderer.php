@@ -122,7 +122,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Place answer at the calculated position
         //$result = substr_replace($result, $data, $position+7, 0);
 
-        //Insert the data at this pointt
+        //Insert the data at this point
         $result = str_replace("0:startNode:-3:2|0:endNode:-3:1.5|6:draggableCanvas:0:0", $data, $result);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
