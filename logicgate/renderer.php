@@ -76,8 +76,10 @@ class qtype_logicgate_renderer extends qtype_renderer
             //Set input field diabled and set tick or cross
             $feedbackimg = $this->feedback_image($fraction);
 
-            //Lock the canvas
-            $input = str_replace("var lockCanvas = false;","var lockCanvas = true;",$input);
+            //Lock the canvas if question mode
+            if($question->questiontype == "0"){
+                $input = str_replace("var lockCanvas = false;","var lockCanvas = true;",$input);
+            }
         }
 
         //Attach the tick or cross
