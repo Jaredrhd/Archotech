@@ -67,32 +67,32 @@ class qtype_logicgate extends question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
 
-        //Set up the data for renderer.php
-        $question->bufferGate =  $questiondata->options->andgate;
-        $question->notGate =  $questiondata->options->notgate;
-        $question->andGate =  $questiondata->options->andgate;
-        $question->nandGate =  $questiondata->options->nandgate;
-        $question->orGate =  $questiondata->options->orgate;
-        $question->norGate =  $questiondata->options->norgate;
-        $question->xorGate =  $questiondata->options->xorgate;
-        $question->xnorGate =  $questiondata->options->xnorgate;
-        $question->xnorGate =  $questiondata->options->xnorgate;
-
-        //Set value amounts
-        $question->bufferGateAmount =  ($questiondata->options->buffergateamount == 0) ? 1000 : $questiondata->options->buffergateamount;
-        $question->notGateAmount =  ($questiondata->options->notgateamount == 0) ? 1000 : $questiondata->options->notgateamount;
-        $question->andGateAmount =  ($questiondata->options->andgateamount == 0) ? 1000 : $questiondata->options->andgateamount;
-        $question->nandGateAmount =  ($questiondata->options->nandgateamount == 0) ? 1000 : $questiondata->options->nandgateamount;
-        $question->orGateamount =  ($questiondata->options->orgateamount == 0) ? 1000 :  $questiondata->options->orgateamount;
-        $question->norGateAmount =  ($questiondata->options->norgateamount == 0) ? 1000 : $questiondata->options->norgateamount;
-        $question->xorGateAmount =  ($questiondata->options->xorgateamount == 0) ? 1000 : $questiondata->options->xorgateamount;
-        $question->xnorGateAmount =  ($questiondata->options->xnorgateamount == 0) ? 1000 : $questiondata->options->xnorgateamount;
-
+        //Set question mode (0-question, 1-sandbox)
+        $question->questiontype  = $questiondata->options->questiontype;
+        
         //Pass curated data
         $question->curated_data = $questiondata->options->curated_data;
 
-        //Set question mode (0-question, 1-sandbox)
-        $question->questiontype  = $questiondata->options->questiontype;
+        //Set up the data for renderer.php
+        $question->bufferGate = ($question->questiontype == '1') ? 1 : $questiondata->options->buffergate;
+        $question->notGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->notgate;
+        $question->andGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->andgate;
+        $question->nandGate = ($question->questiontype == '1') ? 1 : $questiondata->options->nandgate;
+        $question->orGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->orgate;
+        $question->norGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->norgate;
+        $question->xorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xorgate;
+        $question->xnorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xnorgate;
+        $question->xnorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xnorgate;
+
+        //Set value amounts, unless it's sandbox, then set to 1000
+        $question->bufferGateAmount =  ($questiondata->options->buffergateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->buffergateamount;
+        $question->notGateAmount =  ($questiondata->options->notgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->notgateamount;
+        $question->andGateAmount =  ($questiondata->options->andgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->andgateamount;
+        $question->nandGateAmount =  ($questiondata->options->nandgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->nandgateamount;
+        $question->orGateamount =  ($questiondata->options->orgateamount == 0 || $question->questiontype == "1") ? 1000 :  $questiondata->options->orgateamount;
+        $question->norGateAmount =  ($questiondata->options->norgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->norgateamount;
+        $question->xorGateAmount =  ($questiondata->options->xorgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->xorgateamount;
+        $question->xnorGateAmount =  ($questiondata->options->xnorgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->xnorgateamount;
         
         //Set the answer
         $this->initialise_question_answers($question, $questiondata);
