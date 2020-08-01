@@ -46,7 +46,7 @@ class qtype_logicgate extends question_type {
         'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
          'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount',
          'nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount',
-         'curated_data','question_type');
+         'curated_data','questiontype');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -90,6 +90,9 @@ class qtype_logicgate extends question_type {
 
         //Pass curated data
         $question->curated_data = $questiondata->options->curated_data;
+
+        //Set question mode (0-question, 1-sandbox)
+        $question->questiontype  = $questiondata->options->questiontype;
         
         //Set the answer
         $this->initialise_question_answers($question, $questiondata);

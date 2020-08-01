@@ -41,9 +41,10 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
         $mform->addElement('header', 'Gates', "Setup Question");
 
-        //Set question mode
-        $mform->addElement('radio', 'question_type', '', "Question Mode", 0, array());
-        $mform->addElement('radio', 'question_type', '', "Sandbox Mode", 1, array());
+        //Set question mode 0-n
+        $mform->addElement('radio', 'questiontype', '', "Question Mode", 0, array());
+        $mform->addElement('radio', 'questiontype', '', "Sandbox Mode", 1, array());
+
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');
 
         //Adds checkboxes for logic gates
@@ -57,14 +58,14 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
 
         //Hide checkboxex if not question mode
-        $mform->hideIf('buffergate','question_type', "eq", 1);
-        $mform->hideIf('notgate','question_type', "eq", 1);
-        $mform->hideIf('andgate','question_type', "eq", 1);
-        $mform->hideIf('nandgate','question_type', "eq", 1);
-        $mform->hideIf('orgate','question_type', "eq", 1);
-        $mform->hideIf('norgate','question_type', "eq", 1);
-        $mform->hideIf('xorgate','question_type', "eq", 1);
-        $mform->hideIf('xnorgate','question_type', "eq", 1);
+        $mform->hideIf('buffergate','questiontype', "eq", 1);
+        $mform->hideIf('notgate','questiontype', "eq", 1);
+        $mform->hideIf('andgate','questiontype', "eq", 1);
+        $mform->hideIf('nandgate','questiontype', "eq", 1);
+        $mform->hideIf('orgate','questiontype', "eq", 1);
+        $mform->hideIf('norgate','questiontype', "eq", 1);
+        $mform->hideIf('xorgate','questiontype', "eq", 1);
+        $mform->hideIf('xnorgate','questiontype', "eq", 1);
         //$this->add_checkbox_controller(1, NULL, NULL, 0);
 
         #The Numerical limits
@@ -89,14 +90,14 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->hideIf('xnorgateamount', 'xnorgate');
 
         //Hide numericals if sandbox mode
-        $mform->hideIf('buffergateamount','question_type', "eq", 1);
-        $mform->hideIf('notgateamount','question_type', "eq", 1);
-        $mform->hideIf('andgateamount','question_type', "eq", 1);
-        $mform->hideIf('nandgateamount','question_type', "eq", 1);
-        $mform->hideIf('orgateamount','question_type', "eq", 1);
-        $mform->hideIf('norgateamount','question_type', "eq", 1);
-        $mform->hideIf('xorgateamount','question_type', "eq", 1);
-        $mform->hideIf('xnorgateamount','question_type', "eq", 1);
+        $mform->hideIf('buffergateamount','questiontype', "eq", 1);
+        $mform->hideIf('notgateamount','questiontype', "eq", 1);
+        $mform->hideIf('andgateamount','questiontype', "eq", 1);
+        $mform->hideIf('nandgateamount','questiontype', "eq", 1);
+        $mform->hideIf('orgateamount','questiontype', "eq", 1);
+        $mform->hideIf('norgateamount','questiontype', "eq", 1);
+        $mform->hideIf('xorgateamount','questiontype', "eq", 1);
+        $mform->hideIf('xnorgateamount','questiontype', "eq", 1);
 
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");

@@ -61,7 +61,6 @@ class qtype_logicgate_renderer extends qtype_renderer
             $inputattributes['readonly'] = 'readonly';
         }
 
-        
         //Get the file
         $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
         
@@ -96,6 +95,11 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Set data for passing to JS
         $result = $this->answerNameID($question,$currentanswer,$inputname,$result);
         $result = $this->restrictedGates($question,$result);
+
+        //Set sandbox mode
+        if($question->questiontype == "1"){
+            $result = str_replace("var sandboxMode = false;","var sandboxMode = true;",$input);
+        }
 
         //return result
         return $result;
