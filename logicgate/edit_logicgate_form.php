@@ -101,9 +101,20 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
-
+        //$mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
+        
         //Add canvas
-        $mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
+        $group[] =& $mform->createElement('static', 'text', '', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
+        $groupTemp = $mform->addGroup($group, 'hideCanvasGroup', '', ' ', false, array('style'=>'flex-direction:column'));
+        $groupTemp->setAttributes(array('style'=>'flex-direction:column'));
+        $mform->hideIf('hideCanvasGroup', 'questiontype', 'eq', 1);
+
+        //Add help text if canvas is hidden
+        $newGroup[] =& $mform->createElement('static', 'text', '', 'Please set mode to question to create an answer');
+        $mform->addGroup($newGroup, 'ShowHelpTextGroup', '', ' ', false);
+        $mform->hideIf('ShowHelpTextGroup', 'questiontype', 'eq', 0);
+
+        //Add curated data
         $mform->addElement('hidden', 'curated_data','',array('id'=>'curated_data'));
 
         $this->add_interactive_settings(true, true);

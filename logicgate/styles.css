@@ -1,0 +1,6 @@
+.form-group{
+    display: flex;
+}
+.row{
+    flex-direction: column;
+}
