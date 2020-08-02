@@ -6,6 +6,8 @@
 
 <script>
 
+    //Bug: not gate colouring not working. possibly a charge evaluating issue.
+
     var canvas;   // The canvas that is used as the drawing surface
     var graphics; // The 2D graphics context for drawing on the canvas.
 
@@ -21,7 +23,7 @@
     var frameNumber = 0;  // Current frame number. goes up by one in each frame.
 
     var world;  // A SceneGraphNode representing the entire scene. 
-    
+
     // TODO: Define global variables to represent animated objects in the scene.
 
     var selectedObject = null;
@@ -32,12 +34,20 @@
         y: 0
     };
     var dataToLoad = "";
-    var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
+    var dataToTestAgainst = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1|6:draggableCanvas:0:0";
     var logicGateLimitsString = "";
     var logicGateLimits = [];
     var logicGateRestrictions;
     var isLoading = false;
     var updateSpawners = false;
+    var lockCanvas = false;
+    var sandboxMode = false;
+    var canvasObjectsScale = 1;
+    var numberOfSpawners;
+    var browserDimensions = {
+        x: 0,
+        y: 0
+    }
     
     /**
      *  Builds the data structure that represents the entire picture.
@@ -45,6 +55,7 @@
     function createWorld() {
 
         world = new CompoundObject();  // Root node for the scene graph.
+        world.add(new TransformedObject(sidePanel));
     }
     
     /**
@@ -57,7 +68,6 @@
 
         world.subobjects.forEach(function(item, index){
             if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2)) {
-            //if (typeof item.objectType !== "undefined" && item.objectType === 1) {
                 item.outputNodes.forEach(function(subItem, subIndex){
                     if (selectedObject !== subItem) {
                         subItem.setWireCoordinatesToOutputNodeConnectedNodeCoordinates();
@@ -102,8 +112,14 @@
             if (updateSpawners == true) {
                 updateSpawners = false;
                 updateLogicGateSpawners();
+                resizeCanvas();
             }
         }
+    
+        if (browserDimensions.x != window.innerWidth || browserDimensions.y != window.innerHeight) {
+            resizeCanvas();
+        }
+
     }
  
 
@@ -117,6 +133,8 @@
         this.strokeColor = null; // If non-null, the default strokeStyle for this node.
         if (arguments.length == 1 && arguments[0] == true) {
             this.wireCoordinates = [0, 0];
+        } else if (arguments.length == 1) {
+            this.owner = arguments[0];
         }
     }
     SceneGraphNode.prototype.doDraw = function(g) {
@@ -173,8 +191,21 @@
     }
     CompoundObject.prototype.doDraw = function(g) {
             // Just call the sub-objects' draw() methods.
-        for (var i = 0; i < this.subobjects.length; i++)
-            this.subobjects[i].draw(g);
+        this.delayedDraws = [[],[]];
+        for (var i = 0; i < this.subobjects.length; i++) {
+            if (typeof this.subobjects[i].objectType != "undefined" && (this.subobjects[i].objectType == 0 || this.subobjects[i] === selectedObject)) {
+                this.delayedDraws[1].push(i);
+            } else if (typeof this.subobjects[i].objectType == "undefined") {
+                this.delayedDraws[0].push(i);
+            } else {
+                this.subobjects[i].draw(g);
+            }
+        }
+        for (let i = 0; i < this.delayedDraws.length; ++i) {
+            for (let j = 0; j < this.delayedDraws[i].length; ++j) {
+                this.subobjects[this.delayedDraws[i][j]].draw(g);
+            }
+        }
     }
     
     /**
@@ -290,13 +321,16 @@
                         }
                     }
                 } else if (this.objectType == 1) {
-                    this.dragRadius = 1.125;
+                    this.scaleX = canvasObjectsScale * 1;
+                    this.scaleY = canvasObjectsScale * 1;
+                    this.dragRadius = this.scaleX * 1.125;
                     this.hasCharge = false;
                     this.inputNodes = [];
                     this.outputNodes = [];
                     this.addInputNode = function(x, y){
                         var inputNode = new TransformedObject(node, 5).setTranslation(x, y);
                         inputNode.nodeOfObject = this;
+                        inputNode.rescaleObject();
                         this.inputNodes.push(inputNode);
                         return this;
                     }
@@ -304,67 +338,309 @@
                         var outputNode = new TransformedObject(node, 3).setTranslation(x, y);
                         outputNode.nodeOfObject = this;
                         outputNode.addWire();
+                        outputNode.rescaleObject();
                         this.outputNodes.push(outputNode);
                         return this;
                     }
+                    this.visualCharge = new TransformedObject(new SceneGraphNode(this)).setTranslation(this.translateX, this.translateY);
+                    this.visualCharge.object.doDraw = function(g) {
+                        switch (this.owner.object) {
+                            case bufferGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
+                                    g.rotate(-Math.PI/2);
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();                            
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case notGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
+                                    g.rotate(-Math.PI/2);
+                                    g.beginPath();
+                                    g.moveTo(-0.5,0);
+                                    g.lineTo(0.5,0);
+                                    g.lineTo(0,1);
+                                    g.closePath();
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case andGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0.51, -0.5);
+                                    g.lineTo(0, -0.5);
+                                    g.lineTo(0, 0.5);
+                                    g.lineTo(0.51, 0.5);
+                                    g.fill();
+                                    g.stroke();
+                                    g.beginPath();
+                                    g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case nandGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.5, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0.51, -0.5);
+                                    g.lineTo(0, -0.5);
+                                    g.lineTo(0, 0.5);
+                                    g.lineTo(0.51, 0.5);
+                                    g.fill();
+                                    g.stroke();
+                                    g.beginPath();
+                                    g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case orGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
+                                    g.closePath();
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case norGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
+                                    g.closePath();
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case xorGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
+                                    g.closePath();
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            case xnorGate:
+                                if (typeof this.owner.inputNodes[0] != "undefined") {
+                                    this.owner.reevaluateCharge();
+                                    if (this.owner.inputNodes[0].connectedNode == "Not Connected" || this.owner.inputNodes[1].connectedNode == "Not Connected") {
+                                        g.fillStyle = "White";
+                                    } else if (this.owner.hasCharge) {
+                                        g.fillStyle = "green";
+                                    } else if (!this.owner.hasCharge){
+                                        g.fillStyle = "black";
+                                    }
+                                    g.translate(-0.55, 0);
+                                    g.lineWidth = 0.025;
+                                    g.beginPath();
+                                    g.moveTo(0, 0.5);
+                                    g.quadraticCurveTo(0.8, 0.5, 1, 0);
+                                    g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+                                    g.quadraticCurveTo(0.35, 0, 0, 0.5);
+                                    g.closePath();
+                                    g.fill();
+                                    g.stroke();
+                                    let tempLogicGate = this.owner;
+                                    this.owner.outputNodes.forEach(function(item, index){
+                                        if (item.connectedNode != "Not Connected") {
+                                            item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
+                                        }
+                                    });
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        
+                    }
                     this.reevaluateCharge = function() {
-                        var previousCharge = this.hasCharge;
                         var numberOfChargedInputNodes = 0;
+                        let allInputNodesConnected = true;
                         this.inputNodes.forEach(function(item, index) {
                             numberOfChargedInputNodes += item.hasCharge;
+                            if (item.connectedNode == "Not Connected") {
+                                allInputNodesConnected = false;
+                            }
                         });
                         switch (this.object) {
                             case bufferGate:
-                                if (numberOfChargedInputNodes == this.inputNodes.length) {
+                                if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case notGate:
-                                if (numberOfChargedInputNodes != this.inputNodes.length) {
+                                if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case andGate:
-                                if (numberOfChargedInputNodes == this.inputNodes.length) {
+                                if (numberOfChargedInputNodes == this.inputNodes.length && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case nandGate:
-                                if (numberOfChargedInputNodes == 0) {
+                                if (numberOfChargedInputNodes == 0 && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case orGate:
-                                if (numberOfChargedInputNodes != 0) {
+                                if (numberOfChargedInputNodes != 0 && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case norGate:
-                                if (numberOfChargedInputNodes != this.inputNodes.length) {
+                                if (numberOfChargedInputNodes != this.inputNodes.length && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case xorGate:
-                                if (numberOfChargedInputNodes == 1) {
+                                if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
                                 }
                                 break;
                             case xnorGate:
-                                if (numberOfChargedInputNodes == 1) {
+                                if (numberOfChargedInputNodes == 1 && allInputNodesConnected) {
                                     this.hasCharge = true;
                                 } else {
                                     this.hasCharge = false;
@@ -372,14 +648,6 @@
                                 break;
                             default:
                                 break;
-                        }
-                        if (previousCharge != this.hasCharge) {
-                            var tempLogicGate = this;
-                            this.outputNodes.forEach(function(item, index){
-                                if (item.connectedNode != "Not Connected") {
-                                    item.connectedNode.updateInputNodeCharge(tempLogicGate.hasCharge);
-                                }
-                            });
                         }
                     }
                     this.removeLogicGate = function() {
@@ -429,13 +697,24 @@
                             this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
                         } 
                     }
+                    this.rescaleObject = function() {
+                        this.scaleX = canvasObjectsScale * 1;
+                        this.scaleY = canvasObjectsScale * 1;
+                        this.dragRadius = this.scaleX * 1.125;
+                        this.inputNodes.forEach(function(item, index){
+                            item.rescaleObject();
+                        });
+                        this.outputNodes.forEach(function(item, index){
+                            item.rescaleObject();
+                        });
+                    }
                 }
                 this.getCoordinates = function() {
                     return [this.translateX, this.translateY];
                 }
             } else if (this.objectType == 2 || this.objectType == 3 || this.objectType == 4 || this.objectType == 5) {
-                this.dragRadius = 0.125;
                 if (this.objectType == 3 || this.objectType == 5) {
+                    this.dragRadius = 0.125;
                     this.connectedNode = "Not Connected";
                     this.nodeOfObject = "No Object";
                     if (this.objectType == 3) {
@@ -444,9 +723,9 @@
                             this.wire.object.doDraw = function(g) {
                                 g.beginPath();
                                 g.moveTo(0,0);
-                                g.lineTo(0,this.wireCoordinates[1]);
+                                g.lineTo(0,this.wireCoordinates[1]/canvasObjectsScale);
                                 g.stroke();
-                                g.lineTo(this.wireCoordinates[0],this.wireCoordinates[1]);
+                                g.lineTo(this.wireCoordinates[0]/canvasObjectsScale,this.wireCoordinates[1]/canvasObjectsScale);
                                 g.stroke();
                             }
                         }
@@ -462,7 +741,7 @@
                             } else {
                                 mousePos = getMousePos(canvas, event);
                             }
-                            this.setWireCoordinates(mousePos.x - this.getCoordinates()[0], mousePos.y - this.getCoordinates()[1]);
+                            this.setWireCoordinates(mousePos.x - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX)), mousePos.y - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY)));
                         }
                         this.setWireCoordinatesToOutputNodeConnectedNodeCoordinates = function() {
                             if (this.connectedNode == "Not Connected") {
@@ -476,7 +755,7 @@
                                 return this;
                             } else {
                                 if (this.isMouseWithinObjectRadius()) {
-                                    console.log("New Output Node Created");
+                                    //console.log("New Output Node Created");
                                     this.nodeOfObject.addOutputNode(this.translateX, this.translateY);
                                     return this.nodeOfObject.outputNodes[this.nodeOfObject.outputNodes.length - 1];
                                 } else {
@@ -488,10 +767,25 @@
                             }
                         }
                         this.getDistanceFromOutputNodeToConnectedNode = function() {
-                            return [this.connectedNode.getCoordinates()[0] - this.getCoordinates()[0], this.connectedNode.getCoordinates()[1] - this.getCoordinates()[1]];
+                            return [(this.connectedNode.getCoordinates()[0] + (this.connectedNode.nodeOfObject.scaleX*this.connectedNode.translateX - this.connectedNode.translateX)) - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX)), (this.connectedNode.getCoordinates()[1] + (this.connectedNode.nodeOfObject.scaleX*this.connectedNode.translateY - this.connectedNode.translateY)) - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY))];
                         }
                     } else if (this.objectType == 5) {
                         this.hasCharge = false;
+                        this.visualCharge = new TransformedObject(new SceneGraphNode(this)).setTranslation(this.translateX, this.translateY);
+                        this.visualCharge.object.doDraw = function(g) {
+                            g.beginPath();
+                            //Doesn't look like it's within the black outline, maybe there's a loss of information due to decimals.
+                            g.arc(this.owner.translateX,this.owner.translateY,0.125,0,2*Math.PI);
+                            if (this.owner.connectedNode == "Not Connected") {
+                                g.fillStyle = "White";
+                            } else if (this.owner.hasCharge) {
+                                g.fillStyle = "green";
+                            } else if (!this.owner.hasCharge){
+                                g.fillStyle = "black";
+                            }
+                            g.fill();
+                            g.stroke();
+                        }
                         this.getInputNode = function() {
                             if (this.connectedNode == "Not Connected") {
                                 return this;
@@ -502,11 +796,7 @@
                             }
                         }
                         this.updateInputNodeCharge = function(charged) {
-                            var previousCharge = this.hasCharge;
                             this.hasCharge = charged;
-                            if (previousCharge != this.hasCharge) {
-                                this.nodeOfObject.reevaluateCharge();
-                            }
                         }
                     }
                     this.getCoordinates = function() {
@@ -522,7 +812,7 @@
                             if (this.connectedNode == "Not Connected") {
                                 this.resetWireCoordinates();
                                 if (this.nodeOfObject.outputNodes.length > 1) {
-                                    console.log("Removing Output Node");
+                                    //console.log("Removing Output Node");
                                     var outputNode = this;
                                     this.nodeOfObject.outputNodes.splice(this.nodeOfObject.outputNodes.findIndex(function(wireNode) { return wireNode === outputNode;}), 1);
                                 }
@@ -539,7 +829,13 @@
                             }
                         }
                     }
+                    this.rescaleObject = function() {
+                        this.dragRadius = this.nodeOfObject.scaleX * 0.125;
+                    }
                 } else if (this.objectType == 2 || this.objectType == 4) {
+                    this.scaleX = canvasObjectsScale * 1;
+                    this.scaleY = canvasObjectsScale * 1;
+                    this.dragRadius = this.scaleX * 0.125;
                     if (this.objectType == 2) {
                         this.hasCharge = true;
                         this.outputNodes = [];
@@ -547,6 +843,7 @@
                             var outputNode = new TransformedObject(node, 3).setTranslation(0, 0);
                             outputNode.nodeOfObject = this;
                             outputNode.addWire();
+                            outputNode.rescaleObject();
                             this.outputNodes.push(outputNode);
                             return this;
                         }
@@ -563,9 +860,13 @@
                             }
                         }
                         this.setStartNodeCoordinatesToMouseWithOffset = function() {
-                            var oldMousePos = mousePos;
-                            mousePos = getMousePos(canvas, event);
-                            this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                            if (isLoading) {
+                                this.setTranslation(loadingMousePos.x, loadingMousePos.y);
+                            } else {
+                                var oldMousePos = mousePos;
+                                mousePos = getMousePos(canvas, event);
+                                this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                            }
                         }
                         this.removeStartNode = function() {
                             this.outputNodes.forEach(function(item, index){
@@ -574,12 +875,21 @@
                             var thisStartNode = this;
                             world.subobjects.splice(world.subobjects.findIndex(function(startNode) { return startNode === thisStartNode;}), 1);
                         }
+                        this.rescaleObject = function() {
+                            this.scaleX = canvasObjectsScale * 1;
+                            this.scaleY = canvasObjectsScale * 1;
+                            this.dragRadius = this.scaleX * 0.125;
+                            this.outputNodes.forEach(function(item, index){
+                                item.rescaleObject();
+                            });
+                        }
                     } else if (this.objectType == 4) {
                         this.hasCharge = false;
                         this.inputNodes = [];
                         this.addInputNode = function(){
                             var inputNode = new TransformedObject(node, 5).setTranslation(0, 0);
                             inputNode.nodeOfObject = this;
+                            inputNode.rescaleObject();
                             this.inputNodes.push(inputNode);
                             return this;
                         }
@@ -602,9 +912,84 @@
                             var thisEndNode = this;
                             world.subobjects.splice(world.subobjects.findIndex(function(endNode) { return endNode === thisEndNode;}), 1);
                         }
+                        this.rescaleObject = function() {
+                            this.scaleX = canvasObjectsScale * 1;
+                            this.scaleY = canvasObjectsScale * 1;
+                            this.dragRadius = this.scaleX * 0.125;
+                            this.inputNodes.forEach(function(item, index){
+                                item.rescaleObject();
+                            });
+                        }
                     }
                     this.getCoordinates = function() {
                         return [this.translateX, this.translateY];
+                    }
+                }
+            } else if (this.objectType == 6) {
+                this.xBoundry = [X_LEFT, X_RIGHT];
+                this.yBoundry = [Y_BOTTOM, Y_TOP];
+                this.isMouseWithinCanvasBoundry = function() {
+                    mousePos = getMousePos(canvas, event);
+                    return mousePos.x >= this.xBoundry[0] && mousePos.x <= this.xBoundry[1] && mousePos.y >= this.yBoundry[0] && mousePos.y <= this.yBoundry[1];
+                }
+                this.getCoordinates = function() {
+                    return [this.translateX, this.translateY];
+                }
+                this.setDraggableCanvasCoordinatesToMouseWithOffset = function() {
+                    //Work with isLoading to move all other objects to relative origin.
+                    // if (isLoading) {
+                    //     this.setTranslation(loadingMousePos.x, loadingMousePos.y);
+                    // } else if (resetToOrigin) {
+                    //     isLoading = true;
+                    //     for (var i = 0; i < world.subobjects.length; ++i) {
+                    //         if (world.subobjects[i] !== this) {
+                    //             loadingMousePos.x = world.subobjects[i].getCoordinates()[0] - this.getCoordinates()[0];
+                    //             loadingMousePos.y = world.subobjects[i].getCoordinates()[1] - this.getCoordinates()[1];
+                    //             world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                    //         } else {
+                    //             console.log("Trying to move drag object when shouldn't.");
+                    //         }
+                    //     }
+                    //     loadingMousePos.x = 0;
+                    //     loadingMousePos.y = 0;
+                    //     this.dragOutputNodeWireButIfNoneDragLogicGate();
+                    //     isLoading = false;
+                    //     resetToOrigin = false;
+                    // } else {
+                    //     var oldMousePos = mousePos;
+                    //     mousePos = getMousePos(canvas, event);
+                    //     this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                    //     for (var i = 0; i < world.subobjects.length; ++i) {
+                    //         if (world.subobjects[i] !== this) {
+                    //             mousePos = oldMousePos;
+                    //             world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                    //         } else {
+                    //             console.log("Trying to move drag object when shouldn't.");
+                    //         }
+                    //     }
+                    // }
+                    if (isLoading) {
+                        for (var i = 0; i < world.subobjects.length; ++i) {
+                            //console.log("Draggable Object Stuff #1");
+                            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType !== 6) {
+                                loadingMousePos.x = world.subobjects[i].getCoordinates()[0] - this.getCoordinates()[0];
+                                loadingMousePos.y = world.subobjects[i].getCoordinates()[1] - this.getCoordinates()[1];
+                                world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                        }
+                        this.setTranslation(0, 0);
+                    } else {
+                        var oldMousePos = mousePos;
+                        mousePos = getMousePos(canvas, event);
+                        var newMousePos = mousePos;
+                        this.setTranslation(this.translateX + (mousePos.x - oldMousePos.x), this.translateY + (mousePos.y - oldMousePos.y));
+                        for (var i = 0; i < world.subobjects.length; ++i) {
+                            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType !== 6) {
+                                mousePos = oldMousePos;
+                                world.subobjects[i].dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                        }
+                        mousePos = newMousePos;
                     }
                 }
             }
@@ -614,7 +999,11 @@
                 } else {
                     mousePos = getMousePos(canvas, event);
                 }
-                return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+                if (typeof this.nodeOfObject != "undefined") {
+                    return Math.sqrt(Math.pow((mousePos.x - (this.getCoordinates()[0] + (this.nodeOfObject.scaleX*this.translateX - this.translateX))), 2) + Math.pow((mousePos.y - (this.getCoordinates()[1] + (this.nodeOfObject.scaleX*this.translateY - this.translateY))), 2));
+                } else {
+                    return Math.sqrt(Math.pow((mousePos.x - this.getCoordinates()[0]), 2) + Math.pow((mousePos.y - this.getCoordinates()[1]), 2));
+                }
             }
             this.isMouseCloserToThisObject = function(otherObject) {
                 return this.getDistanceOfObjectToMouse() <= otherObject.getDistanceOfObjectToMouse();
@@ -635,6 +1024,8 @@
                     this.setEndNodeCoordinatesToMouseWithOffset();
                 } else if (this.objectType == 2) {
                     this.setStartNodeCoordinatesToMouseWithOffset();
+                } else if (this.objectType == 6) {
+                    this.setDraggableCanvasCoordinatesToMouseWithOffset();
                 }
             }
         }
@@ -676,6 +1067,8 @@
             if (this.objectType === 1) {
                 for (var i = 0; i < this.inputNodes.length; i++) {
                     this.inputNodes[i].draw(g);
+                    this.inputNodes[i].visualCharge.draw(g);
+                    this.visualCharge.draw(g);
                 }
                 for (var i = 0; i < this.outputNodes.length; i++) {
                     this.outputNodes[i].draw(g);
@@ -689,6 +1082,7 @@
             } else if (this.objectType === 4) {
                 for (var i = 0; i < this.inputNodes.length; i++) {
                     this.inputNodes[i].draw(g);
+                    this.inputNodes[i].visualCharge.draw(g);
                 }
             }
         }
@@ -696,24 +1090,31 @@
     }
 
     function getObject() {
-        if (arguments.length == 1 || (arguments.length == 2 && arguments[0] != null && arguments[1] != null)) {
+        // Possibly edit arguments.length == 2 statement to account for drag object.
+        if (arguments.length == 1 || (arguments.length == 2 && arguments[0] != null && arguments[1] != null && arguments[1].objectType != 6)) {
             if (arguments[0] == null) {
                 var currentObject = null;
                 world.subobjects.forEach(function(item, index){
-                    if (selectedObject !== item && item.isMouseWithinObjectRadius() && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
+                    if (typeof item.objectType != "undefined" && selectedObject !== item && item.isMouseWithinObjectRadius() && (currentObject == null || item.isMouseCloserToThisObject(currentObject))) {
                         currentObject = item;
                     }
                 });
-                if (currentObject != null) {
-                    console.log("Object isn't null");
+                if (currentObject != null && (!lockCanvas || (lockCanvas && isLoading))) {
+                    //console.log("Object isn't null");
                     return getObject(currentObject);
                 } else {
-                    console.log("Object is null");
-                    return null;
+                    //console.log("Object is possibly null or drag object.");
+                    var dragObject = null;
+                    world.subobjects.forEach(function(item, index){
+                        if (item.objectType == 6 && item.isMouseWithinCanvasBoundry()) {
+                            dragObject = item;
+                        }
+                    });
+                    return dragObject;
                 }
             } else if (arguments[0].objectType === 1) {
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[0].object === arguments[1].object) {
-                    console.log("Removing Logic Gate");
+                    //console.log("Removing Logic Gate");
                     arguments[0].removeLogicGate();
                     return null;
                 } else {
@@ -726,19 +1127,19 @@
                     if (currentObject != null) {
                         return getObject(currentObject);
                     } else {
-                        console.log("Object is a logic gate");
+                        //console.log("Object is a logic gate");
                         return arguments[0];
                     }
                 }
             } else if (arguments[0].objectType === 0) {
-                console.log("Object is a logic gate spawner");
+                //console.log("Object is a logic gate spawner");
                 if (selectedObject == null) {
                     return arguments[0].createLogicGateObject();
                 } else {
                     return arguments[0];
                 }
             } else if (arguments[0].objectType === 3) {
-                console.log("Object is an output node");
+                //console.log("Object is an output node");
                 if (arguments.length == 2 && arguments[1].objectType === 5) {
                     arguments[0].connectedNode = arguments[1];
                     arguments[1].connectedNode = arguments[0];
@@ -758,7 +1159,7 @@
                     }
                 }
             } else if (arguments[0].objectType === 5) {
-                console.log("Object is an input node");
+                //console.log("Object is an input node");
                 var node = arguments[0].getInputNode();
                 if (node.connectedNode != "Not Connected") {
                     return getObject(node);
@@ -770,9 +1171,9 @@
                    }
                 }
             } else if (arguments[0].objectType === 2) {
-                console.log("Object is a start node");
+                //console.log("Object is a start node");
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === startNode) {
-                    console.log("Removing Start Node");
+                    //console.log("Removing Start Node");
                     arguments[0].removeStartNode();
                     return null;
                 } else {
@@ -786,18 +1187,18 @@
                             }
                         });
                         if (currentObject != null) {
-                            console.log("Object is an output node");
+                            //console.log("Object is an output node");
                             return getObject(currentObject);
                         } else {
-                            console.log("Object is a start node");
+                            //console.log("Object is a start node");
                             return arguments[0];
                         }
                     }
                 }
             } else if (arguments[0].objectType === 4) {
-                console.log("Object is an end node");
+                //console.log("Object is an end node");
                 if (arguments.length == 2 && arguments[1].objectType === 0 && arguments[1].object === endNode) {
-                    console.log("Removing End Node");
+                    //console.log("Removing End Node");
                     arguments[0].removeEndNode();
                     return null;
                 } else {
@@ -808,10 +1209,10 @@
                         }
                     });
                     if (currentObject != null) {
-                        console.log("Object is an input node");
+                        //console.log("Object is an input node");
                         return getObject(currentObject);
                     } else {
-                        console.log("Object is an end node");
+                        //console.log("Object is an end node");
                         return arguments[0];
                     }
                 }
@@ -860,6 +1261,8 @@
                     case endNode:
                         saveData += "endNode:";
                         break;
+                    case draggableCanvas:
+                        saveData += "draggableCanvas:";
                     default:
                         break;
                 }
@@ -898,7 +1301,7 @@
 
         if (document.getElementsByName("buffergate").length != 0) {
             var i = document.getElementsByName("buffergate")[1].checked;
-            console.log(i);
+            //console.log(i);
         }
 
         if (typeof logicGateRestrictions != "undefined") {
@@ -934,6 +1337,9 @@
                         case node:
                         curatedSaveData += "node:";
                             break;
+                        case draggableCanvas:
+                        curatedSaveData += "draggableCanvas:";
+                            break;
                         default:
                             break;
                     }
@@ -946,7 +1352,7 @@
                                 var existsError = true;
                                 for (var i = 0; i < world.subobjects.length; ++i) {
                                     if (item.connectedNode.nodeOfObject === world.subobjects[i]) {
-                                        curatedSaveData += i + ":" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":" + item.connectedNode.getCoordinates()[0] + ":" + item.connectedNode.getCoordinates()[1] + ":";
+                                        curatedSaveData += "-1:" + item.getCoordinates()[0] + ":" + item.getCoordinates()[1] + ":none:none:";
                                         existsError = false;
                                     }
                                 }
@@ -966,11 +1372,11 @@
             curatedSaveData = curatedSaveData.substr(0, curatedSaveData.length - 1);
             document.getElementById("curated_data").value = curatedSaveData;
 
-            console.log(curatedSaveData);
+            //console.log(curatedSaveData);
         }
         
 
-        console.log(dataToLoad);
+        //console.log(dataToLoad);
         //console.log(String(document.getElementById("answer").value));
     }
 
@@ -979,6 +1385,7 @@
             logicGateRestrictions = [false, false, false, false, false, false, false, false];
         }
         isLoading = true;
+        let presentSpawners = [];
         loadData = dataToLoad.split("|");
         for (var i = 0; i < loadData.length; ++i) { 
             loadData[i] = loadData[i].split(":");
@@ -1026,59 +1433,69 @@
             //document.getElementsByName("xnorgate")[1].checked = logicGateRestrictions[7];
         }
         
-        console.log(loadData);
+        //console.log(loadData);
 
         loadData.forEach(function(item, index) {
-            console.log("Looping through load data.");
+            //console.log("Looping through load data.");
             switch(parseInt(item[0])) {
                 case 0:
                     switch(item[1]) {
                         case "bufferGate":
-                            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "notGate":
-                            var loadedObject = new TransformedObject(notGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(notGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "andGate":
-                            var loadedObject = new TransformedObject(andGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(andGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "nandGate":
-                            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "orGate":
-                            var loadedObject = new TransformedObject(orGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(orGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "norGate":
-                            var loadedObject = new TransformedObject(norGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(norGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "xorGate":
-                            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "xnorGate":
-                            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "startNode":
-                            var loadedObject = new TransformedObject(startNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(startNode, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         case "endNode":
-                            var loadedObject = new TransformedObject(endNode, 0).setTranslation(parseInt(item[2]), parseInt(item[3]));
+                            presentSpawners.push(item[1]);
+                            var loadedObject = new TransformedObject(endNode, 0).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
                             world.add(loadedObject);
                             break;
                         default:
                             break;
                     }
                     break;
-                case 1:
-                    console.log("Attempting to create logic gate.");
+                /*case 1:
+                    //console.log("Attempting to create logic gate.");
                     switch(item[1]) {
                         case "bufferGate":
                             world.subobjects.forEach(function(item, index){
@@ -1090,7 +1507,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1108,7 +1525,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1126,7 +1543,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1144,7 +1561,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1162,7 +1579,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1180,7 +1597,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1198,7 +1615,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1216,7 +1633,7 @@
                             selectedObject = getObject(selectedObject);
                             loadingMousePos.x = parseFloat(item[2]);
                             loadingMousePos.y = parseFloat(item[3]);
-                            console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
                             if (selectedObject != null) {
                                 selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
                             }
@@ -1227,7 +1644,7 @@
                         default:
                             break;
                     }
-                    break;
+                    break;*/
                 case 2:
                     var loadedObject = new TransformedObject(node, 2).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addOutputNode();
                     world.add(loadedObject);
@@ -1235,6 +1652,174 @@
                 case 4:
                     var loadedObject = new TransformedObject(node, 4).setTranslation(parseFloat(item[2]), parseFloat(item[3])).addInputNode();
                     world.add(loadedObject);
+                    break;
+                case 6:
+                    switch(item[1]) {
+                        case "draggableCanvas":
+                            var loadedObject = new TransformedObject(draggableCanvas, 6).setTranslation(parseFloat(item[2]), parseFloat(item[3]));
+                            world.add(loadedObject);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        loadData.forEach(function(item, index) {
+            switch(parseInt(item[0])) {
+                case 1:
+                    //console.log("Attempting to create logic gate.");
+                    switch(item[1]) {
+                        case "bufferGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === bufferGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "notGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === notGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "andGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === andGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "nandGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === nandGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "orGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === orGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "norGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === norGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "xorGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xorGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        case "xnorGate":
+                            world.subobjects.forEach(function(item, index){
+                                if (typeof item.objectType !== "undefined" && item.objectType === 0 && item.object === xnorGate) {
+                                    loadingMousePos.x = item.translateX;
+                                    loadingMousePos.y = item.translateY;
+                                }
+                            });
+                            selectedObject = getObject(selectedObject);
+                            loadingMousePos.x = parseFloat(item[2]);
+                            loadingMousePos.y = parseFloat(item[3]);
+                            //console.log(loadingMousePos.x + ":" + loadingMousePos.y);
+                            if (selectedObject != null) {
+                                selectedObject.dragOutputNodeWireButIfNoneDragLogicGate();
+                            }
+                            getObject(selectedObject, getObject(assignedObject));
+                            selectedObject = null;
+                            assignedObject = null;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
@@ -1421,6 +2006,74 @@
                     break;
             }
         });
+        var draggableCanvasObject = null;
+        world.subobjects.forEach(function(item, index) {
+            if (item.objectType == 6) {
+                //console.log("I should run once.");
+                draggableCanvasObject = item;
+            }    
+        });
+        //console.log("I should run once.");
+        draggableCanvasObject.dragOutputNodeWireButIfNoneDragLogicGate();
+
+        if (sandboxMode) {
+            let spawnersToCompareAgainst = ["bufferGate", "notGate", "andGate", "nandGate", "orGate", "norGate", "xorGate", "xnorGate", "startNode", "endNode"];
+            spawnersToCompareAgainst.forEach(function(item, index) {
+                let tempSpawner = item;
+                let isPresent = false;
+                presentSpawners.forEach(function(item, index) {
+                    if (tempSpawner == item) {
+                        isPresent = true;
+                    }
+                });
+                if (!isPresent) {
+                    switch(item) {
+                        case "bufferGate":
+                            var loadedObject = new TransformedObject(bufferGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "notGate":
+                            var loadedObject = new TransformedObject(notGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "andGate":
+                            var loadedObject = new TransformedObject(andGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "nandGate":
+                            var loadedObject = new TransformedObject(nandGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "orGate":
+                            var loadedObject = new TransformedObject(orGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "norGate":
+                            var loadedObject = new TransformedObject(norGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "xorGate":
+                            var loadedObject = new TransformedObject(xorGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "xnorGate":
+                            var loadedObject = new TransformedObject(xnorGate, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "startNode":
+                            var loadedObject = new TransformedObject(startNode, 0);
+                            world.add(loadedObject);
+                            break;
+                        case "endNode":
+                            var loadedObject = new TransformedObject(endNode, 0);
+                            world.add(loadedObject);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
         isLoading = false;
     }
 
@@ -1581,11 +2234,11 @@
         }
 
 
-        console.log(isCorrect);
-        console.log(endNodeCharges);
-        console.table(arrayOfArrays);
-        console.log(endNodeCharges1);
-        console.table(arrayOfArrays1);
+        //console.log(isCorrect);
+        //console.log(endNodeCharges);
+        //console.table(arrayOfArrays);
+        //console.log(endNodeCharges1);
+        //console.table(arrayOfArrays1);
     }
     
     function adjustTable(comparedData, formattedData, inputNodeNumber, logicGateNumber, logicGatePosition) {
@@ -1618,7 +2271,7 @@
         for (var i = 0; i < logicGateLimitProcessor.length; ++i) {
             logicGateLimits.push(parseInt(logicGateLimitProcessor[i][1]));
         }
-        console.log(logicGateLimits);
+        //console.log(logicGateLimits);
     }
 
     function setupCircuit() {
@@ -1632,10 +2285,11 @@
         //dataToLoad = dataToLoad.replace(/\\n/g, "\n");
         getLogicGateLimits();
         load();
+        countSpawners();
     }
 
     function updateLogicGateSpawners() {
-        var logicGateRestrictionsCounter = 1;
+        // var logicGateRestrictionsCounter = 1;
         var removingCounter = [];
         //I'm removing items from an array as I'm looping through it, what was I thinking.
         world.subobjects.forEach(function(item, index){
@@ -1650,15 +2304,16 @@
             world.subobjects.splice(removingCounter[i]-i, 1);
         }
 
-        endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
-            if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
-                return true;;
-            } 
-        });
+        // endNodeSpawnerIndex = world.subobjects.findIndex(function(endNodeSpawner) {
+            // if (typeof endNodeSpawner.objectType != "undefined" && endNodeSpawner.objectType === 0 && endNodeSpawner.object === endNode) {
+                // return true;;
+            // } 
+        // });
         if (logicGateRestrictions[0] == true) {
-            var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            // var loadedObject = new TransformedObject(bufferGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(bufferGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === bufferGate) {
@@ -1667,9 +2322,10 @@
             });
         }
         if (logicGateRestrictions[1] == true) {
-            var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(notGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(notGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === notGate) {
@@ -1678,9 +2334,10 @@
             });
         }
         if (logicGateRestrictions[2] == true) {
-            var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(andGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(andGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === andGate) {
@@ -1689,9 +2346,10 @@
             });
         }
         if (logicGateRestrictions[3] == true) {
-            var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(nandGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(nandGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === nandGate) {
@@ -1700,9 +2358,10 @@
             });
         }
         if (logicGateRestrictions[4] == true) {
-            var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(orGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(orGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === orGate) {
@@ -1711,9 +2370,10 @@
             });
         }
         if (logicGateRestrictions[5] == true) {
-            var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(norGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(norGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === norGate) {
@@ -1722,9 +2382,10 @@
             });
         }
         if (logicGateRestrictions[6] == true) {
-            var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(xorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(xorGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xorGate) {
@@ -1733,9 +2394,10 @@
             });
         }
         if (logicGateRestrictions[7] == true) {
-            var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            //var loadedObject = new TransformedObject(xnorGate, 0).setTranslation(world.subobjects[endNodeSpawnerIndex].translateX - 0.5, world.subobjects[endNodeSpawnerIndex].translateY - 1*logicGateRestrictionsCounter);
+            var loadedObject = new TransformedObject(xnorGate, 0);
             world.add(loadedObject);
-            ++logicGateRestrictionsCounter;
+            //++logicGateRestrictionsCounter;
         } else {
             world.subobjects.forEach(function(item, index){
                 if (typeof item.objectType !== "undefined" && item.objectType === 1 && item.object === xnorGate) {
@@ -1744,6 +2406,132 @@
             });
         }
         save();
+        countSpawners();
+    }
+
+    function updateScale(degreeOfScaleChange) {
+        if (!(parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) > 1.5 || parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1)) < 0.5)) {
+            canvasObjectsScale = parseFloat((canvasObjectsScale + degreeOfScaleChange).toFixed(1));
+            //console.log("New scale is: " + canvasObjectsScale);
+            rescaleCanvasObjects();
+        } else {
+            //console.log("Scale has been capped");
+        }
+    }
+
+    function rescaleCanvasObjects() {
+        world.subobjects.forEach(function(item, index){
+            if (typeof item.objectType !== "undefined" && (item.objectType === 1 || item.objectType === 2 || item.objectType === 4)) {
+                item.rescaleObject();
+            }
+        });
+    }
+
+    //innerWidth 1200 gives width 800.
+    function resizeCanvas(){
+        if (window.innerWidth > 1435) {
+            canvas.width = 800+(window.innerWidth-1435);
+            canvas.height = ((800+(window.innerWidth-1435))/800)*600;
+            X_LEFT = ((800+(window.innerWidth-1435))/800)*(-4);
+            X_RIGHT = ((800+(window.innerWidth-1435))/800)*4;
+            Y_BOTTOM = ((800+(window.innerWidth-1435))/800)*(-3);
+            Y_TOP = ((800+(window.innerWidth-1435))/800)*3;
+        } else {
+            canvas.width = 800;
+            canvas.height = 600;
+            X_LEFT = -4;
+            X_RIGHT = 4;
+            Y_BOTTOM = -3;
+            Y_TOP = 3;
+        }
+        if ((Y_TOP - Y_BOTTOM) < (numberOfSpawners * 1.4)) {
+            canvas.height = ((numberOfSpawners * 1.4)/(Y_TOP - Y_BOTTOM))*canvas.height;
+            Y_TOP = (numberOfSpawners * 0.7);
+            Y_BOTTOM = -(numberOfSpawners * 0.7);
+        }
+        //innerWidth of 2100 gives 1200 by 900.
+        /*if (window.innerWidth > 2100) {
+            // world.subobjects.forEach(function(item, index){
+                // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
+                    // item.setTranslation(-5, item.translateY-(-5-item.translateX));
+                // }
+            // });
+            canvas.width = 1200;
+            canvas.height = 900*(((numberOfSpawners*0.5)+9)/9);
+            X_LEFT = -6;
+            X_RIGHT = 6;
+            Y_BOTTOM = -4.5-(numberOfSpawners*0.25);
+            Y_TOP = 4.5+(numberOfSpawners*0.25);
+            
+        } else if (window.innerWidth > 2000) {
+            // world.subobjects.forEach(function(item, index){
+                // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
+                    // item.setTranslation(-4.5, item.translateY-(-4.5-item.translateX));
+                // }
+            // });
+            canvas.width = 1100;
+            canvas.height = 825*(((numberOfSpawners*0.5)+8.25)/8.25);
+            X_LEFT = -5.5;
+            X_RIGHT = 5.5;
+            Y_BOTTOM = -4.125-(numberOfSpawners*0.25);
+            Y_TOP = 4.125+(numberOfSpawners*0.25);
+        } else if (window.innerWidth > 1900) {
+            // world.subobjects.forEach(function(item, index){
+                // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
+                    // item.setTranslation(-4, item.translateY-(-4-item.translateX));
+                // }
+            // });
+            canvas.width = 1000;
+            canvas.height = 750*(((numberOfSpawners*0.5)+7.5)/7.5);
+            X_LEFT = -5;
+            X_RIGHT = 5;
+            Y_BOTTOM = -3.75-(numberOfSpawners*0.25);
+            Y_TOP = 3.75+(numberOfSpawners*0.25);
+        } else if (window.innerWidth > 1800) {
+            // world.subobjects.forEach(function(item, index){
+                // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
+                    // item.setTranslation(-3.5, item.translateY-(-3.5-item.translateX));
+                // }
+            // });
+            canvas.width = 900;
+            canvas.height = 675*(((numberOfSpawners*0.5)+6.75)/6.75);
+            X_LEFT = -4.5;
+            X_RIGHT = 4.5;
+            Y_BOTTOM = -3.375-(numberOfSpawners*0.25);
+            Y_TOP = 3.375+(numberOfSpawners*0.25);
+        } else {
+            // world.subobjects.forEach(function(item, index){
+                // if (typeof item.objectType !== "undefined" && item.objectType === 0) {
+                    // item.setTranslation(-3, item.translateY-(-3-item.translateX));
+                // }
+            // });
+            canvas.width = 800;
+            canvas.height = 600*(((numberOfSpawners*0.5)+6)/6);
+            X_LEFT = -4;
+            X_RIGHT = 4;
+            Y_BOTTOM = -3-(numberOfSpawners*0.25);
+            Y_TOP = 3+(numberOfSpawners*0.25);
+        }*/
+        let counter = 1;
+        for (let i = 0; i < world.subobjects.length; ++i) {
+            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
+                world.subobjects[i].setTranslation(X_LEFT + 1, Y_TOP - counter * ((Y_TOP - Y_BOTTOM)/(numberOfSpawners + 1)));
+                ++counter;
+            }
+            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 6) {
+                world.subobjects[i].xBoundry = [X_LEFT, X_RIGHT];
+                world.subobjects[i].yBoundry = [Y_BOTTOM, Y_TOP];
+            }
+        }
+    }
+
+    function countSpawners() {
+        numberOfSpawners = 0;
+        for (let i = 0; i < world.subobjects.length; ++i) {
+            if (typeof world.subobjects[i].objectType !== "undefined" && world.subobjects[i].objectType === 0) {
+                ++numberOfSpawners;
+            }
+        }
     }
     
         // Create some basic shapes as custom SceneGraphNode objects.
@@ -1793,20 +2581,47 @@
     var node = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     node.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
         g.stroke();
     }
     var startNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     startNode.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
         g.stroke();
     }
 
     var endNode = new SceneGraphNode();// Stroked circle, diameter = 0.25, center = (0,0)
     endNode.doDraw = function(g) {
         g.beginPath();
+        g.fillStyle = "white";
         g.arc(0,0,0.125,0,2*Math.PI);
+        g.fill();
+        g.stroke();
+    }
+
+    var draggableCanvas = new SceneGraphNode();
+    draggableCanvas.doDraw = function(g) {
+
+    }
+
+    sidePanel = new SceneGraphNode();
+    sidePanel.doDraw = function(g) {
+        g.beginPath();
+        g.moveTo(X_LEFT,Y_TOP);
+        g.lineTo(X_LEFT,Y_BOTTOM);
+        g.lineTo(X_LEFT + 1.5,Y_BOTTOM);
+        g.lineTo(X_LEFT + 2.25,Y_BOTTOM + 0.75*Math.tan(Math.PI/4));
+        g.lineTo(X_LEFT + 2.25,Y_TOP - 0.75*Math.tan(Math.PI/4));
+        g.lineTo(X_LEFT + 1.5,Y_TOP);
+        g.lineTo(X_LEFT,Y_TOP);
+        g.fillStyle = "grey";
+        g.fill();
+        g.lineWidth = 0.046875;
         g.stroke();
     }
 
@@ -1838,6 +2653,16 @@
         g.lineTo(0,1);
         g.closePath();
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.fill();                            
+        g.stroke();
     }
 
     var notGate = new SceneGraphNode(); // Stroked triangle, two line segments and a stroked circle. One input, one output.
@@ -1868,6 +2693,16 @@
         g.lineTo(0.5,0);
         g.lineTo(0,1);
         g.closePath();
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(-0.5,0);
+        g.lineTo(0.5,0);
+        g.lineTo(0,1);
+        g.closePath();
+        g.fill();                            
         g.stroke();
     }
 
@@ -1905,6 +2740,20 @@
         g.moveTo(0.5, -0.5);
         g.lineTo(0, -0.5);
         g.lineTo(0, 0.51);
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0.51, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.5);
+        g.lineTo(0.51, 0.5);
+        g.fill();
+        g.stroke();
+        g.beginPath();
+        g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        g.fill();
         g.stroke();
     }
 
@@ -1950,6 +2799,20 @@
         g.lineTo(0, -0.5);
         g.lineTo(0, 0.51);
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0.51, -0.5);
+        g.lineTo(0, -0.5);
+        g.lineTo(0, 0.5);
+        g.lineTo(0.51, 0.5);
+        g.fill();
+        g.stroke();
+        g.beginPath();
+        g.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        g.fill();
+        g.stroke();
     }
 
     var orGate = new SceneGraphNode(); // Three bezier curves and three line segments. Two inputs, one output.
@@ -1973,6 +2836,17 @@
         g.quadraticCurveTo(0.8, -0.5, 0, -0.5); // Right side of body
         g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
 
@@ -2005,6 +2879,17 @@
         g.quadraticCurveTo(0.35, 0, 0, 0.5); // Bottom curve
         g.closePath();
         g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
+        g.stroke();
     }
 
     var xorGate = new SceneGraphNode(); // Four bezier curves and three line segments. Two inputs, one output.
@@ -2030,6 +2915,17 @@
         g.closePath();
         g.moveTo(-0.1, -0.5);
         g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
 
@@ -2063,6 +2959,17 @@
         g.closePath();
         g.moveTo(-0.1, -0.5);
         g.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
+        g.stroke();
+
+        g.fillStyle = "white";
+        g.lineWidth = 0.025;
+        g.beginPath();
+        g.moveTo(0, 0.5);
+        g.quadraticCurveTo(0.8, 0.5, 1, 0);
+        g.quadraticCurveTo(0.8, -0.5, 0, -0.5);
+        g.quadraticCurveTo(0.35, 0, 0, 0.5);
+        g.closePath();
+        g.fill();
         g.stroke();
     }
     
@@ -2142,8 +3049,10 @@
         document.addEventListener("mousedown", function(event) { 
             if (event.which){
                 selectedObject = getObject(selectedObject);
+                //console.log("Canvas Width: " + canvas.width + " Canvas Height: " + canvas.height + "\nInnerWidth: " + window.innerWidth + " InnerHeight: " + window.innerHeight);
             }
-            console.log(typeof logicGateRestrictions);
+            //console.log(typeof logicGateRestrictions);
+            //console.log(canvas);
         }, true);
         
         //Mouse up
@@ -2165,8 +3074,24 @@
             }
         }, true);
 
+        //Keyboard key pressed
+        document.addEventListener("keydown", function(event) {
+            switch (event.code) {
+                case "NumpadAdd":
+                    updateScale(0.1);
+                    break;
+                case "NumpadSubtract":
+                    updateScale(-0.1);
+                    break;
+                default:
+                    break;
+            }
+        }, true);
 
+        browserDimensions.x = window.innerWidth;
+        browserDimensions.y = window.innerHeight;
         setupCircuit();
+        resizeCanvas();
 
         if (document.getElementById("id_answerhdr") != null) {
             document.getElementById("id_answerhdr").setAttribute("style", "display: none;");
@@ -2208,7 +3133,7 @@
 <canvas id="thecanvas" width="800" height="600" style="display:block"></canvas>
 </div>
 
-<input type="hidden" name="ANSWER_NAME_ID" value="0:startNode:-3:2|0:endNode:-3:1.5" id="answer" size="80" class="form-control d-inline">
+<input type="hidden" name="ANSWER_NAME_ID" value="0:startNode:-3:2|0:endNode:-3:1.5|6:draggableCanvas:0:0" id="answer" size="80" class="form-control d-inline">
 <input type="hidden" name="RESTRICTEDGATES_NAME_ID" value="bufferGate:100|notGate:100|andGate:100|nandGate:100|orGate:100|norGate:100|xorGate:100|xnorGate:100" id="restrictedGates" size="80" class="form-control d-inline">
 
 </body>
