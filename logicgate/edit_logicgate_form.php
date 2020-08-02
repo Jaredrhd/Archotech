@@ -78,6 +78,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);
+        
         return $question;
     }
 
