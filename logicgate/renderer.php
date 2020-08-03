@@ -145,14 +145,8 @@ class qtype_logicgate_renderer extends qtype_renderer
         $data .= '|xorgate:' . ((int)$question->xorGate * $question->xorGateAmount);
         $data .= '|xnorgate:' . ((int)$question->xnorGate * $question->xnorGateAmount);
 
-        //Get the string pos at ANSWER_NAME_ID
-        $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);
-
-        //Get the value= position from the last position, this is the value we need to edit to show answer 
-        $position = strpos($result,"value=",$position);
-
-        //Place answer at the calculated position
-        $result = substr_replace($result, $data, $position+7, 0);
+        //Place the new stuff in the correct position
+        $result = str_replace('name="RESTRICTEDGATES_NAME_ID" value="bufferGate:1000|notGate:1000|andGate:1000|nandGate:1000|orGate:1000|norGate:1000|xorGate:1000|xnorGate:1000"','name="RESTRICTEDGATES_NAME_ID" value="'.$data .'"' ,$result);
 
         return $result;
     }
