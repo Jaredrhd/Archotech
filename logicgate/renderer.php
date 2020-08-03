@@ -61,6 +61,9 @@ class qtype_logicgate_renderer extends qtype_renderer
             $inputattributes['readonly'] = 'readonly';
         }
 
+        //Get the file
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
+        
         //Displays the red x or tick
         $feedbackimg = '';
 
@@ -72,10 +75,15 @@ class qtype_logicgate_renderer extends qtype_renderer
 
             //Set input field diabled and set tick or cross
             $feedbackimg = $this->feedback_image($fraction);
+
+            //Lock the canvas if question mode
+            if($question->questiontype == "0"){
+                $input = str_replace("var lockCanvas = false;","var lockCanvas = true;",$input);
+            }
         }
 
-        //Get the file
-        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
+        //Attach the tick or cross
+        $input .= $feedbackimg;
 
         //Add the question text
         $result = html_writer::tag('div', $question->name, array('class' => 'h2'));
@@ -89,6 +97,11 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Set data for passing to JS
         $result = $this->answerNameID($question,$currentanswer,$inputname,$result);
         $result = $this->restrictedGates($question,$result);
+
+        //Set sandbox mode
+        if($question->questiontype == "1"){
+            $result = str_replace("var sandboxMode = false;","var sandboxMode = true;",$result);
+        }
 
         //return result
         return $result;
@@ -111,8 +124,8 @@ class qtype_logicgate_renderer extends qtype_renderer
         //Place answer at the calculated position
         //$result = substr_replace($result, $data, $position+7, 0);
 
-        //Insert the data at this pomt
-        $result = str_replace("0:startNode:-3:2|0:endNode:-3:1.5", $data, $result);
+        //Insert the data at this point
+        $result = str_replace("0:startNode:-3:2|0:endNode:-3:1.5|6:draggableCanvas:0:0", $data, $result);
 
         //Replace the ANSWER_NAME_ID with the question id for saving
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
@@ -123,23 +136,17 @@ class qtype_logicgate_renderer extends qtype_renderer
     private function restrictedGates($question, $result)
     {
         //Construct limits
-        $data = 'buffergate:' . ((int)$question->buffergate * $question->bufferGateAmount);
-        $data .= '|notgate:' . ((int)$question->notgate * $question->notGateAmount);
-        $data .= '|andgate:' . ((int)$question->andgate * $question->andGateAmount);
-        $data .= '|nandgate:' . ((int)$question->nandgate * $question->nandGateAmount);
-        $data .= '|orgate:' . ((int)$question->orgate * $question->orGateamount);
-        $data .= '|norgate:' . ((int)$question->norgate * $question->norGateAmount);
-        $data .= '|xorgate:' . ((int)$question->xorgate * $question->xorGateAmount);
-        $data .= '|xnorgate:' . ((int)$question->xnorgate * $question->xnorGateAmount);
+        $data = 'buffergate:' . ((int)$question->bufferGate * $question->bufferGateAmount);
+        $data .= '|notgate:' . ((int)$question->notGate * $question->notGateAmount);
+        $data .= '|andgate:' . ((int)$question->andGate * $question->andGateAmount);
+        $data .= '|nandgate:' . ((int)$question->nandGate * $question->nandGateAmount);
+        $data .= '|orgate:' . ((int)$question->orGate * $question->orGateamount);
+        $data .= '|norgate:' . ((int)$question->norGate * $question->norGateAmount);
+        $data .= '|xorgate:' . ((int)$question->xorGate * $question->xorGateAmount);
+        $data .= '|xnorgate:' . ((int)$question->xnorGate * $question->xnorGateAmount);
 
-        //Get the string pos at ANSWER_NAME_ID
-        $position = strpos($result,"RESTRICTEDGATES_NAME_ID",0);
-
-        //Get the value= position from the last position, this is the value we need to edit to show answer 
-        $position = strpos($result,"value=",$position);
-
-        //Place answer at the calculated position
-        $result = substr_replace($result, $data, $position+7, 0);
+        //Place the new stuff in the correct position
+        $result = str_replace('name="RESTRICTEDGATES_NAME_ID" value="bufferGate:1000|notGate:1000|andGate:1000|nandGate:1000|orGate:1000|norGate:1000|xorGate:1000|xnorGate:1000"','name="RESTRICTEDGATES_NAME_ID" value="'.$data .'"' ,$result);
 
         return $result;
     }
@@ -151,12 +158,12 @@ class qtype_logicgate_renderer extends qtype_renderer
 
     public function correct_response(question_attempt $qa) 
     {
-        $question = $qa->get_question();
+        //$question = $qa->get_question();
         
         //Get the file to display as the answer
         //$result = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphcopy.html'));
         
-        $result = $this->restrictedGates($question, $result);
+        //$result = $this->restrictedGates($question, $result);
         
         //TODO inject lecturer code of logic gate save
         return '';

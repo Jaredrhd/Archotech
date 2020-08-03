@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_logicgate';
-$plugin->version   = 2020053001;
+$plugin->version   = 2020080103;
 
 $plugin->requires  = 2012062504;
 
