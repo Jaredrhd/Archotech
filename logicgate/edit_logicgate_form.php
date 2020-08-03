@@ -105,8 +105,9 @@ class qtype_logicgate_edit_form extends question_edit_form {
         
         //Add canvas
         $group[] =& $mform->createElement('static', 'text', '', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
-        $groupTemp = $mform->addGroup($group, 'hideCanvasGroup', '', ' ', false, array('style'=>'flex-direction:column'));
-        //$groupTemp->setAttributes(array('style'=>'flex-direction:column'));
+        $groupTemp = $mform->addGroup($group, 'hideCanvasGroup', '', ' ', false);
+        $groupTemp->setAttributes(array('class'=>'flex-column'));
+
         $mform->hideIf('hideCanvasGroup', 'questiontype', 'eq', 1);
 
         //Add help text if canvas is hidden
