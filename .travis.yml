@@ -38,7 +38,8 @@ jobs:
         
       # This lists steps that are run for installation and setup.
       install:
-        - moodle-plugin-ci install
+        - moodle-plugin-ci install --plugin Jaredrhd/Archotech/logicgate
+
       script:
         - moodle-plugin-ci phplint
         - moodle-plugin-ci phpcpd
@@ -72,7 +73,7 @@ jobs:
 
       # This lists steps that are run for installation and setup.
       install:
-        - moodle-plugin-ci install
+        - moodle-plugin-ci install --plugin Jaredrhd/Archotech/logicgate
 
       script:
         - moodle-plugin-ci phplint
