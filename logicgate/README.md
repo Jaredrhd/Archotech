@@ -8,20 +8,20 @@
 Logic Gate
 ----------------------
 
-Logic Gate plugin is a plugin that allows users to drag and drop logic gates onscreen and create a circuit that should match an output created by a lecturer:
+The Logic Gate plugin is a plugin that allows users to drag and drop logic gates onscreen and create a circuit:
 
 Features
 ---------------------
 
-* A lecturer should be able to type a question into a text-box for the student to answer
 * A lecturer should be able to assign an output to a question (ie the answer for the question)
 * A lecturer should be able to choose a set selection of logic gates for the students to use in answering the question
 * A student should be able to drag and drop logic gates onto the canvas
-* A student should be able to connect logic gates via connecting wires
+* A student should be able to connect logic gates via connecting wires with the gates changing charge.
 * The marker needs to be able to recognize the combination the student put down and compare it to the desired output that the lecturer assigned to the question
 * The marker  needs to be able to give feedback to the student as to whether their output and the lecturers output matched by returning “correct” or “incorrect”
 * A student should be able to answer in any order and to change their answer before submitting
 * A lecturer should be able to place optional hints to help the students in answering a given question
+* A lecturer should be able to set the plugin to sandbox mode which will allow the student to mess around and create their own gates.
 
 ###Installation
 
