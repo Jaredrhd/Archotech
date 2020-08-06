@@ -44,13 +44,11 @@ class qtype_trees_edit_form extends question_edit_form {
         /** TRAVERSAL */
         $mform->addElement('radio', 'question_type', '', "Perform Traversal", 0, array('qtype_name'=>'traversal'));
         /** CHECKBOXES FOR TRAVERSAL */
-        $mform->addElement('advcheckbox', 'preorder', "", "Pre-Order", array('traversal_type' => 'preorder'));
-        $mform->addElement('advcheckbox', 'inorder', "", "In-Order",  array('traversal_type' => 'inorder'));
-        $mform->addElement('advcheckbox', 'postorder', "", "Post-Order",  array('traversal_type' => 'postorder'));
+        $mform->addElement('radio', 'traversal_type', "", "Pre-Order", 0, array('traversal_type' => 'preorder'));
+        $mform->addElement('radio', 'traversal_type', "", "In-Order", 1, array('traversal_type' => 'inorder'));
+        $mform->addElement('radio', 'traversal_type', "", "Post-Order", 2, array('traversal_type' => 'postorder'));
         /** Hide the traversal checkboxes unless "Perform Traversal" is selected */
-        $mform->hideIf('preorder', 'question_type', 'neq', 0);
-        $mform->hideIf('inorder', 'question_type', 'neq', 0);
-        $mform->hideIf('postorder', 'question_type', 'neq', 0);
+        $mform->hideIf('traversal_type', 'question_type', 'neq', 0);
 
         /** BST */
         $mform->addElement('radio', 'question_type', '', "Construct BST", 1, array('qtype_name'=>'bst'));
@@ -59,10 +57,14 @@ class qtype_trees_edit_form extends question_edit_form {
 
         $mform->setDefault('question_type', 0);
 
-        $mform->addElement('header', 'Answer', "Create Answer");
+        $mform->addElement('header', 'Answer', "Build Tree");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/trees/index.html')));
 
-        $mform->addElement('hidden', 'curated_data','',array('id'=>'curated_data'));
+        $mform->addElement('hidden', 'curated_data','', array('id'=>'curated_data'));
+        $mform->addElement('hidden', 'preorder','', array('id'=>'preorder'));
+        $mform->addElement('hidden', 'inorder','', array('id'=>'inorder'));
+        $mform->addElement('hidden', 'postorder','', array('id'=>'postorder'));
+        $mform->addElement('hidden', 'q_type','', array('id'=>'q_type'));
 
         // $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_trees', '{no}'), array(100,0),1,0);
 

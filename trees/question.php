@@ -82,14 +82,35 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         }
     }
 
-    public function grade_response(array $response) {
-        // TODO.
+    public function grade_response(array $response) { // response -> what student answered
         $fraction = 0;
+
+        if($this->q_type == 'traversal') {
+            $fraction = $this->grade_traversal($response);
+        }
+
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
     public function compute_final_grade($responses, $totaltries) {
         // TODO.
         return 0;
+    }
+
+    public function grade_traversal(array $response) {
+        $result = 0;
+        $answer = $response["answer"];
+
+        if($this->preorder != "") { 
+            if($answer == $this->preorder) $result = 1;
+        }
+        else if($this->inorder != "") {
+            if($answer == $this->inorder) $result = 1;
+        }
+        else {
+            if($answer == $this->postorder) $result = 1;
+        }
+
+        return $result;
     }
 }

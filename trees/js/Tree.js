@@ -16,6 +16,9 @@ class Tree {
         this._inOrder = "";
         this._preOrder = "";
         this._postOrder = "";
+
+        this._string = "";
+        this._childPos = "";
     }
 
     get root() {
@@ -42,6 +45,14 @@ class Tree {
         return this._postOrder;
     }
 
+    get string() {
+        return this._string;
+    }
+
+    get childPos() {
+        return this._childPos;
+    }
+
     set root(value) {
         this._root = value;
     }
@@ -66,10 +77,18 @@ class Tree {
         this._postOrder = value;
     }
 
+    set string(value) {
+        this._string = value;
+    }
+
+    set childPos(value) {
+        this._childPos = value;
+    }
+
     addChild(selectedNode, childType, childValue, childCellX, childCellY) {
         let newChild;
 
-        if(childType === "left") {
+        if(childType === "L") {
             selectedNode.children.leftChild = new Node(childValue, false);
             selectedNode.children.leftChild.parent = selectedNode;
             newChild = selectedNode.children.leftChild;
@@ -95,7 +114,7 @@ class Tree {
         tree.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
 
         if(!selectedNode.isRoot) {
-            if(selectedNode.childType() === "left") {
+            if(selectedNode.childType() === "L") {
                 selectedNode.parent.children.leftChild = null;
             }
             else {
@@ -198,5 +217,45 @@ class Tree {
             }   
         }
         this.nodes = tempMatrix;
+    }
+
+    convertToString(node) {
+        if(!node) return;
+
+        if(node.isRoot) {
+            this.string += ROWS + "," + COLS + ":" + node.value + ":ROOT:" + node.cellCoords.y + "," + node.cellCoords.x;
+        }
+        else if(node.childType() === "L") {
+            this.string += node.value + ":" + this.generateChildPosition(node) + ":" + node.cellCoords.y + "," + node.cellCoords.x;
+        }
+        else {
+            this.string += node.value + ":" + this.generateChildPosition(node) + ":" + node.cellCoords.y + "," + node.cellCoords.x;
+        }
+
+        if(this.string.split("#").length !== this.numNodes) {
+            this.string += "#";
+        }
+        
+        this.convertToString(node.children.leftChild);
+        this.convertToString(node.children.rightChild);
+    }
+
+    generateChildPosition(node) {
+        let childPos = "";
+
+        while(node !== this.root) {
+            if(node.parent === this.root) {
+                childPos += node.childType();
+            }
+            else {
+                childPos += node.childType() + ".";
+            }
+
+            node = node.parent;
+        }
+
+        childPos = childPos.split("").reverse().join(""); // Get child position from root to child instead of from child to root e.g. LLR not RLL
+
+        return childPos;
     }
 }

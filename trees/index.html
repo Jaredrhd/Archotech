@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tree</title>
 </head>
-<link rel="stylesheet" href="styles.css">
 <body oncontextmenu="return false;">
 
 <noscript>
@@ -18,23 +17,30 @@
         <canvas id="canvas" width="700" height="700" style="display:block"></canvas>
     </div>
     <div id="toolbar">
-        <!-- <form class="toolbar-element"> -->
-            <div class="toolbar-element">
-                <label for="node-value">NODE VALUE</label>
-                <input id="node-value" type="number" min="0" max="99" autocomplete="off" required>
-                <label for="random-node-value">RANDOM VALUE</label>
-                <input id="random-node-value" type="checkbox" autocomplete="off">
-            </div>
-        <!-- </form> -->
-        <button type="button" id="add-root" class="toolbar-element">ADD ROOT</button>
-        <button type="button" id="remove-node" class="toolbar-element" style="display: none;">REMOVE</button>
-        <button type="button" id="edit-node" class="toolbar-element">EDIT VALUE</button>
+        <div id="modify-tree-tools" style="display: none;">
+            <label for="node-value">NODE VALUE</label>
+            <input id="node-value" type="number" min="0" max="99" autocomplete="off">
+            <label for="random-node-value">RANDOM VALUE</label>
+            <input id="random-node-value" type="checkbox" autocomplete="off">
+            <button type="button" id="add-root" class="modify-tree-tools">ADD ROOT</button>
+            <button type="button" id="remove-node" style="display: none;" class="modify-tree-tools">REMOVE</button>
+            <button type="button" id="edit-node" style="display: none;" class="modify-tree-tools">EDIT VALUE</button>
+        </div>
+        <div id="answer-question-tools" style="display: none;">
+            <label for='ANSWER_ID'></label>
+            <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''> 
+        </div>
     </div>
 </div>
+<script>
+    var lecturer = true;
+    var student = {qType: '', treeString: ''};
+</script>
 <script src="/question/type/trees/js/Board.js"></script>
 <script src="/question/type/trees/js/Node.js"></script>
 <script src="/question/type/trees/js/Tree.js"></script>
-<script src="/question/type/trees/js/QuestionManager.js"></script>
+<script src="/question/type/trees/js/QuestionSetup.js"></script>
+<script src="/question/type/trees/js/QuestionAttempt.js"></script>
 <script src="/question/type/trees/js/TraversalQuestion.js"></script>
 <script src="/question/type/trees/js/BSTQuestion.js"></script>
 <script src="/question/type/trees/js/main.js"></script>

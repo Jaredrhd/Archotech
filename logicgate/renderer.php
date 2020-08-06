@@ -81,9 +81,9 @@ class qtype_logicgate_renderer extends qtype_renderer
                 $input = str_replace("var lockCanvas = false;","var lockCanvas = true;",$input);
             }
         }
-
-        //Attach the tick or cross
-        $input .= $feedbackimg;
+        
+        //Get the file
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
 
         //Add the question text
         $result = html_writer::tag('div', $question->name, array('class' => 'h2'));
