@@ -2,14 +2,19 @@ onload = init;
 
 /** HTML ELEMENTS */
 {
+var modifyTreeTools = document.getElementById("modify-tree-tools");
+var answerQuestionTools = document.getElementById("answer-question-tools");
 var nodeValueInput = document.getElementById("node-value");
 var randNodeValueCheckbox = document.getElementById("random-node-value");
 var addRootButton = document.getElementById("add-root");
 var removeNodeButton = document.getElementById("remove-node");
 var editNodeValueButton = document.getElementById("edit-node");
+var qType = document.getElementById("q_type");
+var preOrder = document.getElementById("preorder");
+var inOrder = document.getElementById("inorder");
+var postOrder = document.getElementById("postorder");
 var curatedData = document.getElementById("curated_data");
 /** The list of BST values shown to the student */
-var bstValueList = document.getElementById("bst-values");
 var bstValueList = document.getElementById("bst-values");
 }
 
@@ -20,11 +25,10 @@ var context;
 var board;
 }
 
-/** QUESTIONS */
-{
-var bstQuestion;
-var traversalQuestion;
-}
+/** Question setup object. Will be non-null if the lecturer is creating a question */
+var setup = null;
+/** Question attempt object. Will be non-null if the student is answering a question */
+var attempt = null;
 
 var ROWS = 13;
 var COLS = 13;
@@ -41,9 +45,6 @@ var MIN_NODE_VALUE = 0;
 /** Boolean indicating whether a new node's value should be taken from user input or randomised */
 let randNodeValue = false;
 
-/** TESTING */
-let drawGrid = true;
-
 function init() {
     canvas = document.getElementById("canvas");
     if (!canvas.getContext) {
@@ -52,23 +53,29 @@ function init() {
     }
 
     context = canvas.getContext("2d");
+
     board = new Board();
-
-    bstQuestion = new BSTQuestion();
-    traversalQuestion = new TraversalQuestion();
-
-    QuestionManager.addQuestion(bstQuestion);
-    QuestionManager.addQuestion(traversalQuestion);
-
-    if(drawGrid) {
-        board.drawGrid();
-    }
+    board.drawGrid();
 
     initListeners();
+
+    if(lecturer) {
+        setup = new QuestionSetup();
+        setup.configureHTML();
+    }
+    else {
+        attempt = new QuestionAttempt();
+        attempt.configureHTML();
+    }
 }
 
 function redrawCanvas() {
+    context.save();
+
+    context.fillStyle = "white";
     context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    context.restore();
 
     /** Redraw the tree */
     for(let i = 0; i < ROWS; i++) {
@@ -79,23 +86,22 @@ function redrawCanvas() {
         }
     }
 
-    if(drawGrid) {
-        board.drawGrid();
-    }
+    board.drawGrid();
 }
 
 function initListeners() {
-    randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
-    addRootButton.addEventListener("click", addRoot);
-    removeNodeButton.addEventListener("click", removeNodeAndChildren);
-    editNodeValueButton.addEventListener("click", editNodeValue);
-
     /** CANVAS */
     canvas.addEventListener("click", onBoardClick);
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
+    if(!lecturer && student.qType === "traversal") return;
     canvas.addEventListener("mousedown", beginDrag);
     canvas.addEventListener("mouseup", exitDrag);
+
+    randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
+    addRootButton.addEventListener("click", addRoot);
+    removeNodeButton.addEventListener("click", removeNodeAndChildren);
+    editNodeValueButton.addEventListener("click", editNodeValue);
 }
 
 function randNodeValueChecked() {
@@ -112,28 +118,54 @@ function randNodeValueChecked() {
 function addRoot() {
     let newNodeValue;
 
-    if(QuestionManager.currQuestion === bstQuestion) {
-        newNodeValue = nodeValueInput.value;
-        nodeValueInput.value = bstQuestion.getNextNodeValue();
-    }
-    else {
-        newNodeValue = getNewNodeValue();
-    }
+    // if(QuestionManager.currQuestion === bstQuestion) {
+    //     newNodeValue = nodeValueInput.value;
+    //     nodeValueInput.value = bstQuestion.getNextNodeValue();
+    // }
+    // else {
+    newNodeValue = getNewNodeValue();
+    // }
 
     if(!newNodeValue) return; // newNodeValue is null
 
     if(!tree) { // Tree doesn't exist
-        tree = new Tree(Number(newNodeValue), board);
+        tree = new Tree(Number(newNodeValue));
     }
     else { // Tree instance already exists - will be true if the root node was removed
-        tree.setNewRoot(Number(newNodeValue), board);
+        tree.setNewRoot(Number(newNodeValue));
     }
 
     addRootButton.style.display = "none";
 
-    if(QuestionManager.currQuestion === traversalQuestion) {
-        traversalQuestion.performTraversal();
+    if(lecturer) {
+        setup.handleEvent(setup.events.ADDROOT);
     }
+    
+    treeToString();
+}
+
+function removeNodeAndChildren() {
+    tree.removeNodeAndChildren(selectedNode);
+    
+    if(selectedNode.isRoot) {
+        addRootButton.style.display = "block";
+    }
+    
+    while(board.canShrink()) {
+        resizeBoard("shrink");
+    }
+    
+    redrawCanvas();
+    
+    selectedNode = null;
+    removeNodeButton.style.display = "none";
+    editNodeValueButton.style.display = "none";
+
+    if(lecturer) {
+        setup.handleEvent(setup.events.REMOVENODE);
+    }
+
+    treeToString();
 }
 
 function editNodeValue(){
@@ -146,33 +178,6 @@ function editNodeValue(){
     selectedNode.value = newNodeValue;
 
     redrawCanvas();
-}
-
-function removeNodeAndChildren() {
-    if(!selectedNode.isLeaf()) {
-        if(confirm("This will remove all subtrees")) {
-            tree.removeNodeAndChildren(selectedNode);
-        }
-        else {
-            return;
-        }
-    }
-    else {
-        tree.removeNodeAndChildren(selectedNode);
-    }
-    
-    if(selectedNode.isRoot) {
-        addRootButton.style.display = "block";
-    }
-
-    while(board.canShrink()) {
-        resizeBoard("shrink");
-    }
-
-    redrawCanvas();
-
-    selectedNode = null;
-    removeNodeButton.style.display = "none";
 }
 
 function beginDrag(event){
@@ -198,6 +203,7 @@ function onBoardClick(event) {
             selectedNode = null;
             redrawCanvas();
             removeNodeButton.style.display = "none";
+            editNodeValueButton.style.display = "none";
             return;
         }
         if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
@@ -211,6 +217,7 @@ function onBoardClick(event) {
         redrawCanvas();
 
         removeNodeButton.style.display = "block";
+        editNodeValueButton.style.display = "block";
     }
     else if(board.cellX != prevX || board.cellY != prevY){ // If dragging
         if(canDrag()) {
@@ -239,6 +246,8 @@ function onBoardClick(event) {
         else {
             return;
         }
+
+        treeToString();
     }
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
@@ -247,25 +256,25 @@ function onBoardClick(event) {
         if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
 
         let newNodeValue;
-        if(QuestionManager.currQuestion === bstQuestion) {
-            newNodeValue = nodeValueInput.value;
-            nodeValueInput.value = bstQuestion.getNextNodeValue();
-        }
-        else {
-            newNodeValue = getNewNodeValue();
-        }
+        // if(QuestionManager.currQuestion === bstQuestion) {
+        //     newNodeValue = nodeValueInput.value;
+        //     nodeValueInput.value = bstQuestion.getNextNodeValue();
+        // }
+        // else {
+        newNodeValue = getNewNodeValue();
+        // }
 
         if(!newNodeValue) return; // newNodeValue is null
 
         if(board.cellX < selectedNode.cellCoords.x) { // Adding a left child
             if(selectedNode.children.leftChild) return; // Parent already has a left child
 
-            tree.addChild(selectedNode, "left", Number(newNodeValue), board.cellX, board.cellY);
+            tree.addChild(selectedNode, "L", newNodeValue, board.cellX, board.cellY);
         }
         else { // Adding a right child
             if(selectedNode.children.rightChild) return; // Parent already has a right child
 
-            tree.addChild(selectedNode, "right", Number(newNodeValue), board.cellX, board.cellY);
+            tree.addChild(selectedNode, "R", newNodeValue, board.cellX, board.cellY);
         }
 
         /** INCREASE SIZE OF BOARD */
@@ -275,9 +284,11 @@ function onBoardClick(event) {
             }
         }
 
-        if(QuestionManager.currQuestion === traversalQuestion) {
-            traversalQuestion.performTraversal();
+        if(lecturer) {
+            setup.handleEvent(setup.events.ADDCHILD);
         }
+
+        treeToString();
     }
 }
 
@@ -289,12 +300,19 @@ function onBoardHover(event) {
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node in the hovered cell
         document.body.style.cursor = "pointer";
     }
+    else if(!lecturer && student.qType === "traversal") {
+        document.body.style.cursor = "default";
+        return;
+    }
     else if(selectedNode) { // No node in the hovered cell but an existing node is selected
         if(dragging) { 
             if(canDrag()) {
+                redrawCanvas();
+                selectedNode.drawOutline();
                 document.body.style.cursor = "move";
             }
             else {
+                redrawCanvas();
                 document.body.style.cursor = "not-allowed";
             }
         }
@@ -333,7 +351,7 @@ function getNewNodeValue() {
         newNodeValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);
     }
 
-    return newNodeValue;
+    return Number(newNodeValue);
 }
 
 /** Checks whether a node can be dragged to the required position on the board */
@@ -352,7 +370,7 @@ function canDrag() {
     return true;
 }
 
-/** Dynamically resize the board if a cell is made on any edge */
+/** Dynamically resize the board if a cell is made on any edge or there is adequate space to shrink */
 function resizeBoard(direction) {
     if(direction === "grow") {
         ROWS += 2;
@@ -368,6 +386,66 @@ function resizeBoard(direction) {
         COLS -= 2;
 
         board = new Board();
+    }
+
+    redrawCanvas();
+}
+
+function treeToString() {
+    tree.convertToString(tree.root);
+    curatedData.value = tree.string;
+    tree.string = "";
+}
+
+function buildTreeFromString(string) {
+    let temp = string;
+    let tempArr = temp.split("#");
+
+    let node = tempArr[0].split(":");
+    let boardDimensions = node[0].split(",");
+    ROWS = Number(boardDimensions[0]);
+    COLS = Number(boardDimensions[1]);
+    let nodeValue = Number(node[1]);
+
+    board = new Board(); 
+    tree = new Tree(nodeValue);
+
+    tempArr.shift();
+    
+    while(tempArr.length !== 0) {
+        if(tempArr[0] === "") break;
+
+        let node = tempArr[0].split(":");
+
+        let nodeValue = Number(node[0]);
+        let childPos = node[1].split(".");
+        let nodeCoords = node[2].split(",");
+
+        let nodeX = Number(nodeCoords[1]);
+        let nodeY = Number(nodeCoords[0]);
+
+        let newNode = tree.root;
+
+        for(let i = 0; i < childPos.length; i++) {
+            if(childPos[i] === "L") {
+                if(!newNode.children.leftChild) { // Reached correct position of child
+                    tree.addChild(newNode, "L", nodeValue, nodeX, nodeY);
+                }
+                else {
+                    newNode = newNode.children.leftChild;
+                }
+            }      
+            else {
+                if(!newNode.children.rightChild) {
+                    tree.addChild(newNode, "R", nodeValue, nodeX, nodeY);
+                }
+                else {
+                    newNode = newNode.children.rightChild;
+                }
+            }
+        }
+
+        tempArr.shift();
     }
 
     redrawCanvas();

@@ -73,7 +73,7 @@ class qtype_logicgate_renderer extends qtype_renderer
             //Set input field diabled and set tick or cross
             $feedbackimg = $this->feedback_image($fraction);
         }
-
+        
         //Get the file
         $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')) . $feedbackimg;
 
