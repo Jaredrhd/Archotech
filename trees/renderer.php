@@ -50,7 +50,7 @@ class qtype_trees_renderer extends qtype_renderer {
         
         /** Display a label indicating the type of traversal required */
         if($question->q_type == "traversal") {
-            $label = $question->preorder != "" ? "Pre-order Traversal" : $question->inorder != "" ? "In-order Traversal" : "Post-order Traversal";
+            $label = $question->preorder !== "" ? "Pre-order Traversal" : ($question->inorder !== "" ? "In-order Traversal" : "Post-order Traversal");
             $html = str_replace("<label for='ANSWER_ID'></label>", "<label for='ANSWER_ID'>$label</label>", $html);
         }
         
@@ -135,7 +135,8 @@ class qtype_trees_renderer extends qtype_renderer {
 
     public function traversal_results($question, $answer) {
         $string = '';
-        $correctAnswer = $question->preorder != "" ? $question->preorder : $question->inorder != "" ? $question->inorder : $question->postorder;
+        
+        $correctAnswer = $question->preorder != "" ? $question->preorder : ($question->inorder != "" ? $question->inorder : $question->postorder);
 
         $comparison = "Your answer: " . $answer . "\nCorrect answer: " . $correctAnswer;
 

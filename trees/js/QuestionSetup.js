@@ -56,7 +56,12 @@ class QuestionSetup {
         if(curatedData.value !== "") {
             buildTreeFromString(curatedData.value);
             addRootButton.style.display = "none";
+            this.trvQuestion.performTraversal();
         }
+        
+        // if(this.currQuestion.TRAVERSAL) {
+           
+        // }
 
         modifyTreeTools.style.display = "block";
         answerQuestionTools.style.display = "none";

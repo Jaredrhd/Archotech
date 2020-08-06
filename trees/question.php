@@ -101,15 +101,9 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         $result = 0;
         $answer = $response["answer"];
 
-        if($this->preorder != "") { 
-            if($answer == $this->preorder) $result = 1;
-        }
-        else if($this->inorder != "") {
-            if($answer == $this->inorder) $result = 1;
-        }
-        else {
-            if($answer == $this->postorder) $result = 1;
-        }
+        $traversalType = $this->preorder != "" ? $this->preorder : ($this->inorder != "" ? $this->inorder : $this->postorder);
+
+        if($answer == $traversalType) $result = 1;
 
         return $result;
     }
