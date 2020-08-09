@@ -25,6 +25,7 @@
             <button type="button" id="add-root" class="modify-tree-tools">ADD ROOT</button>
             <button type="button" id="remove-node" style="display: none;" class="modify-tree-tools">REMOVE</button>
             <button type="button" id="edit-node" style="display: none;" class="modify-tree-tools">EDIT VALUE</button>
+            <button type="button" id="bst-undo" style="display: none;" class="modify-tree-tools">UNDO</button>
         </div>
         <div id="answer-question-tools" style="display: none;">
             <label for='ANSWER_ID'></label>
@@ -34,7 +35,14 @@
 </div>
 <script>
     var lecturer = true;
-    var student = {qType: '', treeString: ''};
+    var studentQType = '';
+    var student = {treeString: '', bstValues: ''};
+
+    /** BST */
+    var constructTreeForBSTReview;
+    var callInOrder;
+    var storeInOrder;
+    var resetInOrder;
 </script>
 <script src="/question/type/trees/js/Board.js"></script>
 <script src="/question/type/trees/js/Node.js"></script>

@@ -46,12 +46,15 @@ class qtype_trees_renderer extends qtype_renderer {
 
         $html = file_get_contents(new moodle_url('/question/type/trees/index.html'));
         $html = str_replace("var lecturer = true;", "var lecturer = false;", $html);
-        $html = str_replace("var student = {qType: '', treeString: ''};", "var student = {qType: '$question->q_type', treeString: '$question->curated_data'};", $html);
+        $html = str_replace("var studentQType = '';", "var studentQType = '$question->q_type';", $html);
         
-        /** Display a label indicating the type of traversal required */
         if($question->q_type == "traversal") {
+            $html = str_replace("var student = {treeString: '', bstValues: ''};", "var student = {treeString: '$question->lecturer_tree', bstValues: ''};", $html);
             $label = $question->preorder !== "" ? "Pre-order Traversal" : ($question->inorder !== "" ? "In-order Traversal" : "Post-order Traversal");
             $html = str_replace("<label for='ANSWER_ID'></label>", "<label for='ANSWER_ID'>$label</label>", $html);
+        }
+        else if($question->q_type == "bst") {
+            $html = str_replace("var student = {treeString: '', bstValues: ''};", "var student = {treeString: '', bstValues: '$question->bstvalues'};", $html);
         }
         
         // echo "<script>console.log('$question->postorder');</script>";
@@ -78,17 +81,22 @@ class qtype_trees_renderer extends qtype_renderer {
         //If we are showing their mark
         if ($options->correctness) {
             //Get the answer
-            $answerForDisplay = $answer;
+            if($question->q_type == "traversal") {
+                $html = str_replace("<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answer' style='cursor: default;' readonly>", $html);
+            }
+            else if($question->q_type == "bst") {
+                $values = explode("-", $answer);
+                $answer = $values[0];
+                $studentTree = $values[1];
+
+                $html = str_replace("treeString: ''", "treeString: '$studentTree'", $html);
+            }
 
             $answer = $question->grade_response(array('answer' => $answer));
             $fraction = $answer[0];
 
             //Set input field diabled and set tick or cross
             $feedbackimg = $this->feedback_image($fraction);
-
-            if($question->q_type == "traversal") {
-                $html = str_replace("<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answerForDisplay' style='cursor: default;' readonly>", $html);
-            }
         }
 
         //Get the file

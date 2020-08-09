@@ -39,7 +39,7 @@ class qtype_trees_edit_form extends question_edit_form {
     protected function definition_inner($mform) {
         $this->add_interactive_settings();
 
-        $mform->addElement('header', 'QuestionType', "Question Type");
+        $mform->addElement('header', 'q_type_header', "Question Type");
 
         /** TRAVERSAL */
         $mform->addElement('radio', 'question_type', '', "Perform Traversal", 0, array('qtype_name'=>'traversal'));
@@ -57,13 +57,15 @@ class qtype_trees_edit_form extends question_edit_form {
 
         $mform->setDefault('question_type', 0);
 
-        $mform->addElement('header', 'Answer', "Build Tree");
+        $mform->addElement('header', 'create_question_header', "Build Tree");
         $mform->addElement('html', file_get_contents(new moodle_url('/question/type/trees/index.html')));
 
-        $mform->addElement('hidden', 'curated_data','', array('id'=>'curated_data'));
+        $mform->addElement('hidden', 'lecturer_tree','', array('id'=>'lecturer_tree'));
+        $mform->addElement('hidden', 'student_tree','', array('id'=>'student_tree'));
         $mform->addElement('hidden', 'preorder','', array('id'=>'preorder'));
         $mform->addElement('hidden', 'inorder','', array('id'=>'inorder'));
         $mform->addElement('hidden', 'postorder','', array('id'=>'postorder'));
+        $mform->addElement('hidden', 'bstvalues','', array('id'=>'bstvalues'));
         $mform->addElement('hidden', 'q_type','', array('id'=>'q_type'));
 
         // $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_trees', '{no}'), array(100,0),1,0);

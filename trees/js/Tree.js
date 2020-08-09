@@ -105,6 +105,17 @@ class Tree {
         this.numNodes++;
     }
 
+    /** Returns the first node whose value matches the argument */
+    getNode(value) {
+        for(let i = 0; i < ROWS; i++) {
+            for(let j = 0; j < COLS; j++) {
+                if(typeof tree.nodes[i][j] !== "undefined") {
+                    if(tree.nodes[i][j].value === value) return tree.nodes[i][j];
+                }
+            }
+        }
+    }
+
     removeNodeAndChildren(selectedNode) {
         if(!selectedNode) return; // selectedNode is child of leaf node (i.e. doesn't exist)
 

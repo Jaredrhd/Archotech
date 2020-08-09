@@ -43,13 +43,7 @@ class TraversalQuestion {
             bstValueList.style.display = "none";
         }
 
-        qType.value = "traversal";
-
-        nodeValueInput.disabled = false;
-        nodeValueInput.value = "";
-        nodeValueInput.style.color = "#000000";
-
-        randNodeValueCheckbox.disabled = false;
+        setup.updateCurrentQuestion("TRAVERSAL");
     }
 
     performTraversal() {

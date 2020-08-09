@@ -1,21 +1,21 @@
 class BSTQuestion {
     constructor() {
-
-        this._radioElement = document.querySelector('[qtype_name="bst"]');
-        this._nodeAmountElement = document.getElementById("id_node_amount");
-        this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
-        this._nodeAmountElement.addEventListener("input", this.updateBSTValues.bind(this));
-
+        this._radio = document.querySelector('[qtype_name="bst"]');
+        this._nodeAmountInput = document.getElementById("id_node_amount");
+        this._nodeAmount = 0;
         this._bstValues = [];
         this._addedValues = [];
+
+        this._radio.addEventListener("change", this.updateQuestionType.bind(this));
+        this._nodeAmountInput.addEventListener("input", this.updateBSTValues.bind(this));
     }
 
-    get radioElement() {
-        return this._radioElement;
+    get radio() {
+        return this._radio;
     }
 
-    get nodeAmountElement() {
-        return this._nodeAmountElement;
+    get nodeAmountInput() {
+        return this._nodeAmountInput;
     }
 
     get nodeAmount() {
@@ -36,25 +36,18 @@ class BSTQuestion {
 
     /** Called when 'Construct BST' radio button is checked */
     updateQuestionType() {
-        qType.value = "bst";
-
+        setup.updateCurrentQuestion("BST");
         this.updateBSTValues();
-        bstValueList.style.display = "block";
-
-        nodeValueInput.disabled = true;
-        randNodeValueCheckbox.disabled = true;
-
-        nodeValueInput.value = this.getNextNodeValue();
-        nodeValueInput.style.color = "#ff0000";
     }
 
     updateBSTValues() {
         bstValueList.value = "";
+        bstValues.value = "";
         this.bstValues.length = 0; // Reset the list of previous BST values
-        this.addedValues.length = 0;
-        this.nodeAmount = Number(this.nodeAmountElement.value);
+        this.nodeAmount = Number(this.nodeAmountInput.value);
 
         if(this.nodeAmount > (MAX_NODE_VALUE - MIN_NODE_VALUE)) return; // If number of requested nodes is greater than possible unique values
+        if(this.nodeAmount > ROWS * COLS) return;
 
         for(let i = 0; i < this.nodeAmount; i++) {
             let newValue = Math.floor(Math.random() * (MAX_NODE_VALUE - MIN_NODE_VALUE) + MIN_NODE_VALUE);
@@ -65,9 +58,11 @@ class BSTQuestion {
 
             this.bstValues.push(newValue);
             bstValueList.value += newValue;
+            bstValues.value += newValue;
             
             if(i !== this.nodeAmount - 1) {
                 bstValueList.value += ", ";
+                bstValues.value += ", ";
             }
         }
     }

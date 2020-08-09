@@ -88,6 +88,9 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         if($this->q_type == 'traversal') {
             $fraction = $this->grade_traversal($response);
         }
+        else if($this->q_type == 'bst') {
+            $fraction = $this->grade_bst($response);
+        }
 
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
@@ -104,6 +107,21 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         $traversalType = $this->preorder != "" ? $this->preorder : ($this->inorder != "" ? $this->inorder : $this->postorder);
 
         if($answer == $traversalType) $result = 1;
+
+        return $result;
+    }
+
+    public function grade_bst(array $response) {
+        $result = 0;
+        $answer = $response["answer"];
+
+        $values = explode(",", $this->bstvalues);
+        $values = array_map('intval', $values);
+        sort($values);
+
+        $values = implode(",", $values);
+
+        if($answer == $values) $result = 1;
 
         return $result;
     }
