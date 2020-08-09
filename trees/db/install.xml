@@ -8,6 +8,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
+        <FIELD NAME="q_type" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="preorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="inorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="postorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="curated_data" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

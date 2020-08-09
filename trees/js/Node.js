@@ -96,45 +96,76 @@ class Node {
         context.restore();
 
         if(parent !== null) { // Draw the connecting edge from the parent to the node
-            let deltaX = Math.abs(this.parent.cellCoords.x - this.cellCoords.x);
-            let deltaY = Math.abs(this.parent.cellCoords.y - this.cellCoords.y);
-
-            /** Angles of the line from the centre of the child to the centre of the parent */
-            let angleChild = Math.atan(deltaY / deltaX);
-            let angleParent = Math.atan(deltaX / deltaY);
-
-            if(this.childType() === "left") {
-                angleChild = (360 * Math.PI / 180) - angleChild;
-                angleParent = (90 * Math.PI / 180) + angleParent;
-            }
-            else {
-                angleChild = Math.PI + angleChild;
-                angleParent = (90 * Math.PI / 180) - angleParent;
-            }
-
-            context.save();
-
-            context.lineWidth = 2;
-            context.beginPath();
-
-            /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
-            context.moveTo(this.nodeRadius*Math.cos(angleParent) + this.parent.boardCoords.x, this.nodeRadius*Math.sin(angleParent) +  this.parent.boardCoords.y);
-            context.lineTo(this.nodeRadius*Math.cos(angleChild) + this.boardCoords.x, this.nodeRadius*Math.sin(angleChild) + this.boardCoords.y);
-
-            context.stroke();
-
-            context.restore();
+            this.drawEdge(parent.boardCoords, this.boardCoords, parent.cellCoords, this.cellCoords.x, this.cellCoords.y, this);
         }
+    }
+
+    drawOutline() {
+        context.save();
+
+        context.lineWidth = 2;
+        context.setLineDash([3, 3]);
+
+        context.beginPath();
+
+        let cellCoords = {x: board.cellX, y: board.cellY};
+        let boardCoords = board.cellToBoardCoords(board.cellX, board.cellY);
+        
+        context.arc(boardCoords.x, boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node outline
+
+        context.stroke();
+
+        this.drawEdge(this.parent.boardCoords, boardCoords, this.parent.cellCoords, board.cellX, board.cellY, this);
+
+        if(this.hasLeftChild()) {
+            this.drawEdge(boardCoords, this.children.leftChild.boardCoords, cellCoords, this.children.leftChild.cellCoords.x, this.children.leftChild.cellCoords.y, this.children.leftChild);
+        }
+        if(this.hasRightChild()) {
+            this.drawEdge(boardCoords, this.children.rightChild.boardCoords, cellCoords, this.children.rightChild.cellCoords.x, this.children.rightChild.cellCoords.y, this.children.rightChild);
+        }
+
+        context.restore();
+    }
+
+    drawEdge(parentBoardCoords, childBoardCoords, parentCellCoords, cellX, cellY, child) {
+        let deltaX = Math.abs(parentCellCoords.x - cellX);
+        let deltaY = Math.abs(parentCellCoords.y - cellY);
+
+        /** Angles of the line from the centre of the child to the centre of the parent */
+        let angleChild = Math.atan(deltaY / deltaX);
+        let angleParent = Math.atan(deltaX / deltaY);
+
+        if(child.childType() === "L") {
+            angleChild = (360 * Math.PI / 180) - angleChild;
+            angleParent = (90 * Math.PI / 180) + angleParent;
+        }
+        else {
+            angleChild = Math.PI + angleChild;
+            angleParent = (90 * Math.PI / 180) - angleParent;
+        }
+
+        context.save();
+
+        context.lineWidth = 2;
+        context.beginPath();
+
+        /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
+        context.moveTo(this.nodeRadius*Math.cos(angleParent) + parentBoardCoords.x, this.nodeRadius*Math.sin(angleParent) + parentBoardCoords.y);
+        context.lineTo(this.nodeRadius*Math.cos(angleChild) + childBoardCoords.x, this.nodeRadius*Math.sin(angleChild) + childBoardCoords.y);
+
+        context.stroke();
+
+        context.restore();
     }
 
     childType() {
         if(this.isRoot) return;
 
         if(this.parent.children.leftChild === this) {
-            return "left";
+            return "L";
         }
         else {
-            return "right";
+            return "R";
         }
     }
 

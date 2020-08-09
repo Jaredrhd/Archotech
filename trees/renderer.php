@@ -35,26 +35,77 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_trees_renderer extends qtype_renderer {
+
+    public $answerForDisplay;
+
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
+        //Get the whole question with everything (hints, penalties, length, feedback, etc)
         $question = $qa->get_question();
-        $answer = $qa->get_last_qt_var('answer');
 
+        $html = file_get_contents(new moodle_url('/question/type/trees/index.html'));
+        $html = str_replace("var lecturer = true;", "var lecturer = false;", $html);
+        $html = str_replace("var student = {qType: '', treeString: ''};", "var student = {qType: '$question->q_type', treeString: '$question->curated_data'};", $html);
+        
+        /** Display a label indicating the type of traversal required */
+        if($question->q_type == "traversal") {
+            $label = $question->preorder != "" ? "Pre-order Traversal" : $question->inorder != "" ? "In-order Traversal" : "Post-order Traversal";
+            $html = str_replace("<label for='ANSWER_ID'></label>", "<label for='ANSWER_ID'>$label</label>", $html);
+        }
+        
+        // echo "<script>console.log('$question->postorder');</script>";
+
+        //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
         
         $placeholder = false;
         if (preg_match('/_____+/', $questiontext, $matches)) {
-            $placeholder = $matches[0];
+            $placeholder = $smatches[0];
         }
         $input = '**subq controls go in here**';
 
-        if ($placeholder) {
-            $questiontext = substr_replace($questiontext, $input,
-                    strpos($questiontext, $placeholder), strlen($placeholder));
+        $answer = $qa->get_last_qt_var('answer');
+
+        // if ($placeholder) {
+        //     $questiontext = substr_replace($questiontext, $input,
+        //             strpos($questiontext, $placeholder), strlen($placeholder));
+        // }
+
+        //Displays the red x or tick
+        $feedbackimg = '';
+
+        //If we are showing their mark
+        if ($options->correctness) {
+            //Get the answer
+            $answerForDisplay = $answer;
+
+            $answer = $question->grade_response(array('answer' => $answer));
+            $fraction = $answer[0];
+
+            //Set input field diabled and set tick or cross
+            $feedbackimg = $this->feedback_image($fraction);
+
+            if($question->q_type == "traversal") {
+                $html = str_replace("<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answerForDisplay' style='cursor: default;' readonly>", $html);
+            }
         }
 
-        $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+        //Get the file
+        $input = $html.$feedbackimg;
+        $inputname = $qa->get_qt_field_name('answer');
+
+        //Add the question text
+        $result = html_writer::tag('div', $question->name, array('class' => 'h2'));
+        $result .= html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+
+
+        //This is probably what we want to display since we dont have placeholder
+        if (!$placeholder) {
+            $result .= html_writer::tag('span', $input, array('class' => 'answer'));
+        }
+
+        $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
 
         /* if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
@@ -65,12 +116,36 @@ class qtype_trees_renderer extends qtype_renderer {
     }
 
     public function specific_feedback(question_attempt $qa) {
-        // TODO.
         return '';
     }
 
-    public function correct_response(question_attempt $qa) {
-        // TODO.
-        return '';
+    public function correct_response(question_attempt $qa) { // Displayed on review
+        $string = '';
+
+        $question = $qa->get_question();
+
+        $answer = $qa->get_last_qt_var('answer');
+
+        if($question->q_type == "traversal") {
+            $string = $this->traversal_results($question, $answer);
+        }
+        
+        return $string;
+    }
+
+    public function traversal_results($question, $answer) {
+        $string = '';
+        $correctAnswer = $question->preorder != "" ? $question->preorder : $question->inorder != "" ? $question->inorder : $question->postorder;
+
+        $comparison = "Your answer: " . $answer . "\nCorrect answer: " . $correctAnswer;
+
+        if($answer == $correctAnswer) {
+            $string .= nl2br("Your answer is correct.\n\n" . "Your answer: " . $answer);
+        }
+        else {
+            $string .= nl2br("Your answer is incorrect.\n\n" . $comparison);
+        }
+
+        return $string;
     }
 }

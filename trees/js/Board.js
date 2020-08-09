@@ -43,7 +43,7 @@ class Board {
             context.save();
 
             context.lineWidth = 2;
-            context.globalAlpha = 0.2
+            context.globalAlpha = 0.2;
             context.setLineDash([2, 3]);
             context.beginPath();
             context.moveTo(0, this.cellHeight * i);
@@ -57,7 +57,7 @@ class Board {
             context.save();
 
             context.lineWidth = 2;
-            context.globalAlpha = 0.2
+            context.globalAlpha = 0.2;
             context.setLineDash([2, 3]);
             context.beginPath();
             context.moveTo(this.cellWidth * j, 0);
