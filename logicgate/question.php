@@ -97,7 +97,11 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
     {
         //If there is no lecturer answer, return 0 since you can't pass
         if(empty($this->answersFromLecturer))
-            return 0;
+            return array(0, question_state::graded_state_for_fraction(0));
+        
+        //If sandbox return it as if it is a pass
+        if($this->questiontype == "1")
+            return array(1, question_state::graded_state_for_fraction(1));
 
         //Get key and value from answer
         reset($this->answersFromLecturer);

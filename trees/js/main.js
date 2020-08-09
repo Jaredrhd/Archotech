@@ -19,6 +19,7 @@ var postOrder = document.getElementById("postorder");
 var bstValues = document.getElementById("bstvalues");
 var lecturerTree = document.getElementById("lecturer_tree");
 var studentTree = document.getElementById("student_tree")
+var answerBox = document.getElementById("ANSWER_ID");
 /** The list of BST values shown to the student and lecturer */
 var bstValueList = document.getElementById("bst-values");
 var answerID = document.getElementById("ANSWER_ID");
@@ -44,6 +45,9 @@ var COLS = 13;
 let tree = null;
 let selectedNode = null;
 
+/** Answer string for traversal question */
+let answerArray = [];
+
 /** DRAGGING */
 var prevX, prevY, dragging = false;
 
@@ -64,6 +68,8 @@ function init() {
 
     board = new Board();
     board.drawGrid();
+
+    answerBox.readOnly = true;
 
     initListeners();
 
@@ -222,21 +228,31 @@ function onBoardClick(event) {
     board.boardCoordsFromMouse(event); 
 
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node at the selected cell
-        if(tree.nodes[board.cellY][board.cellX] == selectedNode) { // If the current selected node is selected again
-            selectedNode.selected = false;
-            selectedNode = null;
+        if(tree.nodes[board.cellY][board.cellX].selected) { // If the current selected node is selected again
+            if(!lecturer && student.qType === "traversal") {
+                tree.nodes[board.cellY][board.cellX].selected = false;
+                buildAnswerString(tree.nodes[board.cellY][board.cellX], "remove");
+            }
+            else {
+                selectedNode.selected = false;
+                selectedNode = null;
+            }
             redrawCanvas();
             removeNodeButton.style.display = "none";
             editNodeValueButton.style.display = "none";
             return;
         }
         if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
-            selectedNode.selected = false;
+            if(lecturer && student.qType !== "traversal") {
+                selectedNode.selected = false;
+            }
         }
 
         selectedNode = tree.nodes[board.cellY][board.cellX];
 
         selectedNode.selected = true;
+
+        buildAnswerString(selectedNode, "add");
 
         redrawCanvas();
 
@@ -488,4 +504,25 @@ function buildTreeFromString(string) {
     }
 
     redrawCanvas();
+}
+
+function buildAnswerString(node, action) {
+    answerBox.value = "";
+    
+    if(action === "add") {
+        answerArray.push(node);
+    }
+    else if(action === "remove") {
+        let indexToRemove = answerArray.indexOf(node);
+        answerArray.splice(indexToRemove, 1);
+    }
+
+    for (const node of answerArray) {
+        if(node === answerArray[answerArray.length-1]) {
+            answerBox.value += node.value;
+        }
+        else {
+            answerBox.value += node.value + ",";
+        }
+    }
 }
