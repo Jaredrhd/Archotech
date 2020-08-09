@@ -101,10 +101,9 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
         //Add hidden field with circuit stuff
         $mform->addElement('header', 'Answer', "Create Answer");
-        //$mform->addElement('html', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
         
         //Add canvas
-        $group[] =& $mform->createElement('static', 'text', '', file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html')));
+        $group[] =& $mform->createElement('static', 'text', '', file_get_contents(new moodle_url('/question/type/logicgate/js/SceneGraph.html')));
         $groupTemp = $mform->addGroup($group, 'hideCanvasGroup', '', ' ', false);
         $groupTemp->setAttributes(array('class'=>'flex-column'));
 

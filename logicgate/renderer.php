@@ -62,7 +62,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         }
 
         //Get the file
-        $input = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraph.html'));
+        $input = file_get_contents(new moodle_url('/question/type/logicgate/js/SceneGraph.html'));
         
         //Displays the red x or tick
         $feedbackimg = '';
