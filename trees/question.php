@@ -82,7 +82,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         }
     }
 
-    public function grade_response(array $response) { // response -> what student answered
+    public function grade_response(array $response) { // Response -> what student answered
         $fraction = 0;
 
         if($this->q_type == 'traversal') {
@@ -113,15 +113,18 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
 
     public function grade_bst(array $response) {
         $result = 0;
-        $answer = $response["answer"];
+        $combinedString = $response["answer"];
 
-        $values = explode(",", $this->bstvalues);
-        $values = array_map('intval', $values);
-        sort($values);
+        $values = explode("-", $combinedString);
+        $answer = $values[0];
 
-        $values = implode(",", $values);
+        $sortedBSTValues = explode(",", $this->bstvalues);
+        $sortedBSTValues = array_map('intval', $sortedBSTValues);
+        sort($sortedBSTValues);
 
-        if($answer == $values) $result = 1;
+        $sortedBSTValues = implode(",", $sortedBSTValues);
+
+        if($answer == $sortedBSTValues) $result = 1;
 
         return $result;
     }

@@ -86,7 +86,6 @@ class qtype_trees_renderer extends qtype_renderer {
             }
             else if($question->q_type == "bst") {
                 $values = explode("-", $answer);
-                $answer = $values[0];
                 $studentTree = $values[1];
 
                 $html = str_replace("treeString: ''", "treeString: '$studentTree'", $html);
