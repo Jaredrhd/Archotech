@@ -29,4 +29,4 @@ Download the zip from :
 
 * latest (master branch) - https://github.com/Jaredrhd/Archotech
 
-unzip it into the question/type folder, and then rename the new folder to logicgate if not already that.
+unzip it into the question/type folder, and then rename the new folder to trees if not already that.
