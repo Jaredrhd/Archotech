@@ -1,62 +1,32 @@
-Question type template
+# Archotech
+
+[![Build Status](https://travis-ci.org/Jaredrhd/Archotech.svg?branch=master)](https://travis-ci.org/Jaredrhd/Archotech)
+
+[![Coverage Status](https://coveralls.io/repos/github/Jaredrhd/Archotech/badge.svg)](https://coveralls.io/github/Jaredrhd/Archotech)
+
+
+Trees
 ----------------------
 
-A simple question type template.
+The Tree plugin is a plugin that allows users to create Trees by placing, editing and deleting nodes.
 
-It is a copy of the shortanswer question type with everything unnecessary removed and :
+Features
+---------------------
 
-* countback grading
-* hints
-* question text
-* no grading implemented at all
-* no input controls at all in question as yet
-* it doesn't install any new tables
-
-###Who should use
-
-
-This is one alternative start for devloping a question type plug in and is working code as is. Although it doesn't do any actual
-grading or collect student input at all.
-
-Depending on what type of question plug in you want to develope it might be good to either :
-
-* use one of the existing question types that is doing something similar to what you want to do as a base, copy that,
-have fun deleting no longer needed code and you then have a template to start from.
-* or if possible to avoid code duplication it is better to extend existing classes, particularly for the question type and
-question classes. There are quite a few examples of queston types that do this at https://github.com/moodleou/.
-        for example classes in ddimageortext and ddmarker both inherit from common code in ddimageortext and those inherit code from the gapselect question type
-* or this code might help start you off.
-
+* A lecturer should be able to assign an output to a question (ie the answer for the question)
+* A lecturer and student should be able to build a tree by adding nodes.
+* A lecturer and student should be able to edit the value of a node.
+* A lecturer and student should be able to drag a node to another place.
+* A lecturer and student should be able to delete a node and its children.
+* A lecturer should be able to choose what type of question to ask.
+* A student should be able to select nodes in the tree to build up a traversal string if the question type is a traversal question
+* A lecturer should be able to input BST values for a BST question for the student.
+* A lecturer or student should be able to randomly generate values for a node, or specifically put in their own value.
 
 ###Installation
 
-####Installation Using Git 
+Download the zip from :
 
-To install using git for the latest version (the master branch), type this command in the
-root of your Moodle install:
+* latest (master branch) - https://github.com/Jaredrhd/Archotech
 
-    git clone git://github.com/jamiepratt/moodle-qtype_TEMPLATE.git question/type/TEMPLATE
-    echo '/question/type/TEMPLATE' >> .git/info/exclude
-
-####Installation From Downloaded zip file
-
-Alternatively, download the zip from :
-
-* latest (master branch) - https://github.com/jamiepratt/moodle-qtype_TEMPLATE/zipball/master
-
-unzip it into the question/type folder, and then rename the new folder to TEMPLATE.
-
-####Doesn't get installed as long as it is called TEMPLATE
-
-You can keep a copy of the template in Moodle in the question/type/ folder and as long as it is called TEMPLATE the plug in will
-be ignored.
-
-###Use
-
-
-* Copy or rename the module directory to trees.
-* Replace all occurances of trees in files with the new name for your question type.
-* Rename files that have trees replacing trees with the new name for your question type.
-* Replace '@copyright  THEYEAR YOURNAME (YOURCONTACTINFO)' with something like @copyright  2013 Jamie Pratt (me@jamiep.org)
-* See http://docs.moodle.org/dev/Question_types for more info on how to create a question type plug in. Please add to it where
- you can.
+unzip it into the question/type folder, and then rename the new folder to trees if not already that.
