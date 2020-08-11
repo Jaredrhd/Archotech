@@ -1,18 +1,13 @@
 class BSTQuestion {
     constructor() {
-        this._qTypeName = "bst";
+
         this._radioElement = document.querySelector('[qtype_name="bst"]');
         this._nodeAmountElement = document.getElementById("id_node_amount");
-        this._nodeAmount = Number(this._nodeAmountElement.value);
-        this._bstValues = [];
-        this._addedValues = [];
-
         this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
         this._nodeAmountElement.addEventListener("input", this.updateBSTValues.bind(this));
-    }
 
-    get qTypeName() {
-        return this._qTypeName;
+        this._bstValues = [];
+        this._addedValues = [];
     }
 
     get radioElement() {
@@ -41,7 +36,7 @@ class BSTQuestion {
 
     /** Called when 'Construct BST' radio button is checked */
     updateQuestionType() {
-        QuestionManager.currQuestion = this;
+        qType.value = "bst";
 
         this.updateBSTValues();
         bstValueList.style.display = "block";

@@ -81,7 +81,6 @@ class qtype_logicgate_renderer extends qtype_renderer
                 $input = str_replace("var lockCanvas = false;","var lockCanvas = true;",$input);
             }
         }
-
         //Attach the tick or cross
         $input .= $feedbackimg; 
 

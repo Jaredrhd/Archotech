@@ -1,46 +1,49 @@
 class TraversalQuestion {
     constructor() {
-        QuestionManager.currQuestion = this; // Initially set as the current question (traversal is the default question type)
+        qType.value = "traversal";
 
-        this._qTypeName = "traversal";
-        this._radioElement = document.querySelector('[qtype_name="traversal"]');
-        this._preOrderCheckbox = document.querySelector('[traversal_type="preorder"]');
-        this._inOrderCheckbox = document.querySelector('[traversal_type="inorder"]');
-        this._postOrderCheckbox = document.querySelector('[traversal_type="postorder"]');
+        this._radio = document.querySelector('[qtype_name="traversal"]');
+        this._preOrderRadio = document.querySelector('[traversal_type="preorder"]');
+        this._inOrderRadio = document.querySelector('[traversal_type="inorder"]');
+        this._postOrderRadio = document.querySelector('[traversal_type="postorder"]');
+        this._traversalOptions = [this._preOrderRadio, this._inOrderRadio, this._postOrderRadio];
 
-        this._preOrderCheckbox.parentElement.style.marginLeft = "21px";
-        this._inOrderCheckbox.parentElement.style.marginLeft = "21px";
-        this._postOrderCheckbox.parentElement.style.marginLeft = "21px";
+        this._preOrderRadio.checked = true; // Default of pre-order traversal
 
-        this._radioElement.addEventListener("change", this.updateQuestionType.bind(this));
+        this._radio.addEventListener("change", this.updateQuestionType.bind(this));
+
+        for(const traversalOption of this._traversalOptions) {
+            traversalOption.parentElement.style.marginLeft += "30px";
+            traversalOption.addEventListener("change", this.traversalChanged.bind(this, traversalOption));
+        }
     }
 
-    get qTypeName() {
-        return this._qTypeName;
+    get radio() {
+        return this._radio;
     }
 
-    get radioElement() {
-        return this._radioElement;
+    get preOrderRadio() {
+        return this._preOrderRadio;
     }
 
-    get preOrderCheckbox() {
-        return this._preOrderCheckbox;
+    get inOrderRadio() {
+        return this._inOrderRadio;
     }
 
-    get inOrderCheckbox() {
-        return this._inOrderCheckbox;
+    get postOrderRadio() {
+        return this._postOrderRadio;
     }
 
-    get postOrderCheckbox() {
-        return this._postOrderCheckbox;
+    get traversalOptions() {
+        return this._traversalOptions;
     }
 
     updateQuestionType() {
-        if(QuestionManager.currQuestion === bstQuestion) {
+        if(setup.currQuestion.BST) {
             bstValueList.style.display = "none";
         }
 
-        QuestionManager.currQuestion = this;
+        qType.value = "traversal";
 
         nodeValueInput.disabled = false;
         nodeValueInput.value = "";
@@ -52,22 +55,54 @@ class TraversalQuestion {
     performTraversal() {
         if(!tree) return;
 
-        if(this.preOrderCheckbox.checked) {
+        if(this.preOrderRadio.checked) {
             tree.preOrderTraversal(tree.root);
-            // curatedData.value = tree.preOrder;
+            preOrder.value = tree.preOrder;
             tree.preOrder = "";
         }
+        else {
+            preOrder.value = "";
+        }
 
-        if(this.inOrderCheckbox.checked) {
+        if(this.inOrderRadio.checked) {
             tree.inOrderTraversal(tree.root);
-            // curatedData.value = tree.preOrder;
+            inOrder.value = tree.inOrder;
             tree.inOrder = "";
         }
+        else {
+            inOrder.value = "";
+        }
 
-        if(this.postOrderCheckbox.checked) {
+        if(this.postOrderRadio.checked) {
             tree.postOrderTraversal(tree.root);
-            // curatedData.value = tree.preOrder;
+            postOrder.value = tree.postOrder;
             tree.postOrder = "";
         }
+        else {
+            postOrder.value = "";
+        }
     }
+
+    traversalChanged(traversalOption) {
+        // if(!this.canRemoveTraversal(traversalOption)) { // If checkbox is the only one selected, cannot deselect it
+        //     traversalOption.checked = true;
+        // }
+
+        this.performTraversal();
+    }
+
+    /*
+    canRemoveTraversal(traversalOption) {
+        if(!traversalOption.checked) { // Only time to check if not able to deselect checkbox is when it has already been deselected
+            for(const option of this.traversalOptions) {
+                if(option !== traversalOption && option.checked) return true; // If another checkbox is checked, we can deselect traversalCheckbox
+            }
+
+            return false;
+        }
+        else {
+            return true;
+        }      
+    }
+    */
 }
