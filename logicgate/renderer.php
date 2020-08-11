@@ -83,7 +83,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         }
 
         //Attach the tick or cross
-        $input .= $feedbackimg;
+        $input .= $feedbackimg; 
 
         //Add the question text
         $result = html_writer::tag('div', $question->name, array('class' => 'h2'));
