@@ -68,7 +68,7 @@ class qtype_logicgate extends question_type {
         parent::initialise_question_instance($question, $questiondata);
 
         //Set question mode (0-question, 1-sandbox)
-        $question->questiontype  = $questiondata->options->questiontype;
+        $question->questiontype  = $questiondata->options->questiontype; 
         
         //Pass curated data
         $question->curated_data = $questiondata->options->curated_data;
