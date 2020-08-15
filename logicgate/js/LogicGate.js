@@ -37,6 +37,7 @@ class LogicGate
         }
     }
 
+    //Draw a gate
     Draw(graphics)
     {
         //Draw an incorrect node to force the use of a proper gate rather then the LogicGate

@@ -8,11 +8,17 @@ class Main
         this.ybottom = -3;
         this.ytop = 3;
 
-
         //Set up canvas properties
         this.pixelSize = 1;
         this.canvas = canvas;
         this.graphics = canvas.getContext("2d");
+        this.canvas.onmousemove = this.GetMousePos.bind(this);
+        window.onmousedown = this.onMouseDown.bind(this);
+        window.onmouseup = this.onMouseUp.bind(this);
+        
+        //Mouse props
+        this.mousePos = {x:0,y:0};
+        this.mouseButton = [0,0,0]; //Primary, middle, secondary (TODO check with actual mouse)
 
         //Circuit stuff
         this.circuit = Array();
@@ -21,10 +27,7 @@ class Main
         let andGate = new StartGate();
         this.circuit.push(andGate);
 
-        this.mousePos = {x:0,y:0};
-
-        this.canvas.onmousemove = this.GetMousePos.bind(this);
-
+        //Start the circuit
         this.Render();
     }
 
@@ -34,6 +37,7 @@ class Main
         requestAnimationFrame(this.Render.bind(this));
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
+
         //Set color
         this.graphics.fillStyle = "white";  // background color
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
@@ -41,11 +45,10 @@ class Main
         //Apply limits to canvas, graphics, xLeft, xRight, yTop, yBottom
         this.ApplyLimits(this.graphics,false);
 
-
         //Draw the circuit
         for(let i = 0, length = this.circuit.length; i < length; i++)
         {
-            this.circuit[i].Update(this.mousePos);
+            this.circuit[i].Update(this.mousePos, this.mouseButton);
             this.circuit[i].Draw(this.graphics);
         }
 
@@ -84,7 +87,7 @@ class Main
     }
 
     //Get Mouse Position based on coordinate system we are using
-    GetMousePos(evt) 
+    GetMousePos(event) 
     {
         var rect = this.canvas.getBoundingClientRect();
         let width = rect.width;
@@ -97,8 +100,18 @@ class Main
         
         //Return mouse position
         this.mousePos = {
-            x: ((evt.clientX - rect.left)/x)+this.xleft,
-            y: ((evt.clientY - rect.top)/y)+this.ytop
+            x: ((event.clientX - rect.left)/x)+this.xleft,
+            y: ((event.clientY - rect.top)/y)+this.ytop
         };
+    }
+
+    onMouseDown = function(event)
+    {
+        this.mouseButton[event.button] = 1;
+    }
+
+    onMouseUp = function(event)
+    {
+        this.mouseButton[event.button] = 0;
     }
 }
