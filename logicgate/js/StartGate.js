@@ -16,20 +16,13 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
 
         //Should result in true
         console.log(this.Correct());
+
     }
 
     //Used to update the gate
     Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            let distance = this.GetDistanceToGate(Input.GetMousePos());
-
-            if(distance < this.radius)
-            {
-                console.log("sup");
-            }
-        }
+        super.Update();
     }
 
     Draw(graphics)

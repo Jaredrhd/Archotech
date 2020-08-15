@@ -9,12 +9,30 @@ class LogicGate
         this.connectionsNeeded = connectionsNeeded;
         this.pos = {x:0, y:0};
 
-        this.radius = 0.1;
+        this.radius = 0.2;
+        this.selected = false;
+
     }
 
+    //TODO move this to a new selection class since we need to pick the closest item
     Update()
     {
-        console.error("You need to implement an update method in the logic gate");
+        //Check if we clicked
+        if(Input.GetMouseButtonDown(0))
+        {
+            //Get distance to this gate from the mouse
+            let distance = this.GetDistanceToGate(Input.GetMousePos());
+
+            //make sure distance is close enough
+            if(distance < this.radius)
+                this.selected = true;
+        }
+
+        //If we have selected the node, and the mouse is still held down, drag it
+        if(this.selected && Input.GetMouseButton(0))
+            this.pos = Input.GetMousePos();
+        else
+            this.selected = false; //reset
     }
 
     //Makes sure that the gate is correctly connected

@@ -17,21 +17,18 @@ class Main
         this.canvas.onmouseleave = this.OnCanvasLeave.bind(this);
         this.canvas.onmouseenter = this.OnCanvasEnter.bind(this);
         
-        //Mouse props
-        this.mousePos = {x:0,y:0};
-        this.mouseButton = [0,0,0]; //Primary, middle, secondary (TODO check with actual mouse)
-
         //Circuit stuff
         this.circuit = Array();
 
         //Temp for testing
-        let andGate = new StartGate();
+        let andGate = new AndGate();
         this.circuit.push(andGate);
     }
 
 
     Render()
     {
+        //Save
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
 

@@ -7,12 +7,12 @@ class AndGate extends LogicGate
 
     Draw(graphics)
     {
+        graphics.translate(this.pos.x,this.pos.y);
         this.DrawBroken(graphics);
     }
 
     DrawCorrect(graphics)
     {
-
     }
 
     DrawBroken(graphics)
