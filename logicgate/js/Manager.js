@@ -3,7 +3,7 @@ class Manager
     constructor()
     {
         //Make an array of the circuits (mains)
-        let circuits = new Array();
+        this.circuits = new Array();
 
         //Start adding canvases to the screen
         let scripts = document.getElementsByClassName("init");
@@ -30,7 +30,25 @@ class Manager
             }
 
             //Add the circuit to the list
-            circuits.push(new Main(canvas));
+            this.circuits.push(new Main(canvas));
         }
+
+        //Start the program
+        this.Update();
+    }
+
+    Update()
+    {
+        //Bind the animation request to this
+        requestAnimationFrame(this.Update.bind(this));
+
+        //Render each circuit
+        for(let i = 0, length = this.circuits.length; i < length; i++)
+        {
+            this.circuits[i].Render();
+        }
+
+        //Update global classes
+        Input.Update();
     }
 }

@@ -8,6 +8,8 @@ class LogicGate
 
         this.connectionsNeeded = connectionsNeeded;
         this.pos = {x:0, y:0};
+
+        this.radius = 0.1;
     }
 
     Update()

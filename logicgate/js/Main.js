@@ -10,11 +10,12 @@ class Main
 
         //Set up canvas properties
         this.pixelSize = 1;
+        this.canvasFocused = false;
         this.canvas = canvas;
         this.graphics = canvas.getContext("2d");
-        this.canvas.onmousemove = this.GetMousePos.bind(this);
-        window.onmousedown = this.onMouseDown.bind(this);
-        window.onmouseup = this.onMouseUp.bind(this);
+        this.canvas.onmousemove = Input.UpdateMousePos.bind(this);
+        this.canvas.onmouseleave = this.OnCanvasLeave.bind(this);
+        this.canvas.onmouseenter = this.OnCanvasEnter.bind(this);
         
         //Mouse props
         this.mousePos = {x:0,y:0};
@@ -26,15 +27,11 @@ class Main
         //Temp for testing
         let andGate = new StartGate();
         this.circuit.push(andGate);
-
-        //Start the circuit
-        this.Render();
     }
+
 
     Render()
     {
-        //Bind the animation request to this render
-        requestAnimationFrame(this.Render.bind(this));
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
 
@@ -45,10 +42,16 @@ class Main
         //Apply limits to canvas, graphics, xLeft, xRight, yTop, yBottom
         this.ApplyLimits(this.graphics,false);
 
-        //Draw the circuit
+        //Draw the circuit (possibly do charge calculations here, maybe better to do it afterwards)
         for(let i = 0, length = this.circuit.length; i < length; i++)
         {
-            this.circuit[i].Update(this.mousePos, this.mouseButton);
+            //Only update gates if we are focused on canvas
+            if(this.canvasFocused)
+            {
+                this.circuit[i].Update();
+            }
+
+            //Draw circuit
             this.circuit[i].Draw(this.graphics);
         }
 
@@ -86,32 +89,14 @@ class Main
         graphics.translate( -this.xleft, -this.ytop );
     }
 
-    //Get Mouse Position based on coordinate system we are using
-    GetMousePos(event) 
+    OnCanvasLeave()
     {
-        var rect = this.canvas.getBoundingClientRect();
-        let width = rect.width;
-        let height= rect.height;
-        
-        //Calculate ratio
-        let x = width / (this.xright-this.xleft);
-        let y = height / (this.ybottom-this.ytop);
-
-        
-        //Return mouse position
-        this.mousePos = {
-            x: ((event.clientX - rect.left)/x)+this.xleft,
-            y: ((event.clientY - rect.top)/y)+this.ytop
-        };
+        this.canvasFocused = false;
     }
 
-    onMouseDown = function(event)
+    OnCanvasEnter()
     {
-        this.mouseButton[event.button] = 1;
+        this.canvasFocused = true;
     }
 
-    onMouseUp = function(event)
-    {
-        this.mouseButton[event.button] = 0;
-    }
 }
