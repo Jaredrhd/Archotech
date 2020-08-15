@@ -6,20 +6,21 @@
     <title>Logic Gate</title>
 </head>
 
-<body onload = "init_QUESTIONID()">
+<body onload = "init()">
 
 <noscript>
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
-    
+
+<!-- Canvas Holder -->
 <div id = "canvasDiv_QUESTIONID" style="float:left; border: 2px solid black"></div>
 
-<script class="init" functionName = "init_QUESTIONID">
+<script class="init">
     
-    function init_QUESTIONID()
+    function init()
     {
         let manager;
-        let moodle = false
+        let moodle = false;
         if(moodle)
         {
             addScript("/question/type/logicgate/js/LogicGate.js");

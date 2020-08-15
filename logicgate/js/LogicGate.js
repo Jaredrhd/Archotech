@@ -3,14 +3,38 @@ class LogicGate
     constructor(connectionsNeeded)
     {
         this.isCharged = false;
-        this.connectionArray = Array();
+        this.incomingConnections = Array();
+        this.outgoingConnections = Array();
+
         this.connectionsNeeded = connectionsNeeded;
+        this.pos = {x:0, y:0};
+    }
+
+    Update()
+    {
+        console.error("You need to implement an update method in the logic gate");
     }
 
     //Makes sure that the gate is correctly connected
     Correct()
     {
-        return this.connectionArray.length == this.connectionsNeeded;
+        return this.incomingConnections.length === this.connectionsNeeded;
+    }
+
+    //Returns the distance between a point and a gate
+    GetDistanceToGate(point)
+    {
+        return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
+    }
+
+    //TODO remake
+    AddIncomingConnection()
+    {
+        if(this.incomingConnections.length >= this.incomingConnections)
+        {
+            console.error("Too many incoming connections");
+            return;
+        }
     }
 
     Draw(graphics)

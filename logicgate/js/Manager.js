@@ -2,7 +2,6 @@ class Manager
 {
     constructor()
     {
-
         //Make an array of the circuits (mains)
         let circuits = new Array();
 
@@ -11,7 +10,7 @@ class Manager
 
         for(let i = 0; i < scripts.length;i++)
         {
-            //Get the fiv
+            //Get the div
             let canvasDiv = scripts[i].previousElementSibling;
 
             //Create canvas
