@@ -1,14 +1,14 @@
 class QuestionAttempt {
     constructor() {
         this._bst = {values: student.bstValues.split(",").map(value => parseInt(value)), undoButton: document.getElementById("bst-undo"), getIndex: this.getBstValueIndex, stack: []};
-        this._bst.undoButton.addEventListener("click", this.bstUndoClicked.bind(this));
+        this._bst.undoButton.addEventListener("click", this.bstUndoClicked.bind(this));        
 
-        this._events = {
-            ADDROOT: "addRoot",
-            ADDCHILD: "addChild",
-            DRAG: "drag",
-            UNDO: "undo",
-        };
+        this._answerBox = document.getElementById("ANSWER_ID");
+        if(student.qType === qTypes.TRAVERSAL) {
+            this._answerBox.readOnly = true;
+        }
+        /** Answer string for traversal question */
+        this._answerArray = [];
 
         this.configureHTML();
     }
@@ -17,8 +17,12 @@ class QuestionAttempt {
         return this._bst;
     }
 
-    get events() {
-        return this._events;
+    get answerBox() {
+        return this._answerBox;
+    }
+
+    get answerArray() {
+        return this._answerArray;
     }
 
     /**
@@ -61,12 +65,12 @@ class QuestionAttempt {
             resizeBoard("shrink");
         }
         
-        this.handleEvent(this.events.UNDO);
+        this.handleEvent(events.UNDO);
     }
 
     /** Configure respective html on student's side */
     configureHTML() {
-        switch(studentQType) {
+        switch(student.qType) {
             case qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
             case qTypes.BST: this.configureBstHTML(); break;
         }
@@ -88,7 +92,9 @@ class QuestionAttempt {
         bstValueList.value = student.bstValues;
         bstValueList.style.display = "block";
 
-        modifyTreeTools.style.display = "block";
+        if(displayTools) {
+            modifyTreeTools.style.display = "block";
+        }
         answerQuestionTools.style.display = "none";
 
         // Set node value as the first value in the BST value list
@@ -97,7 +103,7 @@ class QuestionAttempt {
         nodeValueInput.style.color = "#ff0000";
 
         // Hide random node value option
-        randNodeValueCheckbox.style.display = "none";
+        document.getElementById("random-tools").style.display = "none";
 
         /** Configure buttons for BST */
         addRootButton.style.display = "block";
@@ -106,19 +112,56 @@ class QuestionAttempt {
     }
 
     treeToString() {
-        tree.convertToString(tree.root);
-        if(studentQType === qTypes.BST) {
-            answerID.value += "-" + tree.string;
+        if(student.qType === qTypes.BST) {
+            this.answerBox.value = "";
+
+            tree.convertToStringForBST(tree.root);
+            this.answerBox.value = tree.string;
+            tree.string = "";
+
+            tree.convertToString(tree.root);
+            this.answerBox.value += "-" + tree.string;
+            tree.string = "";
+
+            // let encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
+            // console.log(encrypted.toString());
+            // let decrypted = CryptoJS.AES.decrypt(encrypted, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
+            // decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+            // console.log(decrypted.toString());
         }
-        tree.string = "";
+        else {
+            tree.convertToString(tree.root);
+            tree.string = "";
+        }
+    }
+
+    buildAnswerString(node, action) {
+        this.answerBox.value = "";
+        
+        if(action === events.SELECT) {
+            this.answerArray.push(node);
+        }
+        else if(action === events.DESELECT) {
+            let indexToRemove = this.answerArray.indexOf(node);
+            this.answerArray.splice(indexToRemove, 1);
+        }
+    
+        for (const node of this.answerArray) {
+            if(node === this.answerArray[this.answerArray.length-1]) {
+                this.answerBox.value += node.value;
+            }
+            else {
+                this.answerBox.value += node.value + ",";
+            }
+        }
     }
 
     handleEvent(event) {
         switch(event) {
-            case this.events.ADDROOT: this.addRootEvent(); break;
-            case this.events.ADDCHILD: this.addChildEvent(); break;
-            case this.events.DRAG: this.dragEvent(); break;
-            case this.events.UNDO: this.undoEvent(); break;
+            case events.ADDROOT: this.addRootEvent(); break;
+            case events.ADDCHILD: this.addChildEvent(); break;
+            case events.DRAG: this.dragEvent(); break;
+            case events.UNDO: this.undoEvent(); break;
         }
     }
 

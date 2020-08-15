@@ -8,14 +8,10 @@ class Tree {
 
         this._root = new Node(rootValue);
         this._root.parent = null;
-        this._root.draw(null, (COLS - 1) * 0.5, 0); // board, parent, cellX, cellY
+        this._root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
         this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
 
         this._numNodes = 1;
-
-        this._inOrder = "";
-        this._preOrder = "";
-        this._postOrder = "";
 
         this._string = "";
         this._childPos = "";
@@ -31,18 +27,6 @@ class Tree {
 
     get numNodes() {
         return this._numNodes;
-    }
-
-    get inOrder() {
-        return this._inOrder;
-    }
-
-    get preOrder() {
-        return this._preOrder;
-    }
-
-    get postOrder() {
-        return this._postOrder;
     }
 
     get string() {
@@ -63,18 +47,6 @@ class Tree {
 
     set numNodes(value) {
         this._numNodes = value;
-    }
-
-    set inOrder(value) {
-        this._inOrder = value;
-    }
-
-    set preOrder(value) {
-        this._preOrder = value;
-    }
-
-    set postOrder(value) {
-        this._postOrder = value;
     }
 
     set string(value) {
@@ -101,6 +73,19 @@ class Tree {
 
         newChild.draw(selectedNode, childCellX, childCellY);
         this.nodes[childCellY][childCellX] = newChild;
+
+        this.numNodes++;
+    }
+
+    addChildNoDraw(parentNode, childType, childValue) {
+        if(childType === "L") {
+            parentNode.children.leftChild = new Node(childValue, false);
+            parentNode.children.leftChild.parent = parentNode;
+        }
+        else {
+            parentNode.children.rightChild = new Node(childValue, false);
+            parentNode.children.rightChild.parent = parentNode;
+        }
 
         this.numNodes++;
     }
@@ -142,52 +127,9 @@ class Tree {
     setNewRoot(rootValue) {
         this.root = new Node(rootValue);
         this.root.parent = null;
-        this.root.draw(null, (COLS - 1) * 0.5, 0); // board, parent, cellX, cellY
+        this.root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
         this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         this.numNodes++;
-    }
-
-    preOrderTraversal(node) {
-        if(!node) return;
-        
-        this.preOrder += node.value + this.addDelimeter(this.preOrder);
-
-        this.preOrderTraversal(node.children.leftChild);
-        this.preOrderTraversal(node.children.rightChild);
-    }
-    
-    inOrderTraversal(node) {
-        if(!node) return;
-
-        this.inOrderTraversal(node.children.leftChild);
-
-        this.inOrder += node.value + this.addDelimeter(this.inOrder);
-
-        this.inOrderTraversal(node.children.rightChild);
-    }
-    
-    postOrderTraversal(node) {
-        if(!node) return;
-    
-        this.postOrderTraversal(node.children.leftChild);
-        this.postOrderTraversal(node.children.rightChild);
-
-        this.postOrder += node.value + this.addDelimeter(this.postOrder);
-    }
-
-    addDelimeter(string) {
-        let delimeter = "";
-
-        if(!string && this.numNodes > 1) { // This accounts for adding at least one non-empty delimeter so that if there is more than one node, the second condition can be checked correctly
-            delimeter = ",";
-        }
-        else {
-            if(string.split(",").length < this.numNodes) { // Not the last node so add non-empty delimeter
-                delimeter = ",";
-            }
-        }
-
-        return delimeter;
     }
 
     /** TESTING */
@@ -236,9 +178,6 @@ class Tree {
         if(node.isRoot) {
             this.string += ROWS + "," + COLS + ":" + node.value + ":ROOT:" + node.cellCoords.y + "," + node.cellCoords.x;
         }
-        else if(node.childType() === "L") {
-            this.string += node.value + ":" + this.generateChildPosition(node) + ":" + node.cellCoords.y + "," + node.cellCoords.x;
-        }
         else {
             this.string += node.value + ":" + this.generateChildPosition(node) + ":" + node.cellCoords.y + "," + node.cellCoords.x;
         }
@@ -249,6 +188,20 @@ class Tree {
         
         this.convertToString(node.children.leftChild);
         this.convertToString(node.children.rightChild);
+    }
+
+    convertToStringForBST(node) {
+        if(!node) return;
+
+        if(node.isRoot) {
+            this.string += node.value + "#:ROOT:#";
+        }
+        else {
+            this.string += node.value + "#:" + this.generateChildPosition(node) + ":#";
+        }
+        
+        this.convertToStringForBST(node.children.leftChild);
+        this.convertToStringForBST(node.children.rightChild);
     }
 
     generateChildPosition(node) {

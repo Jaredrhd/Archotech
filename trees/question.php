@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Represents a trees question.
  *
@@ -63,12 +62,10 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
                 $prevresponse, $newresponse, 'answer');
     }
 
-
     public function get_correct_response() {
         // TODO.
         return array();
     }
-
 
     public function check_file_access($qa, $options, $component, $filearea,
             $args, $forcedownload) {
@@ -114,17 +111,21 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
     public function grade_bst(array $response) {
         $result = 0;
         $combinedString = $response["answer"];
+        $splitString = explode("-", $combinedString);
 
-        $values = explode("-", $combinedString);
-        $answer = $values[0];
+        $answer = $splitString[0];
 
-        $sortedBSTValues = explode(",", $this->bstvalues);
-        $sortedBSTValues = array_map('intval', $sortedBSTValues);
-        sort($sortedBSTValues);
+        // $sortedBSTValues = explode(",", $this->bstvalues);
+        // $sortedBSTValues = array_map('intval', $sortedBSTValues);
+        // sort($sortedBSTValues);
 
-        $sortedBSTValues = implode(",", $sortedBSTValues);
+        // $sortedBSTValues = implode(",", $sortedBSTValues);
 
-        if($answer == $sortedBSTValues) $result = 1;
+        // if($sortedBSTValues == 0) { // Will be true if the BST value list is empty i.e. $answer will also be "" since student can't add any nodes
+        //     $sortedBSTValues = "";
+        // }
+
+        if($answer === $this->bst_string) $result = 1;
 
         return $result;
     }

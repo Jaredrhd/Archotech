@@ -1,7 +1,7 @@
 onload = init;
 
-/** HTML ELEMENTS */
-{
+//#region HTML ELEMENTS
+var toolbar = document.getElementById("toolbar");
 var modifyTreeTools = document.getElementById("modify-tree-tools");
 var answerQuestionTools = document.getElementById("answer-question-tools");
 var nodeValueInput = document.getElementById("node-value");
@@ -11,19 +11,9 @@ var randNodeValueCheckbox = document.getElementById("random-node-value");
 var addRootButton = document.getElementById("add-root");
 var removeNodeButton = document.getElementById("remove-node");
 var editNodeValueButton = document.getElementById("edit-node");
-var qType = document.getElementById("q_type");
-var preOrder = document.getElementById("preorder");
-var inOrder = document.getElementById("inorder");
-var postOrder = document.getElementById("postorder");
-/** Holds the BST data to display to student */
-var bstValues = document.getElementById("bstvalues");
-var lecturerTree = document.getElementById("lecturer_tree");
-var studentTree = document.getElementById("student_tree")
-var answerBox = document.getElementById("ANSWER_ID");
 /** The list of BST values shown to the student and lecturer */
 var bstValueList = document.getElementById("bst-values");
-var answerID = document.getElementById("ANSWER_ID");
-}
+//#endregion
 
 /** BOARD MISC */
 {
@@ -37,6 +27,16 @@ var setup = null;
 /** Question attempt object. Will be non-null if the student is answering a question */
 var attempt = null;
 
+var events = {
+    ADDROOT: "addRoot",
+    ADDCHILD: "addChild",
+    REMOVE: "remove",
+    DRAG: "drag",
+    UNDO: "undo",
+    SELECT: "select",
+    DESELECT: "deselect"
+};
+
 var qTypes = {TRAVERSAL: "traversal", BST: "bst"};
 
 var ROWS = 13;
@@ -45,11 +45,8 @@ var COLS = 13;
 let tree = null;
 let selectedNode = null;
 
-/** Answer string for traversal question */
-let answerArray = [];
-
 /** DRAGGING */
-var prevX, prevY, dragging = false;
+let prevX, prevY, dragging = false;
 
 var MAX_NODE_VALUE = 99;
 var MIN_NODE_VALUE = 1;
@@ -68,8 +65,6 @@ function init() {
 
     board = new Board();
     board.drawGrid();
-
-    answerBox.readOnly = true;
 
     initListeners();
 
@@ -107,7 +102,7 @@ function initListeners() {
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
 
-    if(!lecturer && studentQType === qTypes.TRAVERSAL) return;
+    if(!lecturer && student.qType === qTypes.TRAVERSAL) return;
 
     canvas.addEventListener("mousedown", beginDrag);
     document.addEventListener("mouseup", exitDrag);
@@ -132,7 +127,9 @@ function randNodeValueChecked() {
 function addRoot() {
     let newNodeValue;
 
-    if(studentQType === qTypes.BST) {
+    if(!lecturer && student.qType === qTypes.BST) {
+        if(student.bstValues.length === 0) return;
+        
         newNodeValue = Number(nodeValueInput.value);
         nodeValueInput.value = attempt.bst.values[attempt.bst.getIndex("next")];
         attempt.bst.undoButton.style.display = "block";
@@ -153,21 +150,11 @@ function addRoot() {
     addRootButton.style.display = "none";
 
     if(lecturer) {
-        setup.handleEvent(setup.events.ADDROOT);
+        setup.handleEvent(events.ADDROOT);
     }
     else {
-        // if(studentQType === qTypes.BST) {
-        //     attempt.handleEvent(attempt.events.ADDROOT);
-        // }
-    }
-
-    if(studentQType === qTypes.BST) {
         attempt.bst.stack.push(tree.root);
-        tree.inOrderTraversal(tree.root);
-        answerID.value = "";
-        answerID.value = tree.inOrder;
-        tree.inOrder = "";
-        attempt.handleEvent(attempt.events.ADDROOT);
+        attempt.handleEvent(events.ADDROOT);
     }
 }
 
@@ -189,7 +176,7 @@ function removeNodeAndChildren() {
     editNodeValueButton.style.display = "none";
 
     if(lecturer) {
-        setup.handleEvent(setup.events.REMOVENODE);
+        setup.handleEvent(events.REMOVE);
     }
 }
 
@@ -231,7 +218,7 @@ function onBoardClick(event) {
         if(tree.nodes[board.cellY][board.cellX].selected) { // If the current selected node is selected again
             if(!lecturer && student.qType === "traversal") {
                 tree.nodes[board.cellY][board.cellX].selected = false;
-                buildAnswerString(tree.nodes[board.cellY][board.cellX], "remove");
+                attempt.buildAnswerString(tree.nodes[board.cellY][board.cellX], events.DESELECT);
             }
             else {
                 selectedNode.selected = false;
@@ -243,8 +230,13 @@ function onBoardClick(event) {
             return;
         }
         if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
-            if(lecturer && student.qType !== "traversal") {
+            if(lecturer) {
                 selectedNode.selected = false;
+            }
+            else {
+                if(student.qType !== "traversal") { // Only when it is a traversal question for the student will previously selected nodes not be deselected when selecting a new node
+                    selectedNode.selected = false;
+                }
             }
         }
 
@@ -252,13 +244,20 @@ function onBoardClick(event) {
 
         selectedNode.selected = true;
 
-        buildAnswerString(selectedNode, "add");
-
         redrawCanvas();
 
-        if(studentQType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
-            editNodeValueButton.style.display = "block";
+        if(lecturer) {
             removeNodeButton.style.display = "block";
+            editNodeValueButton.style.display = "block";
+        }
+        else {
+            if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
+                removeNodeButton.style.display = "block";
+                editNodeValueButton.style.display = "block";
+            }
+            if(student.qType === qTypes.TRAVERSAL) {
+                attempt.buildAnswerString(selectedNode, events.SELECT);
+            }
         }
     }
     else if(board.cellX != prevX || board.cellY != prevY){ // If dragging
@@ -290,11 +289,11 @@ function onBoardClick(event) {
         }
 
         if(lecturer) {
-            setup.handleEvent(setup.events.DRAG);
+            setup.handleEvent(events.DRAG);
         }
         else {
-            if(studentQType === qTypes.BST) {
-                attempt.handleEvent(attempt.events.DRAG);
+            if(student.qType === qTypes.BST) {
+                attempt.handleEvent(events.DRAG);
             }
         }
     }
@@ -307,7 +306,7 @@ function onBoardClick(event) {
         if(board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild()) return; // Parent already has a right child
 
         let newNodeValue;
-        if(studentQType === qTypes.BST) {
+        if(!lecturer && student.qType === qTypes.BST) {
             newNodeValue = Number(nodeValueInput.value);
             nodeValueInput.value = attempt.bst.values[attempt.bst.getIndex("next")]; // The index will be attempt.bst.values.length + 1 after adding the final BST value (i.e. nodeValueInput will be an empty string)
         }
@@ -332,22 +331,13 @@ function onBoardClick(event) {
         }
 
         if(lecturer) {
-            setup.handleEvent(setup.events.ADDCHILD);
+            setup.handleEvent(events.ADDCHILD);
         }
         else {
-            // if(studentQType === qTypes.BST) {
-            //     attempt.handleEvent(attempt.events.ADDCHILD);
-            //     attempt.bst.stack.push(tree.getNode(Number(newNodeValue)));
-            // }
-        }
-
-        if(studentQType === qTypes.BST) {
-            attempt.bst.stack.push(tree.getNode(Number(newNodeValue)));
-            tree.inOrderTraversal(tree.root);
-            answerID.value = "";
-            answerID.value = tree.inOrder;
-            tree.inOrder = "";
-            attempt.handleEvent(attempt.events.ADDCHILD);
+            if(student.qType === qTypes.BST) {
+                attempt.bst.stack.push(tree.getNode(Number(newNodeValue)));
+                attempt.handleEvent(events.ADDCHILD);
+            }
         }
     }
 }
@@ -360,7 +350,7 @@ function onBoardHover(event) {
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node in the hovered cell
         document.body.style.cursor = "pointer";
     }
-    else if(!lecturer && studentQType === "traversal") {
+    else if(!lecturer && student.qType === "traversal") {
         document.body.style.cursor = "default";
         return;
     }
@@ -380,7 +370,7 @@ function onBoardHover(event) {
             if(board.cellX == selectedNode.cellCoords.x || board.cellY <= selectedNode.cellCoords.y ||
                 (board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) ||
                     (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild()) ||
-                    (studentQType === qTypes.BST && attempt.bst.stack.length === attempt.bst.values.length)) { // Invalid cell to place new child
+                    (!lecturer && student.qType === qTypes.BST && attempt.bst.stack.length === attempt.bst.values.length)) { // Invalid cell to place new child
 
                         document.body.style.cursor = "not-allowed";
             }
@@ -404,7 +394,7 @@ function getNewNodeValue() {
     if(!randNodeValue) { // Set the node's value to the user specified input
         newNodeValue = nodeValueInput.value;
 
-        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE) {
+        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE || !Number.isInteger(Number(newNodeValue))) {
             return;
         }
     }
@@ -493,7 +483,7 @@ function buildTreeFromString(string) {
             else {
                 if(!newNode.children.rightChild) {
                     tree.addChild(newNode, "R", nodeValue, nodeX, nodeY);
-                }
+                }               
                 else {
                     newNode = newNode.children.rightChild;
                 }
@@ -504,25 +494,4 @@ function buildTreeFromString(string) {
     }
 
     redrawCanvas();
-}
-
-function buildAnswerString(node, action) {
-    answerBox.value = "";
-    
-    if(action === "add") {
-        answerArray.push(node);
-    }
-    else if(action === "remove") {
-        let indexToRemove = answerArray.indexOf(node);
-        answerArray.splice(indexToRemove, 1);
-    }
-
-    for (const node of answerArray) {
-        if(node === answerArray[answerArray.length-1]) {
-            answerBox.value += node.value;
-        }
-        else {
-            answerBox.value += node.value + ",";
-        }
-    }
 }
