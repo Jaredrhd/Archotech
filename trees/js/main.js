@@ -192,6 +192,38 @@ function editNodeValue(){
     redrawCanvas();
 }
 
+function onArrowClick(e){ //when using arrow keys
+    if (e.keyCode == 39){ // if right arrow
+        if(selectedNode.children.rightChild != null){
+            selectedNode.selected = false;
+            selectedNode = selectedNode.children.rightChild;
+            selectedNode.selected = true;
+            redrawCanvas();
+        }
+    }
+    else if (e.keyCode == 37){ // if left arrow
+        if(selectedNode.children.leftChild != null){
+            selectedNode.selected = false;
+            selectedNode = selectedNode.children.leftChild;
+            selectedNode.selected = true;
+            redrawCanvas();
+        }
+    }
+    else if (e.keyCode == 38){ // if up arrow
+        e.preventDefault(); // prevent page from moving when clicking up and down arrows
+        if(selectedNode.parent != null){
+            selectedNode.selected = false;
+            selectedNode = selectedNode.parent;
+            selectedNode.selected = true;
+            redrawCanvas();
+        }
+    }
+    else if (e.keyCode == 40){ // prevent page from moving when clicking up and down arrows
+        e.preventDefault();
+    }
+    else return;
+}
+
 function beginDrag(event){
     board.boardCoordsFromMouse(event);
     
@@ -216,6 +248,7 @@ function onBoardClick(event) {
 
     if(typeof tree.nodes[board.cellY][board.cellX] !== "undefined") { // There is a node at the selected cell
         if(tree.nodes[board.cellY][board.cellX].selected) { // If the current selected node is selected again
+            removeEventListener("keydown",onArrowClick);
             if(!lecturer && student.qType === "traversal") {
                 tree.nodes[board.cellY][board.cellX].selected = false;
                 attempt.buildAnswerString(tree.nodes[board.cellY][board.cellX], events.DESELECT);
@@ -247,11 +280,13 @@ function onBoardClick(event) {
         redrawCanvas();
 
         if(lecturer) {
+            addEventListener("keydown", onArrowClick);
             removeNodeButton.style.display = "inline-block";
             editNodeValueButton.style.display = "inline-block";
         }
         else {
             if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
+                addEventListener("keydown", onArrowClick);
                 removeNodeButton.style.display = "inline-block";
                 editNodeValueButton.style.display = "inline-block";
             }
