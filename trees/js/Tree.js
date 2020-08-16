@@ -14,6 +14,7 @@ class Tree {
         }
 
         this._numNodes = 1;
+        this._root.orderPlaced = this.numNodes;
 
         this._string = "";
         this._childPos = "";
@@ -77,19 +78,25 @@ class Tree {
         this.nodes[childCellY][childCellX] = newChild;
 
         this.numNodes++;
+        newChild.orderPlaced = this.numNodes;
     }
 
     addChildNoDraw(parentNode, childType, childValue) {
+        let newChild;
+
         if(childType === "L") {
             parentNode.children.leftChild = new Node(childValue, false);
             parentNode.children.leftChild.parent = parentNode;
+            newChild = parentNode.children.leftChild;
         }
         else {
             parentNode.children.rightChild = new Node(childValue, false);
             parentNode.children.rightChild.parent = parentNode;
+            newChild = parentNode.children.rightChild;
         }
 
         this.numNodes++;
+        newChild.orderPlaced = this.numNodes;
     }
 
     /** Returns the first node whose value matches the argument */
@@ -133,7 +140,8 @@ class Tree {
             this.root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         }
-        this.numNodes++;
+        this.numNodes = 1;
+        this.root.orderPlaced = this.numNodes;
     }
 
     /** TESTING */
@@ -197,11 +205,10 @@ class Tree {
     convertToStringForBST(node) {
         if(!node) return;
 
-        if(node.isRoot) {
-            this.string += node.value + "#:ROOT:#";
-        }
-        else {
-            this.string += node.value + "#:" + this.generateChildPosition(node) + ":#";
+        this.string += node.value;
+
+        if(this.string.split(":").length !== this.numNodes) {
+            this.string += ":";
         }
         
         this.convertToStringForBST(node.children.leftChild);

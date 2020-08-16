@@ -114,17 +114,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         $splitString = explode("-", $combinedString);
 
         $answer = $splitString[0];
-
-        // $sortedBSTValues = explode(",", $this->bstvalues);
-        // $sortedBSTValues = array_map('intval', $sortedBSTValues);
-        // sort($sortedBSTValues);
-
-        // $sortedBSTValues = implode(",", $sortedBSTValues);
-
-        // if($sortedBSTValues == 0) { // Will be true if the BST value list is empty i.e. $answer will also be "" since student can't add any nodes
-        //     $sortedBSTValues = "";
-        // }
-
+        
         if($answer === $this->bst_string) $result = 1;
 
         return $result;

@@ -157,11 +157,12 @@ class TraversalQuestion {
         let delimeter = "";
 
         if(!string && tree.numNodes > 1) { // This accounts for adding at least one non-empty delimeter so that if there is more than one node, the second condition can be checked correctly
-            delimeter = ",";
+            delimeter = ", ";
         }
         else {
-            if(string.split(",").length < tree.numNodes) { // Not the last node so add non-empty delimeter
-                delimeter = ",";
+            if(string.split(", ").length < tree.numNodes) { // Not the last node so add non-empty delimeter
+                
+                delimeter = ", ";
             }
         }
 

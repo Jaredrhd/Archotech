@@ -13,6 +13,10 @@
     
 <div id="layout">
     <textarea id="bst-values" autocomplete="off" style="display: none;" readonly></textarea>
+    <div id="answer-question-tools" style="display: none;">
+        <label for='ANSWER_ID'></label>
+        <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''> 
+    </div>
     <div style="float:left; border: 2px solid black">
         <canvas id="canvas" width="700" height="700" style="display:block"></canvas>
     </div>
@@ -29,15 +33,13 @@
             <button type="button" id="edit-node" style="display: none;" class="modify-tree-tools">EDIT VALUE</button>
             <button type="button" id="bst-undo" style="display: none;" class="modify-tree-tools">UNDO</button>
         </div>
-        <div id="answer-question-tools" style="display: none;">
-            <label for='ANSWER_ID'></label>
-            <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''> 
-        </div>
     </div>
 </div>
 <script>
     var lecturer = false;
     var student = {qType: '', treeString: '', bstValues: ''};
+
+    var lastAnswer = '';
 
     /** Variables to be replaced by appropriate values on student review */
     var disableCanvas;

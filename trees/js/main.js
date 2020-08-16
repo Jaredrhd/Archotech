@@ -17,7 +17,7 @@ var bstValueList = document.getElementById("bst-values");
 
 /** BOARD MISC */
 {
-var canvas;
+let canvas;
 var context;
 var board;
 }
@@ -73,6 +73,9 @@ function init() {
     }
     else {
         attempt = new QuestionAttempt();
+        if(lastAnswer !== "") {
+            attempt.reconstructLastAnswer();
+        }
     }
 }
 

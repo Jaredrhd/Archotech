@@ -8,6 +8,7 @@ class Node {
         this._selected = false;
         this._parent = null;
         this._children = {leftChild: null, rightChild: null};
+        this._orderPlaced;
     }
 
     get value() {
@@ -42,6 +43,10 @@ class Node {
         return this._children;
     }
 
+    get orderPlaced() {
+        return this._orderPlaced;
+    }
+
     set selected(value) {
         this._selected = value;
     }
@@ -64,6 +69,10 @@ class Node {
 
     set nodeRadius(value) {
         this._nodeRadius = value;
+    }
+
+    set orderPlaced(value) {
+        this._orderPlaced = value;
     }
 
     /** Draws a node on the canvas */

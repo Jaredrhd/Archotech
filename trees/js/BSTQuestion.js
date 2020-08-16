@@ -22,7 +22,7 @@ class BSTQuestion {
 
         /** Values saved in DB */
         this._bstString = document.getElementById("bst_string");
-        /** Holds the BST values that are displayed the to student in bstValueList */
+        /** Holds the BST values that are displayed to the student in bstValueList */
         this._bstValues = document.getElementById("bstvalues");
 
         this._radio.addEventListener("change", this.updateQuestionType.bind(this));
@@ -159,6 +159,7 @@ class BSTQuestion {
                 this.insertedBSTValues.includes(Number(this.nodeValuesInput.value))) { // Invalid input
                     this.invalidBSTValueSpan.style.display = "inline-block";
                     this.invalidBSTValueSpan.innerHTML = "Please enter a unique integer between " + MIN_NODE_VALUE + " and " + MAX_NODE_VALUE + ".";
+                    this.nodeValuesInput.focus();
         }
         else {
             this.invalidBSTValueSpan.style.display = "none";
@@ -184,6 +185,7 @@ class BSTQuestion {
 
     undoBSTValueInsert() {
         this.insertedBSTValues.pop();
+        this.nodeValuesInput.focus();
         this.getInsertedBSTValuesFromArray();
     }
 

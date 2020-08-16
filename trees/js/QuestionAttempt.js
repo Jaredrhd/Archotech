@@ -81,7 +81,7 @@ class QuestionAttempt {
             buildTreeFromString(student.treeString);
         }
         modifyTreeTools.style.display = "none";
-        answerQuestionTools.style.display = "block";
+        answerQuestionTools.style.display = "flex";
     }
 
     configureBstHTML() {
@@ -123,9 +123,9 @@ class QuestionAttempt {
             this.answerBox.value += "-" + tree.string;
             tree.string = "";
 
-            var encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
-            console.clear();
-            console.log(encrypted.toString());
+            // var encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
+            // console.clear();
+            // console.log(encrypted.toString());
             // var decrypted = CryptoJS.AES.decrypt(encrypted, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
             // decrypted = decrypted.toString(CryptoJS.enc.Utf8);
             // console.log(decrypted.toString());
@@ -134,6 +134,41 @@ class QuestionAttempt {
             tree.convertToString(tree.root);
             tree.string = "";
         }
+    }
+
+    /** Reconstruct last answer (needed when student views a question they have already answered but not submitted) */
+    reconstructLastAnswer() {
+        if(student.qType === qTypes.BST) {
+            this.rebuildBST();
+        }
+    }
+
+    /** Rebuilds the BST that the student had created but not yet submitted */
+    rebuildBST() {
+        let treeString = lastAnswer.split("-");
+        buildTreeFromString(treeString[1]);
+        this.answerBox.value = lastAnswer;
+
+        let bst = treeString[0];
+        let nodes = bst.split(":");
+
+        let currIndex = 1;
+        let currNode;
+        
+        while(nodes.length !== 0) {
+            for(let i = 0; i < nodes.length; i++) {
+                currNode = tree.getNode(Number(nodes[i]));
+                if(currNode.orderPlaced === currIndex) {
+                    this.bst.stack.push(currNode);
+                    nodes.splice(i, 1);
+                    currIndex++;
+                }
+            }
+        }
+
+        nodeValueInput.value = this.bst.values[this.bst.stack.length]; // Would be undefined if all the nodes from the BST value list had been added before (this.bst.stack.length === this.bst.values.length) and so nodeValueInput would be blank, otherwise will be the next value in BST value list that student hadn't added before
+        addRootButton.style.display = "none";
+        this.bst.undoButton.style.display = "inline-block";
     }
 
     buildAnswerString(node, action) {
@@ -152,7 +187,7 @@ class QuestionAttempt {
                 this.answerBox.value += node.value;
             }
             else {
-                this.answerBox.value += node.value + ",";
+                this.answerBox.value += node.value + ", ";
             }
         }
     }

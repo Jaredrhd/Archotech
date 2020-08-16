@@ -55,9 +55,14 @@ class qtype_trees_renderer extends qtype_renderer {
         }
         else if($question->q_type == "bst") {
             $html = str_replace("var student = {qType: '', treeString: '', bstValues: ''};", "var student = {qType: '$question->q_type', treeString: '', bstValues: '$question->bstvalues'};", $html);
+            if($answer != "") {
+                $html = str_replace("var lastAnswer = '';", "var lastAnswer = '$answer';", $html);
+            }
         }
         
         // echo "<script>console.log('$question->postorder');</script>";
+
+        // echo "<script>console.log('CALLED : $question->q_type');</script>";
 
         //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
