@@ -10,7 +10,7 @@ class BSTQuestion {
         this._undoInsertButton = document.getElementById("undo-insert-bst-value");
         this._invalidBSTValueSpan = document.getElementById("invalid-bst-value");
 
-        this._nodeValuesInput.parentElement.insertBefore(this._invalidBSTValueSpan, this.nodeValuesInput.nextSibling);
+        this._nodeValuesInput.parentElement.insertBefore(this._invalidBSTValueSpan, this._nodeValuesInput.nextSibling);
         this._nodeValuesInput.parentElement.insertBefore(this._undoInsertButton, this._invalidBSTValueSpan);
         this._nodeValuesInput.parentElement.insertBefore(this._insertValueButton, this._undoInsertButton);
 
@@ -132,8 +132,8 @@ class BSTQuestion {
     }
 
     getInsertedBSTValuesFromArray() {
-        this.insertValueButton.style.display = "block"; 
-        this.undoInsertButton.style.display = "block";
+        this.insertValueButton.style.display = "inline-block"; 
+        this.undoInsertButton.style.display = "inline-block";
         this.bstValues.value = "";
         bstValueList.value = "";
         
@@ -157,7 +157,7 @@ class BSTQuestion {
         if(isNaN(Number(this.nodeValuesInput.value)) || !Number.isInteger(Number(this.nodeValuesInput.value)) || 
             Number(this.nodeValuesInput.value) < MIN_NODE_VALUE || Number(this.nodeValuesInput.value) > MAX_NODE_VALUE ||
                 this.insertedBSTValues.includes(Number(this.nodeValuesInput.value))) { // Invalid input
-                    this.invalidBSTValueSpan.style.display = "block";
+                    this.invalidBSTValueSpan.style.display = "inline-block";
                     this.invalidBSTValueSpan.innerHTML = "Please enter a unique integer between " + MIN_NODE_VALUE + " and " + MAX_NODE_VALUE + ".";
         }
         else {
@@ -194,10 +194,10 @@ class BSTQuestion {
         for(let i = 0; i < array.length; i++) {
             if(i === 0) {
                 if(!tree) {
-                    tree = new Tree(rootValue);
+                    tree = new Tree(rootValue, false);
                 }
                 else {
-                    tree.setNewRoot(rootValue);
+                    tree.setNewRoot(rootValue, false);
                 }
             }
             else {

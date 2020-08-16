@@ -52,7 +52,7 @@ class QuestionAttempt {
             nodeValueInput.value = this.bst.values[newNodeIndex];
 
             if(newNodeIndex === 0) {
-                addRootButton.style.display = "block";
+                addRootButton.style.display = "inline-block";
                 this.bst.undoButton.style.display = "none";
             }
         }
@@ -106,7 +106,7 @@ class QuestionAttempt {
         document.getElementById("random-tools").style.display = "none";
 
         /** Configure buttons for BST */
-        addRootButton.style.display = "block";
+        addRootButton.style.display = "inline-block";
         editNodeValueButton.style.display = "none";
         removeNodeButton.style.display = "none";
     }
@@ -123,9 +123,10 @@ class QuestionAttempt {
             this.answerBox.value += "-" + tree.string;
             tree.string = "";
 
-            // let encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
-            // console.log(encrypted.toString());
-            // let decrypted = CryptoJS.AES.decrypt(encrypted, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
+            var encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
+            console.clear();
+            console.log(encrypted.toString());
+            // var decrypted = CryptoJS.AES.decrypt(encrypted, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
             // decrypted = decrypted.toString(CryptoJS.enc.Utf8);
             // console.log(decrypted.toString());
         }

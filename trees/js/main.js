@@ -132,7 +132,7 @@ function addRoot() {
         
         newNodeValue = Number(nodeValueInput.value);
         nodeValueInput.value = attempt.bst.values[attempt.bst.getIndex("next")];
-        attempt.bst.undoButton.style.display = "block";
+        attempt.bst.undoButton.style.display = "inline-block";
     }
     else {
         newNodeValue = getNewNodeValue();
@@ -162,7 +162,7 @@ function removeNodeAndChildren() {
     tree.removeNodeAndChildren(selectedNode);
     
     if(selectedNode.isRoot) {
-        addRootButton.style.display = "block";
+        addRootButton.style.display = "inline-block";
     }
     
     while(board.canShrink()) {
@@ -247,13 +247,13 @@ function onBoardClick(event) {
         redrawCanvas();
 
         if(lecturer) {
-            removeNodeButton.style.display = "block";
-            editNodeValueButton.style.display = "block";
+            removeNodeButton.style.display = "inline-block";
+            editNodeValueButton.style.display = "inline-block";
         }
         else {
             if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
-                removeNodeButton.style.display = "block";
-                editNodeValueButton.style.display = "block";
+                removeNodeButton.style.display = "inline-block";
+                editNodeValueButton.style.display = "inline-block";
             }
             if(student.qType === qTypes.TRAVERSAL) {
                 attempt.buildAnswerString(selectedNode, events.SELECT);

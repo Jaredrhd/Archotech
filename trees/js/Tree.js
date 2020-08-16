@@ -1,5 +1,5 @@
 class Tree {
-    constructor(rootValue) {
+    constructor(rootValue, draw=true) {
         // Create matrix for nodes
         this._nodes = new Array(ROWS);
         for(let i = 0; i < this._nodes.length; i++) {
@@ -8,8 +8,10 @@ class Tree {
 
         this._root = new Node(rootValue);
         this._root.parent = null;
-        this._root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
-        this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+        if(draw) {
+            this._root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
+            this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+        }
 
         this._numNodes = 1;
 
@@ -124,11 +126,13 @@ class Tree {
         }
     }
 
-    setNewRoot(rootValue) {
+    setNewRoot(rootValue, draw=true) {
         this.root = new Node(rootValue);
         this.root.parent = null;
-        this.root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
-        this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+        if(draw) {
+            this.root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
+            this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+        }
         this.numNodes++;
     }
 

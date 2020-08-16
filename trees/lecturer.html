@@ -16,15 +16,17 @@
     <button type="button" id="insert-bst-value" style="display: none;">INSERT</button>
     <button type="button" id="undo-insert-bst-value" style="display: none;">UNDO</button>
     <span id="invalid-bst-value" style="display: none;"></span>
+    <button type="button" id="copy-tree">COPY</button>
+    <span id="copied" style="display: block; opacity: 0;">COPIED</span>
     <div style="float:left; border: 2px solid black">
         <canvas id="canvas" width="700" height="700" style="display:block"></canvas>
     </div>
     <div id="toolbar">
         <div id="modify-tree-tools" style="display: none;">
-            <label for="node-value">NODE VALUE</label>
+            <label for="node-value" class="no-margin">NODE VALUE</label>
             <input id="node-value" type="number" min="0" max="99" autocomplete="off">
             <div id="random-tools">
-                <label for="random-node-value">RANDOM VALUE</label>
+                <label for="random-node-value" style="margin-bottom: 5px;">RANDOM VALUE</label>
                 <input id="random-node-value" type="checkbox" autocomplete="off">
             </div>
             <button type="button" id="add-root" class="modify-tree-tools">ADD ROOT</button>

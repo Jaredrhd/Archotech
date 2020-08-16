@@ -10,8 +10,17 @@
 }
 
 #modify-tree-tools {
-    margin: 0 15px;
     font-weight: bold;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+#node-value {
+    display: block;
+    margin: 5px auto;
+    width: 160px;
 }
 
 #answer-question-tools {
@@ -52,7 +61,6 @@ button {
 
 #add-root {
     background-color:hsl(136, 63%, 47%);
-    /* border:4px solid #18ab29; */
     margin: 5px;
 }
 
@@ -89,7 +97,10 @@ button {
 
 #insert-bst-value {
     background-color:hsl(136, 63%, 47%);
-    margin: 5px;
+    margin-left: 10px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 #insert-bst-value:hover {
@@ -109,6 +120,23 @@ button {
     color: red;
 }
 
+#copy-tree {
+    background-color:hsl(137, 3%, 44%);
+    margin-left: 10px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#copy-tree:hover {
+	background-color:hsl(135, 2%, 53%);
+}
+
+#copied {
+    color: blue;
+    font-weight: bold;
+}
+
 /* Hide number spinners */
 
 /* Chrome, Safari, Edge, Opera */
@@ -123,4 +151,110 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+/* Fade in / out */
 
+.fade-in {
+    animation: fadeIn ease 0.5s;
+    -webkit-animation: fadeIn ease 0.5s;
+    -moz-animation: fadeIn ease 0.5s;
+    -o-animation: fadeIn ease 0.5s;
+    -ms-animation: fadeIn ease 0.5s;
+}
+
+@keyframes fadeIn {
+    0% {
+      opacity:0;
+    }
+    100% {
+      opacity:1;
+    }
+}
+
+@-moz-keyframes fadeIn {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-o-keyframes fadeIn {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-ms-keyframes fadeIn {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+.fade-out {
+    animation: fadeOut ease 1s;
+    -webkit-animation: fadeOut ease 1s;
+    -moz-animation: fadeOut ease 1s;
+    -o-animation: fadeOut ease 1s;
+    -ms-animation: fadeOut ease 1s;
+}
+
+@keyframes fadeOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+}
+  
+@-moz-keyframes fadeOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+}
+  
+ @-webkit-keyframes fadeOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+}
+  
+@-o-keyframes fadeOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+}
+  
+@-ms-keyframes fadeOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+}
