@@ -50,7 +50,7 @@ class Node {
         this._parent = node;
     }
 
-    set value(value){ // value setter for editting node values
+    set value(value){ // Value setter for editting node values
         this._value = value;
     }
 
