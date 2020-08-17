@@ -1,14 +1,17 @@
 class AndGate extends LogicGate
 {
-    constructor()
+    constructor(incomingConnectionsNeeded = 0, outgoingConnectionsNeeded = 0, pos= {x:0, y:0})
     {
-        super();
+        super(incomingConnectionsNeeded, outgoingConnectionsNeeded, pos);
     }
 
     Draw(graphics)
     {
+        graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
         this.DrawBroken(graphics);
+        graphics.restore();
+
     }
 
     DrawCorrect(graphics)
@@ -17,6 +20,7 @@ class AndGate extends LogicGate
 
     DrawBroken(graphics)
     {
+
         graphics.translate(-0.5, 0); // Centre at (0, 0)
         graphics.lineWidth = 0.025;
 
@@ -30,25 +34,18 @@ class AndGate extends LogicGate
         graphics.lineTo(1.5, 0);
         graphics.stroke();
 
-        // Rectangular base
-        graphics.beginPath();
-        graphics.moveTo(0, 0.5);
-        graphics.lineTo(0.5, 0.5);
-        graphics.stroke();
-    
-        // Connecting arc
-        graphics.save();
-        graphics.beginPath();
-        graphics.rotate(-Math.PI/2);
-        graphics.arc(0, 0.5, 0.5, 0, Math.PI);
-        graphics.stroke();
-        graphics.restore();
-
-        // Rectangular base
+        //Middle Shape
+        graphics.fillStyle = "transparent";
         graphics.beginPath();
         graphics.moveTo(0.5, -0.5);
         graphics.lineTo(0, -0.5);
-        graphics.lineTo(0, 0.51);
+        graphics.lineTo(0, 0.5);
+        graphics.lineTo(0.5, 0.5);
+        graphics.fill();
+        graphics.stroke();
+        graphics.beginPath();
+        graphics.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        graphics.fill();
         graphics.stroke();
     }
 }

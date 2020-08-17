@@ -98,7 +98,6 @@ class InputClass
             let x = width / (this.xright-this.xleft);
             let y = height / (this.ybottom-this.ytop);
 
-            
             //Return mouse position
             mouse = {
                 x: ((event.clientX - rect.left)/x)+this.xleft,

@@ -1,13 +1,19 @@
 class LogicGate
 {
-    constructor(connectionsNeeded)
+    /**
+     * @param {incomingConnectionsNeeded} int The required number of incoming connections strictly equal.
+     * @param {outgoingConnectionsNeeded} int The required number of outgoing connections greater than or equal.
+     */
+    constructor(neededIncomingConnections = 0, neededOutgoingConnections = 0, pos= {x:0, y:0})
     {
         this.isCharged = false;
         this.incomingConnections = Array();
         this.outgoingConnections = Array();
 
-        this.connectionsNeeded = connectionsNeeded;
-        this.pos = {x:0, y:0};
+        this.incomingConnectionsNeeded = neededIncomingConnections;
+        this.outgoingConnectionsNeeded = neededOutgoingConnections;
+
+        this.pos = pos;
 
         this.radius = 0.55;
         this.selected = false;
@@ -42,7 +48,7 @@ class LogicGate
      */
     Correct()
     {
-        return this.incomingConnections.length === this.connectionsNeeded;
+        return this.incomingConnections.length === this.neededIncomingConnections && this.outgoingConnections.length >= this.neededOutgoingConnections;
     }
 
     /**

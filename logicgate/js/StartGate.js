@@ -1,8 +1,9 @@
 class StartGate extends LogicGate //Maybe extend buffer gate in future?
 {
-    constructor()
+    constructor(incomingConnectionsNeeded = 0, outgoingConnectionsNeeded = 0, pos = {x:0, y:0})
     {
-        super(2);
+        super(incomingConnectionsNeeded, outgoingConnectionsNeeded, pos);
+
 
         let gate1 = new AndGate();
         let gate2 = new AndGate();
@@ -16,31 +17,44 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
 
         //Should result in true
         console.log(this.Correct());
-
     }
 
-    SelectedUpdate()
+    SelectedUpdate(stillDragging, gateDroppedOn)
     {
-        if(Input.GetKey("control"))
+        //Move gate
+        if(stillDragging && Input.GetKey("control"))
         {
             super.SelectedUpdate();
         }
         else
         {
             //Used for creating wire
-
+            if(stillDragging)
+            {
+                //Create wire to mouse
+            }
+            else if(!stillDragging && gateDroppedOn != null)
+            {
+                //Create wire to gate
+            }
+            else
+            {
+                //Delete wire
+            }
             //BUG CHECK Create wire, then press control to swap, then let go to swap back.
         }
     }
 
     Draw(graphics)
     {
+        graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
+        graphics.restore();
     }
 
     DrawCorrect(graphics)
