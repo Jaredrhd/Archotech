@@ -21,10 +21,11 @@ class Main
         this.circuit = Array();
 
         //Temp for testing
-        let andGate = new AndGate();
+        let andGate = new StartGate();
         this.circuit.push(andGate);
-    }
 
+        this.selectionManager = new SelectionManager(this.circuit);
+    }
 
     Render()
     {
@@ -46,6 +47,7 @@ class Main
             if(this.canvasFocused)
             {
                 this.circuit[i].Update();
+                this.selectionManager.Update();
             }
 
             //Draw circuit

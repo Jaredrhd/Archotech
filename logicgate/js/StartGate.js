@@ -19,10 +19,18 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
 
     }
 
-    //Used to update the gate
-    Update()
+    SelectedUpdate()
     {
-        super.Update();
+        if(Input.GetKey("control"))
+        {
+            super.SelectedUpdate();
+        }
+        else
+        {
+            //Used for creating wire
+
+            //BUG CHECK Create wire, then press control to swap, then let go to swap back.
+        }
     }
 
     Draw(graphics)

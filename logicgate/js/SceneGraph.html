@@ -19,13 +19,14 @@
     function init()
     {
         let manager;
-        let moodle = true;
+        let moodle = false;
         if(moodle)
         {
             addScript("/question/type/logicgate/js/Input.js");
             addScript("/question/type/logicgate/js/LogicGate.js");
             addScript("/question/type/logicgate/js/AndGate.js");
             addScript("/question/type/logicgate/js/StartGate.js");
+            addScript("/question/type/logicgate/js/SelectionManager.js");
             addScript("/question/type/logicgate/js/Main.js");
             manager = addScript("/question/type/logicgate/js/Manager.js");
         }
@@ -35,6 +36,7 @@
             addScript("LogicGate.js");
             addScript("AndGate.js");
             addScript("StartGate.js");
+            addScript("SelectionManager.js");
             addScript("Main.js");
             manager = addScript("Manager.js");
         }
