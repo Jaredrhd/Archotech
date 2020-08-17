@@ -12,7 +12,10 @@
         <FIELD NAME="preorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="inorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="postorder" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="curated_data" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bstvalues" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bst_string" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lecturer_tree" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="student_tree" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

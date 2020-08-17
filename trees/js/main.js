@@ -1,23 +1,19 @@
 onload = init;
 
-/** HTML ELEMENTS */
-{
+//#region HTML ELEMENTS
+var toolbar = document.getElementById("toolbar");
 var modifyTreeTools = document.getElementById("modify-tree-tools");
 var answerQuestionTools = document.getElementById("answer-question-tools");
 var nodeValueInput = document.getElementById("node-value");
+// var nodeValueInputTool = document.getElementById("node-value-tool");
 var randNodeValueCheckbox = document.getElementById("random-node-value");
+// var randNodeValueCheckboxTool = document.getElementById("random-node-value-tool");
 var addRootButton = document.getElementById("add-root");
 var removeNodeButton = document.getElementById("remove-node");
 var editNodeValueButton = document.getElementById("edit-node");
-var qType = document.getElementById("q_type");
-var preOrder = document.getElementById("preorder");
-var inOrder = document.getElementById("inorder");
-var postOrder = document.getElementById("postorder");
-var curatedData = document.getElementById("curated_data");
-var answerBox = document.getElementById("ANSWER_ID");
-/** The list of BST values shown to the student */
+/** The list of BST values shown to the student and lecturer */
 var bstValueList = document.getElementById("bst-values");
-}
+//#endregion
 
 /** BOARD MISC */
 {
@@ -31,20 +27,29 @@ var setup = null;
 /** Question attempt object. Will be non-null if the student is answering a question */
 var attempt = null;
 
+var events = {
+    ADDROOT: "addRoot",
+    ADDCHILD: "addChild",
+    REMOVE: "remove",
+    DRAG: "drag",
+    UNDO: "undo",
+    SELECT: "select",
+    DESELECT: "deselect"
+};
+
+var qTypes = {TRAVERSAL: "traversal", BST: "bst"};
+
 var ROWS = 13;
 var COLS = 13;
 
 let tree = null;
 let selectedNode = null;
 
-/** Answer string for traversal question */
-let answerArray = [];
-
 /** DRAGGING */
-var prevX, prevY, dragging = false;
+let prevX, prevY, dragging = false;
 
 var MAX_NODE_VALUE = 99;
-var MIN_NODE_VALUE = 0;
+var MIN_NODE_VALUE = 1;
 
 /** Boolean indicating whether a new node's value should be taken from user input or randomised */
 let randNodeValue = false;
@@ -61,17 +66,13 @@ function init() {
     board = new Board();
     board.drawGrid();
 
-    answerBox.readOnly = true;
-
     initListeners();
 
     if(lecturer) {
         setup = new QuestionSetup();
-        setup.configureHTML();
     }
     else {
         attempt = new QuestionAttempt();
-        attempt.configureHTML();
     }
 }
 
@@ -100,9 +101,11 @@ function initListeners() {
     canvas.addEventListener("click", onBoardClick);
     canvas.addEventListener("mousemove", onBoardHover);
     canvas.addEventListener("mouseleave", onBoardExit);
-    if(!lecturer && student.qType === "traversal") return;
+
+    if(!lecturer && student.qType === qTypes.TRAVERSAL) return;
+
     canvas.addEventListener("mousedown", beginDrag);
-    canvas.addEventListener("mouseup", exitDrag);
+    document.addEventListener("mouseup", exitDrag);
 
     randNodeValueCheckbox.addEventListener("change", randNodeValueChecked);
     addRootButton.addEventListener("click", addRoot);
@@ -124,37 +127,42 @@ function randNodeValueChecked() {
 function addRoot() {
     let newNodeValue;
 
-    // if(QuestionManager.currQuestion === bstQuestion) {
-    //     newNodeValue = nodeValueInput.value;
-    //     nodeValueInput.value = bstQuestion.getNextNodeValue();
-    // }
-    // else {
-    newNodeValue = getNewNodeValue();
-    // }
+    if(!lecturer && student.qType === qTypes.BST) {
+        if(student.bstValues.length === 0) return;
+        
+        newNodeValue = Number(nodeValueInput.value);
+        nodeValueInput.value = attempt.bst.values[attempt.bst.getIndex("next")];
+        attempt.bst.undoButton.style.display = "inline-block";
+    }
+    else {
+        newNodeValue = getNewNodeValue();
+    }
 
     if(!newNodeValue) return; // newNodeValue is null
 
     if(!tree) { // Tree doesn't exist
-        tree = new Tree(Number(newNodeValue));
+        tree = new Tree(newNodeValue);
     }
     else { // Tree instance already exists - will be true if the root node was removed
-        tree.setNewRoot(Number(newNodeValue));
+        tree.setNewRoot(newNodeValue);
     }
 
     addRootButton.style.display = "none";
 
     if(lecturer) {
-        setup.handleEvent(setup.events.ADDROOT);
+        setup.handleEvent(events.ADDROOT);
     }
-    
-    treeToString();
+    else {
+        attempt.bst.stack.push(tree.root);
+        attempt.handleEvent(events.ADDROOT);
+    }
 }
 
 function removeNodeAndChildren() {
     tree.removeNodeAndChildren(selectedNode);
     
     if(selectedNode.isRoot) {
-        addRootButton.style.display = "block";
+        addRootButton.style.display = "inline-block";
     }
     
     while(board.canShrink()) {
@@ -168,10 +176,8 @@ function removeNodeAndChildren() {
     editNodeValueButton.style.display = "none";
 
     if(lecturer) {
-        setup.handleEvent(setup.events.REMOVENODE);
+        setup.handleEvent(events.REMOVE);
     }
-
-    treeToString();
 }
 
 function editNodeValue(){
@@ -195,7 +201,12 @@ function beginDrag(event){
 }
 
 function exitDrag() {
-    dragging = false;
+    if(!tree) return;
+
+    if(dragging) {
+        dragging = false;
+        redrawCanvas();
+    }
 }
 
 function onBoardClick(event) {
@@ -207,7 +218,7 @@ function onBoardClick(event) {
         if(tree.nodes[board.cellY][board.cellX].selected) { // If the current selected node is selected again
             if(!lecturer && student.qType === "traversal") {
                 tree.nodes[board.cellY][board.cellX].selected = false;
-                buildAnswerString(tree.nodes[board.cellY][board.cellX], "remove");
+                attempt.buildAnswerString(tree.nodes[board.cellY][board.cellX], events.DESELECT);
             }
             else {
                 selectedNode.selected = false;
@@ -219,8 +230,13 @@ function onBoardClick(event) {
             return;
         }
         if(selectedNode !== null) { // A new node is selected so set the current selected node's property to false
-            if(lecturer && student.qType !== "traversal") {
+            if(lecturer) {
                 selectedNode.selected = false;
+            }
+            else {
+                if(student.qType !== "traversal") { // Only when it is a traversal question for the student will previously selected nodes not be deselected when selecting a new node
+                    selectedNode.selected = false;
+                }
             }
         }
 
@@ -228,12 +244,21 @@ function onBoardClick(event) {
 
         selectedNode.selected = true;
 
-        buildAnswerString(selectedNode, "add");
-
         redrawCanvas();
 
-        removeNodeButton.style.display = "block";
-        editNodeValueButton.style.display = "block";
+        if(lecturer) {
+            removeNodeButton.style.display = "inline-block";
+            editNodeValueButton.style.display = "inline-block";
+        }
+        else {
+            if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
+                removeNodeButton.style.display = "inline-block";
+                editNodeValueButton.style.display = "inline-block";
+            }
+            if(student.qType === qTypes.TRAVERSAL) {
+                attempt.buildAnswerString(selectedNode, events.SELECT);
+            }
+        }
     }
     else if(board.cellX != prevX || board.cellY != prevY){ // If dragging
         if(canDrag()) {
@@ -263,33 +288,38 @@ function onBoardClick(event) {
             return;
         }
 
-        treeToString();
+        if(lecturer) {
+            setup.handleEvent(events.DRAG);
+        }
+        else {
+            if(student.qType === qTypes.BST) {
+                attempt.handleEvent(events.DRAG);
+            }
+        }
     }
     else { // No node at the selected cell so place a child node
         if(!selectedNode) return; // No node selected
 
         if(board.cellX === selectedNode.cellCoords.x) return; // Don't allow child node to be in line with parent node
         if(board.cellY <= selectedNode.cellCoords.y) return; // Don't allow child node to be above or on the same level as parent node
+        if(board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) return; // Parent already has a left child
+        if(board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild()) return; // Parent already has a right child
 
         let newNodeValue;
-        // if(QuestionManager.currQuestion === bstQuestion) {
-        //     newNodeValue = nodeValueInput.value;
-        //     nodeValueInput.value = bstQuestion.getNextNodeValue();
-        // }
-        // else {
-        newNodeValue = getNewNodeValue();
-        // }
+        if(!lecturer && student.qType === qTypes.BST) {
+            newNodeValue = Number(nodeValueInput.value);
+            nodeValueInput.value = attempt.bst.values[attempt.bst.getIndex("next")]; // The index will be attempt.bst.values.length + 1 after adding the final BST value (i.e. nodeValueInput will be an empty string)
+        }
+        else {
+            newNodeValue = getNewNodeValue();
+        }
 
         if(!newNodeValue) return; // newNodeValue is null
 
         if(board.cellX < selectedNode.cellCoords.x) { // Adding a left child
-            if(selectedNode.children.leftChild) return; // Parent already has a left child
-
             tree.addChild(selectedNode, "L", newNodeValue, board.cellX, board.cellY);
         }
         else { // Adding a right child
-            if(selectedNode.children.rightChild) return; // Parent already has a right child
-
             tree.addChild(selectedNode, "R", newNodeValue, board.cellX, board.cellY);
         }
 
@@ -301,10 +331,14 @@ function onBoardClick(event) {
         }
 
         if(lecturer) {
-            setup.handleEvent(setup.events.ADDCHILD);
+            setup.handleEvent(events.ADDCHILD);
         }
-
-        treeToString();
+        else {
+            if(student.qType === qTypes.BST) {
+                attempt.bst.stack.push(tree.getNode(Number(newNodeValue)));
+                attempt.handleEvent(events.ADDCHILD);
+            }
+        }
     }
 }
 
@@ -335,7 +369,8 @@ function onBoardHover(event) {
         else{
             if(board.cellX == selectedNode.cellCoords.x || board.cellY <= selectedNode.cellCoords.y ||
                 (board.cellX < selectedNode.cellCoords.x && selectedNode.hasLeftChild()) ||
-                    (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild())) { // Invalid cell to place new child
+                    (board.cellX > selectedNode.cellCoords.x && selectedNode.hasRightChild()) ||
+                    (!lecturer && student.qType === qTypes.BST && attempt.bst.stack.length === attempt.bst.values.length)) { // Invalid cell to place new child
 
                         document.body.style.cursor = "not-allowed";
             }
@@ -359,7 +394,7 @@ function getNewNodeValue() {
     if(!randNodeValue) { // Set the node's value to the user specified input
         newNodeValue = nodeValueInput.value;
 
-        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE) {
+        if(newNodeValue === "" || Number(newNodeValue) < MIN_NODE_VALUE || Number(newNodeValue) > MAX_NODE_VALUE || !Number.isInteger(Number(newNodeValue))) {
             return;
         }
     }
@@ -382,7 +417,7 @@ function canDrag() {
         (selectedNode.children.leftChild != null && (selectedNode.children.leftChild.cellCoords.x >= board.cellX || selectedNode.children.leftChild.cellCoords.y <= board.cellY)) || // Keep its children to the left or right and below
         (selectedNode.children.rightChild != null && (selectedNode.children.rightChild.cellCoords.x <= board.cellX || selectedNode.children.rightChild.cellCoords.y <= board.cellY)) ||
         (prevX != selectedNode.cellCoords.x || prevY != selectedNode.cellCoords.y)) return false; // If dragging doesn't start at a node
-
+    
     return true;
 }
 
@@ -405,12 +440,6 @@ function resizeBoard(direction) {
     }
 
     redrawCanvas();
-}
-
-function treeToString() {
-    tree.convertToString(tree.root);
-    curatedData.value = tree.string;
-    tree.string = "";
 }
 
 function buildTreeFromString(string) {
@@ -454,7 +483,7 @@ function buildTreeFromString(string) {
             else {
                 if(!newNode.children.rightChild) {
                     tree.addChild(newNode, "R", nodeValue, nodeX, nodeY);
-                }
+                }               
                 else {
                     newNode = newNode.children.rightChild;
                 }
@@ -465,25 +494,4 @@ function buildTreeFromString(string) {
     }
 
     redrawCanvas();
-}
-
-function buildAnswerString(node, action) {
-    answerBox.value = "";
-    
-    if(action === "add") {
-        answerArray.push(node);
-    }
-    else if(action === "remove") {
-        let indexToRemove = answerArray.indexOf(node);
-        answerArray.splice(indexToRemove, 1);
-    }
-
-    for (const node of answerArray) {
-        if(node === answerArray[answerArray.length-1]) {
-            answerBox.value += node.value;
-        }
-        else {
-            answerBox.value += node.value + ",";
-        }
-    }
 }

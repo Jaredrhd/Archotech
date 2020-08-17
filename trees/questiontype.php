@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/question/type/trees/question.php');
 class qtype_trees extends question_type {
 
     public function extra_question_fields() {
-        return array('qtype_trees_options', 'q_type', 'preorder', 'inorder', 'postorder', 'curated_data');
+        return array('qtype_trees_options', 'q_type', 'preorder', 'inorder', 'postorder', 'bstvalues', 'bst_string', 'lecturer_tree', 'student_tree');
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
@@ -71,8 +71,13 @@ class qtype_trees extends question_type {
         $question->inorder = $questiondata->options->inorder;
         $question->postorder = $questiondata->options->postorder;
 
-        // Curated data
-        $question->curated_data = $questiondata->options->curated_data;
+        // BST
+        $question->bstvalues = $questiondata->options->bstvalues;
+        $question->bst_string = $questiondata->options->bst_string;
+
+        // Tree data
+        $question->lecturer_tree = $questiondata->options->lecturer_tree;
+        $question->student_tree = $questiondata->options->student_tree;
     }
 
     public function get_random_guess_score($questiondata) {
