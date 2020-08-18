@@ -20,7 +20,7 @@ class Main
         //Circuit stuff
         this.circuit = Array();
 
-        let startGate = new StartGate({x:-2,y:0});
+        let startGate = new StartGate({x:-2,y:0}, this.circuit);
         this.circuit.push(startGate);
 
         //Temp for testing

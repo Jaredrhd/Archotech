@@ -4,10 +4,15 @@ class AndGate extends LogicGate
     {
         super(pos);
 
-        this.incomingNodes = [new IncomingNode({x:0,y:0}, this, {x:-1,y:0.25}), new IncomingNode({x:0,y:0}, this, {x:-1,y:-0.25})];
+        this.incomingNodes = [new IncomingNode({x:0,y:0}, this, {x:-1,y:0.25}, circuit), new IncomingNode({x:0,y:0}, this, {x:-1,y:-0.25}, circuit)];
+        this.outgoingNodes = [new OutgoingNode({x:0,y:0}, this, {x:1,y:0}, circuit)];
+
 
         for (let i = 0; i < this.incomingNodes.length; i++) 
             circuit.push(this.incomingNodes[i]);
+
+        for (let i = 0; i < this.outgoingNodes.length; i++) 
+            circuit.push(this.outgoingNodes[i]);
 
     }
 

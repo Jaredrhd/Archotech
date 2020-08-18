@@ -1,15 +1,18 @@
-class StartGate extends LogicGate //Maybe extend buffer gate in future?
+class StartGate extends OutgoingNode
 {
-    constructor(pos = {x:0, y:0})
+    constructor(pos = {x:0, y:0}, circuit)
     {
-        super(pos);
+        super(pos, null, null, circuit);
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
-        //Move gate
+        //Make sure the drag wire is deleted each round
+        this.dragWire.mousePos = null;
+
         if(stillDragging && Input.GetKey("control"))
         {
+            //For dragging the start gate
             super.SelectedUpdate();
         }
         else
@@ -18,18 +21,15 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
             if(stillDragging)
             {
                 //Create wire to mouse
+                this.dragWire.mousePos = Input.GetMousePos();
             }
             else if(!stillDragging && gateDroppedOn != null)
             {
-                //Create wire to gate
-                //this.AddOutgoingConnection(gateDroppedOn);
-                gateDroppedOn.AddIncomingConnection(this);
+                //Try create a wire to the gate, we might get back a gate which we should rather connect to as it is a node.
+                let attached = gateDroppedOn.AddIncomingConnection(this);
+                if(attached != null)
+                    this.AddOutgoingConnection(attached);
             }
-            else
-            {
-                //Delete wire
-            }
-            //BUG CHECK Create wire, then press control to swap, then let go to swap back.
         }
     }
 
@@ -38,7 +38,7 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
         graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
 
-        if(this.Correct())
+        if(!this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -62,7 +62,7 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
     {
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
-        graphics.fillStyle = 'black';
+        graphics.fillStyle = 'transparent';
         graphics.fill();
         graphics.stroke();
     }

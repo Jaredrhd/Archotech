@@ -1,19 +1,22 @@
 class IncomingNode extends LogicGate
 {
-    constructor(pos, parent, parentOffset)
+    constructor(pos, parent, parentOffset, circuit)
     {
         super(pos);
         this.parentOffset = parentOffset;
 
         this.incomingConnection;
         this.parent = parent;
+
+        this.dragWire = new Wire(pos,parent,parentOffset);
+        circuit.push(this.dragWire);
     }
 
+    //Return the gate so that the the other gate knows what to connect to
     AddIncomingConnection(gate)
     {
-        //TODO maybe use later for adding or removing wire
-        let deletedGate = this.incomingConnection;
         this.incomingConnection = gate;
+        return this;
     }
 
     Draw(graphics)

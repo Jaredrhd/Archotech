@@ -45,6 +45,8 @@ class SelectionManager
         let gate = null;
         for (let i = 0, length = this.circuit.length; i < length; i++) 
         {
+            if(!this.circuit[i].selectable)
+                continue;
             //Get distance to this gate from the mouse
             let distance = this.circuit[i].GetDistanceToGate(mousePos);
 

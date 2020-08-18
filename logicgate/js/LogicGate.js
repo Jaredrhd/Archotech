@@ -13,6 +13,7 @@ class LogicGate
         this.pos = pos;
 
         this.radius = 0.55;
+        this.selectable = true;
         this.selected = false;
 
         //This is provided in the selection manager class. 
@@ -60,7 +61,17 @@ class LogicGate
         return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
     }
 
- 
+    //This is assuming you have dropped the wire onto an actual LogicGate, we then hook it to an open node
+    AddIncomingConnection(gate)
+    {
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+        {
+            if(this.incomingNodes[i].incomingConnection == null)
+            {
+                return this.incomingNodes[i].AddIncomingConnection(gate);
+            }
+        }
+    }
 
     /**
      * The function to draw a gate
