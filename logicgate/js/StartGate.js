@@ -2,35 +2,16 @@ class StartGate extends OutgoingNode
 {
     constructor(pos = {x:0, y:0}, circuit)
     {
-        super(pos, null, null, circuit);
+        super(pos, circuit);
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
-        //Make sure the drag wire is deleted each round
-        this.dragWire.mousePos = null;
-
+        //For dragging the start gate
         if(stillDragging && Input.GetKey("control"))
-        {
-            //For dragging the start gate
-            super.SelectedUpdate();
-        }
-        else
-        {
-            //Used for creating wire
-            if(stillDragging)
-            {
-                //Create wire to mouse
-                this.dragWire.mousePos = Input.GetMousePos();
-            }
-            else if(!stillDragging && gateDroppedOn != null)
-            {
-                //Try create a wire to the gate, we might get back a gate which we should rather connect to as it is a node.
-                let attached = gateDroppedOn.AddIncomingConnection(this);
-                if(attached != null)
-                    this.AddOutgoingConnection(attached);
-            }
-        }
+            super.SelectedUpdate(stillDragging, gateDroppedOn, true);
+        else //Create a wire
+            super.SelectedUpdate(stillDragging, gateDroppedOn);
     }
 
     Draw(graphics)
@@ -62,7 +43,7 @@ class StartGate extends OutgoingNode
     {
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
-        graphics.fillStyle = 'transparent';
+        graphics.fillStyle = 'black';
         graphics.fill();
         graphics.stroke();
     }

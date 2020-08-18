@@ -14,7 +14,6 @@ class LogicGate
 
         this.radius = 0.55;
         this.selectable = true;
-        this.selected = false;
 
         //This is provided in the selection manager class. 
         this.offset = {x:0,y:0};
@@ -61,7 +60,9 @@ class LogicGate
         return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
     }
 
-    //This is assuming you have dropped the wire onto an actual LogicGate, we then hook it to an open node
+     /**
+     * By default this method will try to add a gate to a an open connection if it can. You can overwrite to change how incoming connections are added
+     */
     AddIncomingConnection(gate)
     {
         for (let i = 0; i < this.incomingNodes.length; i++) 

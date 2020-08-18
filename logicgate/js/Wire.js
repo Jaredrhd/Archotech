@@ -10,6 +10,7 @@ class Wire extends LogicGate
         this.mousePos;
     }
 
+    //Updates the connectionTo with the incoming gate
     UpdateConnection(gate)
     {
         this.connectionTo = gate;
@@ -17,16 +18,18 @@ class Wire extends LogicGate
 
     Draw(graphics)
     {
+        //If we don't have a gate or a mouse pos don't draw
         if(this.connectionTo == null && this.mousePos == null)
             return;
 
-        //Start pos
+        //Make sure the wire has a parent to track
         if(this.parent != null && this.parentOffset != null)
         {
             this.pos.x = this.parentOffset.x + this.parent.pos.x;
             this.pos.y = this.parentOffset.y + this.parent.pos.y;
         }
 
+        //Draw
         graphics.save();
 
         //Draw circle
@@ -40,7 +43,6 @@ class Wire extends LogicGate
             graphics.bezierCurveTo(this.pos.x + 1,this.pos.y, this.mousePos.x - 1, this.mousePos.y, this.mousePos.x, this.mousePos.y);
 
         graphics.stroke();
-
         graphics.restore();
     }
 }

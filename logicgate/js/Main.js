@@ -23,10 +23,14 @@ class Main
         let startGate = new StartGate({x:-2,y:0}, this.circuit);
         this.circuit.push(startGate);
 
+        let startGate1 = new StartGate({x:-2,y:-2}, this.circuit);
+        this.circuit.push(startGate1);
+
         //Temp for testing
         let andGate = new AndGate({x:1,y:0}, this.circuit);
         this.circuit.push(andGate);
 
+        //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit);
     }
 
@@ -40,22 +44,22 @@ class Main
         this.graphics.fillStyle = "white";  // background color
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
 
-        //Apply limits to canvas, graphics, xLeft, xRight, yTop, yBottom
+        //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics,false);
 
         //Draw the circuit (possibly do charge calculations here, maybe better to do it afterwards)
-        for(let i = 0, length = this.circuit.length; i < length; i++)
+        for(let i = 0; i < this.circuit.length; i++)
         {
             //Only update gates if we are focused on canvas
             if(this.canvasFocused)
-            {
                 this.circuit[i].Update();
-                this.selectionManager.Update();
-            }
-
+            
             //Draw circuit
             this.circuit[i].Draw(this.graphics);
         }
+
+        //Update the selection manager
+        this.selectionManager.Update();
 
         //restore
         this.graphics.restore();
@@ -91,11 +95,13 @@ class Main
         graphics.translate( -this.xleft, -this.ytop );
     }
 
+    //For unfocusing canvas
     OnCanvasLeave()
     {
         this.canvasFocused = false;
     }
 
+    //For focusing canvas
     OnCanvasEnter()
     {
         this.canvasFocused = true;
