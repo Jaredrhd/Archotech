@@ -4,14 +4,11 @@ class LogicGate
      * @param {incomingConnectionsNeeded} int The required number of incoming connections strictly equal.
      * @param {outgoingConnectionsNeeded} int The required number of outgoing connections greater than or equal.
      */
-    constructor(neededIncomingConnections = 0, neededOutgoingConnections = 0, pos= {x:0, y:0})
+    constructor(pos= {x:0, y:0})
     {
         this.isCharged = false;
-        this.incomingConnections = Array();
-        this.outgoingConnections = Array();
-
-        this.incomingConnectionsNeeded = neededIncomingConnections;
-        this.outgoingConnectionsNeeded = neededOutgoingConnections;
+        this.incomingNodes = Array();
+        this.outgoingNodes = Array();
 
         this.pos = pos;
 
@@ -20,6 +17,9 @@ class LogicGate
 
         //This is provided in the selection manager class. 
         this.offset = {x:0,y:0};
+
+        this.visited;
+        this.updated;
     }
 
     /**
@@ -40,7 +40,6 @@ class LogicGate
      */
     Update()
     {
-
     }
 
     /**
@@ -48,7 +47,9 @@ class LogicGate
      */
     Correct()
     {
-        return this.incomingConnections.length === this.neededIncomingConnections && this.outgoingConnections.length >= this.neededOutgoingConnections;
+        //TEMPORARY set to true, will update when calculating charges
+        return true;
+        return this.incomingConnections.length === this.incomingConnectionsNeeded && this.outgoingConnections.length >= this.outgoingConnectionsNeeded;
     }
 
     /**
@@ -59,15 +60,7 @@ class LogicGate
         return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
     }
 
-    //TODO remake
-    AddIncomingConnection()
-    {
-        if(this.incomingConnections.length >= this.incomingConnections)
-        {
-            console.error("Too many incoming connections");
-            return;
-        }
-    }
+ 
 
     /**
      * The function to draw a gate

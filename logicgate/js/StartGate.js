@@ -1,22 +1,8 @@
 class StartGate extends LogicGate //Maybe extend buffer gate in future?
 {
-    constructor(incomingConnectionsNeeded = 0, outgoingConnectionsNeeded = 0, pos = {x:0, y:0})
+    constructor(pos = {x:0, y:0})
     {
-        super(incomingConnectionsNeeded, outgoingConnectionsNeeded, pos);
-
-
-        let gate1 = new AndGate();
-        let gate2 = new AndGate();
-
-        this.incomingConnections.push(gate1);
-
-        //Should result in false
-        console.log(this.Correct());
-
-        this.incomingConnections.push(gate2);
-
-        //Should result in true
-        console.log(this.Correct());
+        super(pos);
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
@@ -36,6 +22,8 @@ class StartGate extends LogicGate //Maybe extend buffer gate in future?
             else if(!stillDragging && gateDroppedOn != null)
             {
                 //Create wire to gate
+                //this.AddOutgoingConnection(gateDroppedOn);
+                gateDroppedOn.AddIncomingConnection(this);
             }
             else
             {

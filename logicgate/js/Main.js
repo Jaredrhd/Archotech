@@ -20,11 +20,11 @@ class Main
         //Circuit stuff
         this.circuit = Array();
 
-        let startGate = new StartGate(0,0,{x:-2,y:0});
+        let startGate = new StartGate({x:-2,y:0});
         this.circuit.push(startGate);
 
         //Temp for testing
-        let andGate = new AndGate(0,0,{x:0,y:0});
+        let andGate = new AndGate({x:1,y:0}, this.circuit);
         this.circuit.push(andGate);
 
         this.selectionManager = new SelectionManager(this.circuit);

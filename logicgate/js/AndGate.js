@@ -1,17 +1,26 @@
 class AndGate extends LogicGate
 {
-    constructor(incomingConnectionsNeeded = 0, outgoingConnectionsNeeded = 0, pos= {x:0, y:0})
+    constructor(pos = {x:0, y:0}, circuit)
     {
-        super(incomingConnectionsNeeded, outgoingConnectionsNeeded, pos);
+        super(pos);
+
+        this.incomingNodes = [new IncomingNode({x:0,y:0}, this, {x:-1,y:0.25}), new IncomingNode({x:0,y:0}, this, {x:-1,y:-0.25})];
+
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+            circuit.push(this.incomingNodes[i]);
+
     }
 
     Draw(graphics)
     {
         graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
-        this.DrawBroken(graphics);
-        graphics.restore();
+        if(!this.Correct())
+            this.DrawCorrect(graphics);
+        else
+            this.DrawBroken(graphics);
 
+        graphics.restore();
     }
 
     DrawCorrect(graphics)
@@ -20,7 +29,6 @@ class AndGate extends LogicGate
 
     DrawBroken(graphics)
     {
-
         graphics.translate(-0.5, 0); // Centre at (0, 0)
         graphics.lineWidth = 0.025;
 

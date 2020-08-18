@@ -28,6 +28,11 @@ class SelectionManager
         else if(this.selected)
         {
             let gate = this.GetNearestGate();
+
+            //Don't return the same gate to itself      TODO Maybe connect to itself in future
+            if(gate === this.selected)
+                gate = null;
+
             this.selected.SelectedUpdate(false, gate);
             this.selected = null; 
         }
