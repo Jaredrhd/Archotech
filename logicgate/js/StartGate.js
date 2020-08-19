@@ -1,46 +1,29 @@
-class StartGate extends LogicGate //Maybe extend buffer gate in future?
+class StartGate extends OutgoingNode
 {
-    constructor()
+    constructor(pos = {x:0, y:0}, circuit)
     {
-        super(2);
-
-        let gate1 = new AndGate();
-        let gate2 = new AndGate();
-
-        this.incomingConnections.push(gate1);
-
-        //Should result in false
-        console.log(this.Correct());
-
-        this.incomingConnections.push(gate2);
-
-        //Should result in true
-        console.log(this.Correct());
-
+        super(pos, circuit);
     }
 
-    SelectedUpdate()
+    SelectedUpdate(stillDragging, gateDroppedOn)
     {
-        if(Input.GetKey("control"))
-        {
-            super.SelectedUpdate();
-        }
-        else
-        {
-            //Used for creating wire
-
-            //BUG CHECK Create wire, then press control to swap, then let go to swap back.
-        }
+        //For dragging the start gate
+        if(stillDragging && Input.GetKey("control"))
+            super.SelectedUpdate(stillDragging, gateDroppedOn, true);
+        else //Create a wire
+            super.SelectedUpdate(stillDragging, gateDroppedOn);
     }
 
     Draw(graphics)
     {
+        graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
 
-        if(this.Correct())
+        if(!this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
+        graphics.restore();
     }
 
     DrawCorrect(graphics)

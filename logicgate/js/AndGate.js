@@ -1,14 +1,31 @@
 class AndGate extends LogicGate
 {
-    constructor()
+    constructor(pos = {x:0, y:0}, circuit)
     {
-        super();
+        super(pos);
+
+        this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-1,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-1,y:-0.25})];
+        this.outgoingNodes = [new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0})];
+
+
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+            circuit.push(this.incomingNodes[i]);
+
+        for (let i = 0; i < this.outgoingNodes.length; i++) 
+            circuit.push(this.outgoingNodes[i]);
+
     }
 
     Draw(graphics)
     {
+        graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
-        this.DrawBroken(graphics);
+        if(!this.Correct())
+            this.DrawCorrect(graphics);
+        else
+            this.DrawBroken(graphics);
+
+        graphics.restore();
     }
 
     DrawCorrect(graphics)
@@ -30,25 +47,18 @@ class AndGate extends LogicGate
         graphics.lineTo(1.5, 0);
         graphics.stroke();
 
-        // Rectangular base
-        graphics.beginPath();
-        graphics.moveTo(0, 0.5);
-        graphics.lineTo(0.5, 0.5);
-        graphics.stroke();
-    
-        // Connecting arc
-        graphics.save();
-        graphics.beginPath();
-        graphics.rotate(-Math.PI/2);
-        graphics.arc(0, 0.5, 0.5, 0, Math.PI);
-        graphics.stroke();
-        graphics.restore();
-
-        // Rectangular base
+        //Middle Shape
+        graphics.fillStyle = "transparent";
         graphics.beginPath();
         graphics.moveTo(0.5, -0.5);
         graphics.lineTo(0, -0.5);
-        graphics.lineTo(0, 0.51);
+        graphics.lineTo(0, 0.5);
+        graphics.lineTo(0.5, 0.5);
+        graphics.fill();
+        graphics.stroke();
+        graphics.beginPath();
+        graphics.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
+        graphics.fill();
         graphics.stroke();
     }
 }

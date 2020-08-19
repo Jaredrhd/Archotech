@@ -1,19 +1,25 @@
 class LogicGate
 {
-    constructor(connectionsNeeded)
+    /**
+     * @param {incomingConnectionsNeeded} int The required number of incoming connections strictly equal.
+     * @param {outgoingConnectionsNeeded} int The required number of outgoing connections greater than or equal.
+     */
+    constructor(pos= {x:0, y:0})
     {
         this.isCharged = false;
-        this.incomingConnections = Array();
-        this.outgoingConnections = Array();
+        this.incomingNodes = Array();
+        this.outgoingNodes = Array();
 
-        this.connectionsNeeded = connectionsNeeded;
-        this.pos = {x:0, y:0};
+        this.pos = pos;
 
         this.radius = 0.55;
-        this.selected = false;
+        this.selectable = true;
 
         //This is provided in the selection manager class. 
         this.offset = {x:0,y:0};
+
+        this.visited;
+        this.updated;
     }
 
     /**
@@ -34,7 +40,6 @@ class LogicGate
      */
     Update()
     {
-
     }
 
     /**
@@ -42,7 +47,9 @@ class LogicGate
      */
     Correct()
     {
-        return this.incomingConnections.length === this.connectionsNeeded;
+        //TEMPORARY set to true, will update when calculating charges
+        return true;
+        return this.incomingConnections.length === this.incomingConnectionsNeeded && this.outgoingConnections.length >= this.outgoingConnectionsNeeded;
     }
 
     /**
@@ -53,13 +60,17 @@ class LogicGate
         return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
     }
 
-    //TODO remake
-    AddIncomingConnection()
+     /**
+     * By default this method will try to add a gate to a an open connection if it can. You can overwrite to change how incoming connections are added
+     */
+    AddIncomingConnection(gate)
     {
-        if(this.incomingConnections.length >= this.incomingConnections)
+        for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            console.error("Too many incoming connections");
-            return;
+            if(this.incomingNodes[i].incomingConnection == null)
+            {
+                return this.incomingNodes[i].AddIncomingConnection(gate);
+            }
         }
     }
 
