@@ -45,9 +45,13 @@ class qtype_trees_renderer extends qtype_renderer {
         $question = $qa->get_question();
 
         $html = file_get_contents(new moodle_url('/question/type/trees/student.html'));
+        $canvasID = $qa->get_qt_field_name('answer');
+        $html = str_replace("canvasID = '';", "canvasID = '$canvasID';", $html);
+        $html = str_replace("canvas id=''", "canvas id = '$canvasID'", $html);
 
         $answer = $qa->get_last_qt_var('answer');
-        
+        $node_order_clicked = $qa->get_last_qt_var('order');
+
         if($question->q_type == "traversal") {
             $html = str_replace("var student = {qType: '', treeString: '', bstValues: ''};", "var student = {qType: '$question->q_type', treeString: '$question->lecturer_tree', bstValues: ''};", $html);
             $label = $question->preorder !== "" ? "Pre-order Traversal" : ($question->inorder !== "" ? "In-order Traversal" : "Post-order Traversal");
@@ -55,14 +59,16 @@ class qtype_trees_renderer extends qtype_renderer {
         }
         else if($question->q_type == "bst") {
             $html = str_replace("var student = {qType: '', treeString: '', bstValues: ''};", "var student = {qType: '$question->q_type', treeString: '', bstValues: '$question->bstvalues'};", $html);
-            if($answer != "") {
-                $html = str_replace("var lastAnswer = '';", "var lastAnswer = '$answer';", $html);
+        }
+
+        if($answer != "") {
+            $html = str_replace("var lastAnswer = '';", "var lastAnswer = '$answer';", $html);
+            if($question->q_type == "traversal") {
+                $html = str_replace("var lastAnswerNodeOrders = '';", "var lastAnswerNodeOrders = '$node_order_clicked';", $html);
             }
         }
-        
-        // echo "<script>console.log('$question->postorder');</script>";
 
-        // echo "<script>console.log('CALLED : $question->q_type');</script>";
+        // echo "<script>console.log('$node_order_clicked');</script>";
 
         //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
@@ -96,7 +102,7 @@ class qtype_trees_renderer extends qtype_renderer {
                 $html = str_replace("var displayTools = true;", " var displayTools = false;", $html);
             }
 
-            $html = str_replace("var disableCanvas;", "canvas.style.pointerEvents = 'none';", $html);
+            $html = str_replace("var disableCanvas;", "document.getElementById('$canvasID').style.pointerEvents = 'none';", $html);
 
             $answer = $question->grade_response(array('answer' => $answer));
             $fraction = $answer[0];
@@ -120,7 +126,11 @@ class qtype_trees_renderer extends qtype_renderer {
         }
 
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
-
+        if($question->q_type == "traversal") {
+            $node_order_clicked = $qa->get_qt_field_name('order');
+            $result = str_replace("TRAVERSAL_ORDER_NAME", $node_order_clicked, $result);
+        }
+        
         /* if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
                     $question->get_validation_error(array('answer' => $currentanswer)),

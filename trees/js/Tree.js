@@ -1,3 +1,6 @@
+import {ROWS, COLS} from "./main.js";
+import Node from "./Node.js";
+
 class Tree {
     constructor(rootValue, draw=true) {
         // Create matrix for nodes
@@ -99,12 +102,17 @@ class Tree {
         newChild.orderPlaced = this.numNodes;
     }
 
-    /** Returns the first node whose value matches the argument */
-    getNode(value) {
+    /** Returns the first node whose value (and potentially order) matches the argument(s) */
+    getNode(value, order=null) {
         for(let i = 0; i < ROWS; i++) {
             for(let j = 0; j < COLS; j++) {
-                if(typeof tree.nodes[i][j] !== "undefined") {
-                    if(tree.nodes[i][j].value === value) return tree.nodes[i][j];
+                if(typeof this.nodes[i][j] !== "undefined") {
+                    if(order) {
+                        if(this.nodes[i][j].value === value && this.nodes[i][j].orderPlaced === order) return this.nodes[i][j];
+                    }
+                    else {
+                        if(this.nodes[i][j].value === value) return this.nodes[i][j];
+                    }
                 }
             }
         }
@@ -116,7 +124,7 @@ class Tree {
         this.removeNodeAndChildren(selectedNode.children.leftChild);
         this.removeNodeAndChildren(selectedNode.children.rightChild);
 
-        tree.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
+        this.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
 
         if(!selectedNode.isRoot) {
             if(selectedNode.childType() === "L") {
@@ -205,7 +213,12 @@ class Tree {
     convertToStringForBST(node) {
         if(!node) return;
 
-        this.string += node.value;
+        if(node.isRoot) {
+            this.string += node.value;
+        }
+        else {
+            this.string += node.value + "#" + this.generateChildPosition(node);
+        }
 
         if(this.string.split(":").length !== this.numNodes) {
             this.string += ":";
@@ -234,3 +247,5 @@ class Tree {
         return childPos;
     }
 }
+
+export default Tree;

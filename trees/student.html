@@ -10,15 +10,18 @@
 <noscript>
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
+
+<script>canvasID = '';</script>
     
 <div id="layout">
     <textarea id="bst-values" autocomplete="off" style="display: none;" readonly></textarea>
     <div id="answer-question-tools" style="display: none;">
         <label for='ANSWER_ID'></label>
-        <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''> 
+        <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>
+        <input id='TRAVERSAL_ORDER' type='text' name='TRAVERSAL_ORDER_NAME' value='' style="display: none;">
     </div>
     <div style="float:left; border: 2px solid black">
-        <canvas id="canvas" width="700" height="700" style="display:block"></canvas>
+        <canvas id='' width="700" height="700" style="display:block"></canvas>
     </div>
     <div id="toolbar">
         <div id="modify-tree-tools" style="display: none;">
@@ -40,16 +43,18 @@
     var student = {qType: '', treeString: '', bstValues: ''};
 
     var lastAnswer = '';
+    var lastAnswerNodeOrders = '';
 
     /** Variables to be replaced by appropriate values on student review */
     var disableCanvas;
     var displayTools = true;
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
-<script src="/question/type/trees/js/Board.js"></script>
-<script src="/question/type/trees/js/Node.js"></script>
-<script src="/question/type/trees/js/Tree.js"></script>
-<script src="/question/type/trees/js/QuestionAttempt.js"></script>
-<script src="/question/type/trees/js/main.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script> -->
+<script src="/question/type/trees/js/Board.js" type="module"></script>
+<script src="/question/type/trees/js/Node.js" type="module"></script>
+<script src="/question/type/trees/js/Tree.js" type="module"></script>
+<script src="/question/type/trees/js/QuestionAttempt.js" type="module"></script>
+<script src="/question/type/trees/js/main.js" type="module"></script>
+<script src="/question/type/trees/js/Manager.js" type="module"></script>
 </body>
 </html>

@@ -1,3 +1,8 @@
+import {tree, qTypes, addRootButton, toolbar, buildTreeFromString, nodeValueInput, randNodeValueCheckbox, 
+    canvas, modifyTreeTools, answerQuestionTools, bstValueList, events} from "./main.js";
+import TraversalQuestion from "./TraversalQuestion.js";
+import BSTQuestion from "./BSTQuestion.js";
+
 class QuestionSetup {
     constructor() {
         this._trvQuestion = new TraversalQuestion();
@@ -212,3 +217,5 @@ class QuestionSetup {
         this.treeToString();
     }
 }
+
+export default QuestionSetup;

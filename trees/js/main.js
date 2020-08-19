@@ -1,33 +1,40 @@
-onload = init;
+import Board from "./Board.js";
+import Tree from "./Tree.js";
+import QuestionSetup from "./QuestionSetup.js";
+import QuestionAttempt from "./QuestionAttempt.js";
 
 //#region HTML ELEMENTS
-var toolbar = document.getElementById("toolbar");
-var modifyTreeTools = document.getElementById("modify-tree-tools");
-var answerQuestionTools = document.getElementById("answer-question-tools");
-var nodeValueInput = document.getElementById("node-value");
-// var nodeValueInputTool = document.getElementById("node-value-tool");
-var randNodeValueCheckbox = document.getElementById("random-node-value");
-// var randNodeValueCheckboxTool = document.getElementById("random-node-value-tool");
-var addRootButton = document.getElementById("add-root");
-var removeNodeButton = document.getElementById("remove-node");
-var editNodeValueButton = document.getElementById("edit-node");
+export let toolbar = document.getElementById("toolbar");
+export let modifyTreeTools = document.getElementById("modify-tree-tools");
+export let answerQuestionTools = document.getElementById("answer-question-tools");
+export let nodeValueInput = document.getElementById("node-value");
+// export let nodeValueInputTool = document.getElementById("node-value-tool");
+export let randNodeValueCheckbox = document.getElementById("random-node-value");
+// export let randNodeValueCheckboxTool = document.getElementById("random-node-value-tool");
+export let addRootButton = document.getElementById("add-root");
+export let removeNodeButton = document.getElementById("remove-node");
+export let editNodeValueButton = document.getElementById("edit-node");
 /** The list of BST values shown to the student and lecturer */
-var bstValueList = document.getElementById("bst-values");
+export let bstValueList = document.getElementById("bst-values");
 //#endregion
 
-/** BOARD MISC */
-{
-let canvas;
-var context;
-var board;
-}
+//#region BOARD MISC
+export let canvas;
+export let context;
+export let board;
+export let ROWS = 13;
+export let COLS = 13;
+/** DRAGGING */
+let prevX, prevY, dragging = false;
+//#endregion
 
 /** Question setup object. Will be non-null if the lecturer is creating a question */
-var setup = null;
+export let setup = null;
 /** Question attempt object. Will be non-null if the student is answering a question */
-var attempt = null;
+export let attempt = null;
 
-var events = {
+//#region ENUMS
+export let events = {
     ADDROOT: "addRoot",
     ADDCHILD: "addChild",
     REMOVE: "remove",
@@ -36,26 +43,28 @@ var events = {
     SELECT: "select",
     DESELECT: "deselect"
 };
+export let qTypes = {TRAVERSAL: "traversal", BST: "bst"};
+//#endregion
 
-var qTypes = {TRAVERSAL: "traversal", BST: "bst"};
-
-var ROWS = 13;
-var COLS = 13;
-
-let tree = null;
-let selectedNode = null;
-
-/** DRAGGING */
-let prevX, prevY, dragging = false;
-
-var MAX_NODE_VALUE = 99;
-var MIN_NODE_VALUE = 1;
-
+//#region TREE
+export let tree = null;
+export let selectedNode = null;
 /** Boolean indicating whether a new node's value should be taken from user input or randomised */
 let randNodeValue = false;
+export let MAX_NODE_VALUE = 99;
+export let MIN_NODE_VALUE = 1;
+//#endregion
+
+onload = init;
 
 function init() {
-    canvas = document.getElementById("canvas");
+    if(lecturer) {
+        canvas = document.getElementById("canvas");
+    }
+    else {
+        canvas = document.getElementById(canvasID);
+    }
+    
     if (!canvas.getContext) {
         document.getElementById("message").innerHTML = "ERROR: Canvas not supported";
         return;
@@ -79,7 +88,7 @@ function init() {
     }
 }
 
-function redrawCanvas() {
+export function redrawCanvas() {
     context.save();
 
     context.fillStyle = "white";
@@ -425,7 +434,7 @@ function canDrag() {
 }
 
 /** Dynamically resize the board if a cell is made on any edge or there is adequate space to shrink */
-function resizeBoard(direction) {
+export function resizeBoard(direction) {
     if(direction === "grow") {
         ROWS += 2;
         COLS += 2;
@@ -445,7 +454,7 @@ function resizeBoard(direction) {
     redrawCanvas();
 }
 
-function buildTreeFromString(string) {
+export function buildTreeFromString(string) {
     let temp = string;
     let tempArr = temp.split("#");
 
@@ -497,4 +506,12 @@ function buildTreeFromString(string) {
     }
 
     redrawCanvas();
+}
+
+export function mutateTree(value) {
+    tree = value;
+}
+
+export function mutateSelectedNode(value) {
+    selectedNode = value;
 }

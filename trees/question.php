@@ -38,7 +38,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
 
     public function get_expected_data() {
         // TODO.
-        return array('answer' => PARAM_RAW);
+        return array('answer' => PARAM_RAW, 'order' => PARAM_RAW);
     }
 
     public function summarise_response(array $response) {

@@ -1,3 +1,5 @@
+import {board, context} from "./main.js";
+
 class Node {
     constructor(value, root = true) {
         this._value = value;
@@ -190,3 +192,5 @@ class Node {
         return this.children.leftChild === null && this.children.rightChild === null;
     }
 }
+
+export default Node;

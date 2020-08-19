@@ -1,3 +1,5 @@
+import {tree, setup, bstValueList} from "./main.js";
+
 class TraversalQuestion {
     constructor() {
         this._radio = document.querySelector('[qtype_name="traversal"]');
@@ -169,3 +171,5 @@ class TraversalQuestion {
         return delimeter;
     }
 }
+
+export default TraversalQuestion;

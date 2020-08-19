@@ -1,3 +1,6 @@
+import {tree, setup, bstValueList, MAX_NODE_VALUE, MIN_NODE_VALUE, ROWS, COLS, mutateTree} from "./main.js";
+import Tree from "./Tree.js";
+
 class BSTQuestion {
     constructor() {
         this._radio = document.querySelector('[qtype_name="bst"]');
@@ -196,7 +199,7 @@ class BSTQuestion {
         for(let i = 0; i < array.length; i++) {
             if(i === 0) {
                 if(!tree) {
-                    tree = new Tree(rootValue, false);
+                    mutateTree(new Tree(rootValue, false));
                 }
                 else {
                     tree.setNewRoot(rootValue, false);
@@ -229,3 +232,5 @@ class BSTQuestion {
         tree.string = "";
     }
 }
+
+export default BSTQuestion;

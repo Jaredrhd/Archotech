@@ -1,9 +1,13 @@
+import {tree, nodeValueInput, qTypes, addRootButton, editNodeValueButton, removeNodeButton, modifyTreeTools, answerQuestionTools, 
+    bstValueList, buildTreeFromString, events, redrawCanvas, board, selectedNode, mutateSelectedNode} from "./main.js";
+
 class QuestionAttempt {
     constructor() {
         this._bst = {values: student.bstValues.split(",").map(value => parseInt(value)), undoButton: document.getElementById("bst-undo"), getIndex: this.getBstValueIndex, stack: []};
         this._bst.undoButton.addEventListener("click", this.bstUndoClicked.bind(this));        
 
         this._answerBox = document.getElementById("ANSWER_ID");
+        this._traversalOrder = document.getElementById("TRAVERSAL_ORDER");
         if(student.qType === qTypes.TRAVERSAL) {
             this._answerBox.readOnly = true;
         }
@@ -19,6 +23,10 @@ class QuestionAttempt {
 
     get answerBox() {
         return this._answerBox;
+    }
+
+    get traversalOrder() {
+        return this._traversalOrder;
     }
 
     get answerArray() {
@@ -56,8 +64,8 @@ class QuestionAttempt {
                 this.bst.undoButton.style.display = "none";
             }
         }
-
-        if(selectedNode === this.bst.stack[this.bst.stack.length - 1]) selectedNode = null;
+        
+        if(selectedNode === this.bst.stack[this.bst.stack.length - 1]) mutateSelectedNode(null);
         tree.removeNodeAndChildren(this.bst.stack.pop());
         redrawCanvas();
 
@@ -123,6 +131,8 @@ class QuestionAttempt {
             this.answerBox.value += "-" + tree.string;
             tree.string = "";
 
+            if(this.answerBox.value === "-") this.answerBox.value = "";
+
             // var encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
             // console.clear();
             // console.log(encrypted.toString());
@@ -138,13 +148,39 @@ class QuestionAttempt {
 
     /** Reconstruct last answer (needed when student views a question they have already answered but not submitted) */
     reconstructLastAnswer() {
-        if(student.qType === qTypes.BST) {
-            this.rebuildBST();
+        if(student.qType === qTypes.TRAVERSAL) {
+            this.reconstructTraversalAnswer();
+        }
+        else if(student.qType === qTypes.BST) {
+            this.reconstructBSTAnswer();
+        }
+    }
+
+    /** Reselects the nodes in a perform traversal question that the student had selected but not yet submitted */
+    reconstructTraversalAnswer() {
+        this.answerBox.value = lastAnswer;
+        this.traversalOrder.value = lastAnswerNodeOrders;
+
+        let nodes = lastAnswerNodeOrders.split(", "); // The node values and the order they were added to the tree to uniquely identify them in case there are nodes with the same value
+        let node;
+        let nodeValue;
+        let nodeOrderPlaced;
+
+        for(let i = 0; i < nodes.length; i++) {
+            node = nodes[i].split(":");
+            nodeValue = Number(node[0]);
+            nodeOrderPlaced = Number(node[1]);
+
+            node = tree.getNode(nodeValue, nodeOrderPlaced);
+            node.selected = true;
+            this.answerArray.push(node);
+
+            redrawCanvas();
         }
     }
 
     /** Rebuilds the BST that the student had created but not yet submitted */
-    rebuildBST() {
+    reconstructBSTAnswer() {
         let treeString = lastAnswer.split("-");
         buildTreeFromString(treeString[1]);
         this.answerBox.value = lastAnswer;
@@ -157,7 +193,7 @@ class QuestionAttempt {
         
         while(nodes.length !== 0) {
             for(let i = 0; i < nodes.length; i++) {
-                currNode = tree.getNode(Number(nodes[i]));
+                currNode = tree.getNode(Number(nodes[i].split("#")[0]));
                 if(currNode.orderPlaced === currIndex) {
                     this.bst.stack.push(currNode);
                     nodes.splice(i, 1);
@@ -173,6 +209,7 @@ class QuestionAttempt {
 
     buildAnswerString(node, action) {
         this.answerBox.value = "";
+        this.traversalOrder.value = "";
         
         if(action === events.SELECT) {
             this.answerArray.push(node);
@@ -185,9 +222,11 @@ class QuestionAttempt {
         for (const node of this.answerArray) {
             if(node === this.answerArray[this.answerArray.length-1]) {
                 this.answerBox.value += node.value;
+                this.traversalOrder.value += node.value + ":" + node.orderPlaced;
             }
             else {
                 this.answerBox.value += node.value + ", ";
+                this.traversalOrder.value += node.value + ":" + node.orderPlaced + ", ";
             }
         }
     }
@@ -217,3 +256,5 @@ class QuestionAttempt {
         this.treeToString();
     }
 }
+
+export default QuestionAttempt;

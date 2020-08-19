@@ -1,3 +1,5 @@
+import {tree, canvas, context, ROWS, COLS} from "./main.js";
+
 class Board {
     constructor() {
         this._cellWidth = canvas.width / COLS;
@@ -104,3 +106,5 @@ class Board {
         this.selectedBoardCoords.y = (this.cellY * this.cellHeight) + this.cellHeight * 0.5;
     }
 }
+
+export default Board;
