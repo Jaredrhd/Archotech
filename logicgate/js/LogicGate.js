@@ -6,7 +6,7 @@ class LogicGate
      */
     constructor(pos= {x:0, y:0})
     {
-        this.isCharged = false;
+        this.charge = false;
         this.incomingNodes = Array();
         this.outgoingNodes = Array();
 
@@ -18,8 +18,8 @@ class LogicGate
         //This is provided in the selection manager class. 
         this.offset = {x:0,y:0};
 
-        this.visited;
-        this.updated;
+        this.visited = false;
+        this.updated = false;
     }
 
     /**
@@ -43,13 +43,25 @@ class LogicGate
     }
 
     /**
-     * Makes sure that the gate is correctly connected
+     * This method is called when the Logic Gate Charge needs to be calculated
+     */
+    UpdateCharge()
+    {
+    }
+
+    /**
+     * Makes sure that the gate is correctly connected (Which means it has been updated)
      */
     Correct()
     {
-        //TEMPORARY set to true, will update when calculating charges
-        return true;
-        return this.incomingConnections.length === this.incomingConnectionsNeeded && this.outgoingConnections.length >= this.outgoingConnectionsNeeded;
+        let correctlyConnected = true;
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+        {
+            if(this.incomingNodes[i].incomingConnection == null)
+                correctlyConnected = false;
+        }
+
+        return this.visited && correctlyConnected;
     }
 
     /**

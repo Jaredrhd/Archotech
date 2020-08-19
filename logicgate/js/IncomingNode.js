@@ -1,6 +1,6 @@
 class IncomingNode extends LogicGate
 {
-    constructor(pos, circuit, parent, parentOffset)
+    constructor(pos, circuit, parent, parentOffset  = {x:0, y:0})
     {
         super(pos);
         this.circuit = circuit;
@@ -8,9 +8,6 @@ class IncomingNode extends LogicGate
 
         this.incomingConnection;
         this.parent = parent;
-
-        //this.dragWire = new Wire(pos,parent,parentOffset);
-        //this.circuit.push(this.dragWire);
     }
 
     //Return the gate so that the the other gate knows what to connect to
@@ -59,6 +56,13 @@ class IncomingNode extends LogicGate
         graphics.stroke();
 
         graphics.restore();
+    }
+
+    //For updating the position of the node with an offset from the parent
+    UpdatePos()
+    {
+        this.pos.x = this.parentOffset.x + this.parent.pos.x;
+        this.pos.y = this.parentOffset.y + this.parent.pos.y;
     }
 
     SelectedUpdate()

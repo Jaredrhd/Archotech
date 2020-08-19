@@ -20,15 +20,18 @@ class Main
         //Circuit stuff
         this.circuit = Array();
 
-        let startGate = new StartGate({x:-2,y:0}, this.circuit);
+        let startGate = new StartGate({x:-2,y:0}, this.circuit, true);
         this.circuit.push(startGate);
 
-        let startGate1 = new StartGate({x:-2,y:-2}, this.circuit);
+        let startGate1 = new StartGate({x:-2,y:-2}, this.circuit, true);
         this.circuit.push(startGate1);
 
         //Temp for testing
-        let andGate = new AndGate({x:1,y:0}, this.circuit);
+        let andGate = new AndGate({x:0,y:0}, this.circuit);
         this.circuit.push(andGate);
+
+        let endGate = new EndGate({x:2,y:0}, this.circuit);
+        this.circuit.push(endGate);
 
         //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit);
@@ -47,8 +50,11 @@ class Main
         //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics,false);
 
-        //Draw the circuit (possibly do charge calculations here, maybe better to do it afterwards)
-        for(let i = 0; i < this.circuit.length; i++)
+        //First Update the the charges
+        this.UpdateCircuitCharge();
+
+        //Then draw the circuit
+        for(let i = 0; i < this.circuit.length; ++i)
         {
             //Only update gates if we are focused on canvas
             if(this.canvasFocused)
@@ -58,11 +64,49 @@ class Main
             this.circuit[i].Draw(this.graphics);
         }
 
+        //Then Reset
+        this.ResetCircuit();
+
         //Update the selection manager
         this.selectionManager.Update();
-
         //restore
         this.graphics.restore();
+    }
+
+    UpdateCircuitCharge()
+    {
+        let startNodes = Array();
+        //Find all start nodes
+        for(let i = 0; i < this.circuit.length; ++i)
+        {
+            if(this.circuit[i] instanceof StartGate)
+                startNodes.push(this.circuit[i]);
+        }
+
+        for(let i = 0; i < startNodes.length; ++i)
+        {
+            startNodes[i].UpdateCharge();
+        }
+
+
+    }
+
+    ResetCircuit()
+    {
+        for(let i = 0; i < this.circuit.length; ++i)
+        {
+
+            //If we never visited the circuit, it's not part of the main circuit, deactivate it's charge
+            if(!this.circuit[i].visited)
+                this.circuit[i].charge = false;
+
+            //Reset for next loop
+            this.circuit[i].visited = false;
+
+            //Reset updated unless it's a start gate. Start gates don't update
+            if(!(this.circuit[i] instanceof StartGate))
+                this.circuit[i].updated = false;
+        }
     }
 
     ApplyLimits(graphics, preserveAspect) 

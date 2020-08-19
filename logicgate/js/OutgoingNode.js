@@ -1,6 +1,6 @@
 class OutgoingNode extends LogicGate
 {
-    constructor(pos, circuit, parent, parentOffset)
+    constructor(pos, circuit, parent, parentOffset = {x:0, y:0})
     {
         super(pos);
         this.circuit = circuit;
@@ -14,31 +14,23 @@ class OutgoingNode extends LogicGate
         this.circuit.push(this.dragWire);
     }
 
-    SelectedUpdate(stillDragging, gateDroppedOn, shouldMove)
+    SelectedUpdate(stillDragging, gateDroppedOn)
     {
         //Make sure the drag wire is deleted each round
         this.dragWire.mousePos = null;
 
-        //If we should move the gate instead
-        if(shouldMove)
+        //Used for creating wire
+        if(stillDragging)
         {
-            super.SelectedUpdate();
+            //Create wire to mouse
+            this.dragWire.mousePos = Input.GetMousePos();
         }
-        else
+        else if(!stillDragging && gateDroppedOn != null)
         {
-            //Used for creating wire
-            if(stillDragging)
-            {
-                //Create wire to mouse
-                this.dragWire.mousePos = Input.GetMousePos();
-            }
-            else if(!stillDragging && gateDroppedOn != null)
-            {
-                //Try create a wire to the gate, we might get back a gate which we should rather connect to as it is a node.
-                let attached = gateDroppedOn.AddIncomingConnection(this);
-                if(attached != null)
-                    this.AddOutgoingConnection(attached);
-            }
+            //Try create a wire to the gate, we might get back a gate which we should rather connect to as it is a node.
+            let attached = gateDroppedOn.AddIncomingConnection(this);
+            if(attached != null)
+                this.AddOutgoingConnection(attached);
         }
     }
 
@@ -62,11 +54,15 @@ class OutgoingNode extends LogicGate
         this.circuit.splice(this.circuit.indexOf(gateWire.wire),1);
     }
 
-    Draw(graphics)
+    UpdatePos()
     {
         this.pos.x = this.parentOffset.x + this.parent.pos.x;
         this.pos.y = this.parentOffset.y + this.parent.pos.y;
+    }
 
+    Draw(graphics)
+    {
+        this.UpdatePos();
         graphics.save();
 
         //Move to pos and scale
