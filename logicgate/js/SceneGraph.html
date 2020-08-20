@@ -19,34 +19,48 @@
     function init()
     {
         let manager;
-        let moodle = false;
+        let moodle = true;
         if(moodle)
         {
-            addScript("/question/type/logicgate/js/Input.js");
-            addScript("/question/type/logicgate/js/LogicGate.js");
-            addScript("/question/type/logicgate/js/Wire.js");
-            addScript("/question/type/logicgate/js/IncomingNode.js");
-            addScript("/question/type/logicgate/js/OutgoingNode.js");
-            addScript("/question/type/logicgate/js/AndGate.js");
-            addScript("/question/type/logicgate/js/StartGate.js");
-            addScript("/question/type/logicgate/js/EndGate.js");
-            addScript("/question/type/logicgate/js/SelectionManager.js");
-            addScript("/question/type/logicgate/js/Main.js");
-            manager = addScript("/question/type/logicgate/js/Manager.js");
+            addScript("/question/type/logicgate/js/Gates/LogicGate.js");
+            addScript("/question/type/logicgate/js/Gates/Wire.js");
+            addScript("/question/type/logicgate/js/Gates/IncomingNode.js");
+            addScript("/question/type/logicgate/js/Gates/OutgoingNode.js");
+            addScript("/question/type/logicgate/js/Gates/StartGate.js");
+            addScript("/question/type/logicgate/js/Gates/EndGate.js");
+            addScript("/question/type/logicgate/js/Gates/BufferGate.js");
+            addScript("/question/type/logicgate/js/Gates/NotGate.js");
+            addScript("/question/type/logicgate/js/Gates/AndGate.js");
+            addScript("/question/type/logicgate/js/Gates/NandGate.js");
+            addScript("/question/type/logicgate/js/Gates/OrGate.js");
+            addScript("/question/type/logicgate/js/Gates/NorGate.js");
+            addScript("/question/type/logicgate/js/Gates/XorGate.js");
+            addScript("/question/type/logicgate/js/Gates/XnorGate.js");
+            addScript("/question/type/logicgate/js/Managers/Input.js");
+            addScript("/question/type/logicgate/js/Managers/SelectionManager.js");
+            addScript("/question/type/logicgate/js/Managers/Main.js");
+            manager = addScript("/question/type/logicgate/js/Managers/Manager.js");
         }
         else
         {
-            addScript("Input.js");
-            addScript("LogicGate.js");
-            addScript("Wire.js");
-            addScript("IncomingNode.js");
-            addScript("OutgoingNode.js");
-            addScript("AndGate.js");
-            addScript("StartGate.js");
-            addScript("EndGate.js");
-            addScript("SelectionManager.js");
-            addScript("Main.js");
-            manager = addScript("Manager.js");
+            addScript("Gates/LogicGate.js");
+            addScript("Gates/Wire.js");
+            addScript("Gates/IncomingNode.js");
+            addScript("Gates/OutgoingNode.js");
+            addScript("Gates/StartGate.js");
+            addScript("Gates/EndGate.js");
+            addScript("Gates/BufferGate.js");
+            addScript("Gates/NotGate.js");
+            addScript("Gates/AndGate.js");
+            addScript("Gates/NandGate.js");
+            addScript("Gates/OrGate.js");
+            addScript("Gates/NorGate.js");
+            addScript("Gates/XorGate.js");
+            addScript("Gates/XnorGate.js");
+            addScript("Managers/Input.js");
+            addScript("Managers/SelectionManager.js");
+            addScript("Managers/Main.js");
+            manager = addScript("Managers/Manager.js");
         }
 
         //If we added a manager

@@ -1,4 +1,4 @@
-class AndGate extends LogicGate
+class NandGate extends LogicGate
 {
     constructor(pos = {x:0, y:0}, circuit)
     {
@@ -11,8 +11,7 @@ class AndGate extends LogicGate
         for (let i = 0; i < this.incomingNodes.length; i++) 
             circuit.push(this.incomingNodes[i]);
 
-            circuit.push(this.outgoingNodes);
-
+        circuit.push(this.outgoingNodes);
     }
 
     UpdateCharge()
@@ -37,7 +36,7 @@ class AndGate extends LogicGate
             this.incomingNodes[1].incomingConnection.parent.UpdateCharge();
         
         //Calculate the new charge and pass forward
-        this.charge = this.incomingNodes[0].incomingConnection.parent.charge && this.incomingNodes[1].incomingConnection.parent.charge;
+        this.charge = !(this.incomingNodes[0].incomingConnection.parent.charge && this.incomingNodes[1].incomingConnection.parent.charge);
         this.updated = true;
 
         //If we don't have outgoing connections return
@@ -55,6 +54,12 @@ class AndGate extends LogicGate
     {
         graphics.save();
         graphics.translate(this.pos.x,this.pos.y);
+
+        if(this.charge)
+            graphics.fillStyle = "transparent";
+        else
+            graphics.fillStyle = "black";
+
         if(!this.Correct())
             this.DrawCorrect(graphics);
         else
@@ -71,7 +76,6 @@ class AndGate extends LogicGate
     DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
-        graphics.lineWidth = 0.025;
 
         // Three line segments
         graphics.beginPath();
@@ -83,12 +87,16 @@ class AndGate extends LogicGate
         graphics.lineTo(1.5, 0);
         graphics.stroke();
 
-        //Middle Shape
-        if(this.charge)
-            graphics.fillStyle = "transparent";
-        else
-            graphics.fillStyle = "black";
+        //Circle
+        graphics.save();
+        graphics.fillStyle = "white";
+        graphics.beginPath();
+        graphics.arc(1.135, 0, 0.1, 0, 2*Math.PI);
+        graphics.fill();
+        graphics.stroke();
+        graphics.restore();
 
+        //Middle Shape
         graphics.beginPath();
         graphics.moveTo(0.5, -0.5);
         graphics.lineTo(0, -0.5);

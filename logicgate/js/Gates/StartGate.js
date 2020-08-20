@@ -59,8 +59,6 @@ class StartGate extends LogicGate
 
     DrawCorrect(graphics)
     {
-
-
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0,  2 * Math.PI);
         graphics.fill();

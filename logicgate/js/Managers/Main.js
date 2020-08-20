@@ -20,21 +20,41 @@ class Main
         //Circuit stuff
         this.circuit = Array();
 
-        let startGate = new StartGate({x:-2,y:0}, this.circuit, true);
+        let startGate = new StartGate({x:-3,y:2.5}, this.circuit, true);
         this.circuit.push(startGate);
-
-        let startGate1 = new StartGate({x:-2,y:-2}, this.circuit, true);
-        this.circuit.push(startGate1);
-
-        //Temp for testing
-        let andGate = new AndGate({x:0,y:0}, this.circuit);
-        this.circuit.push(andGate);
 
         let endGate = new EndGate({x:2,y:0}, this.circuit);
         this.circuit.push(endGate);
 
+        let bufferGate = new BufferGate({x:-3,y:1}, this.circuit);
+        this.circuit.push(bufferGate);
+        
+        let notGate = new NotGate({x:-3,y:0}, this.circuit);
+        this.circuit.push(notGate);
+
+        let andGate = new AndGate({x:-3,y:-1}, this.circuit);
+        this.circuit.push(andGate);
+
+        let nandGate = new NandGate({x:-3,y:-2.5}, this.circuit);
+        this.circuit.push(nandGate);
+
+        let orGate = new OrGate({x:-1,y:2.5}, this.circuit);
+        this.circuit.push(orGate);
+
+        let norGate = new NorGate({x:-1,y:1}, this.circuit);
+        this.circuit.push(norGate);
+
+        let xorGate = new XorGate({x:-1,y:0}, this.circuit);
+        this.circuit.push(xorGate);
+
+        let xnorGate = new XnorGate({x:-1,y:-1}, this.circuit);
+        this.circuit.push(xnorGate);
+
         //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit);
+
+        this.timer = Date.now();
+        this.timerUpdate = 250;
     }
 
     Render()
@@ -49,9 +69,15 @@ class Main
 
         //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics,false);
-
+        
+        let time = this.timer - Date.now();
         //First Update the the charges
-        this.UpdateCircuitCharge();
+        if(time < 0)
+        {
+            this.ResetCircuit(); //Then Reset
+            this.UpdateCircuitCharge();
+            this.timer = Date.now() + this.timerUpdate;
+        }
 
         //Then draw the circuit
         for(let i = 0; i < this.circuit.length; ++i)
@@ -64,11 +90,10 @@ class Main
             this.circuit[i].Draw(this.graphics);
         }
 
-        //Then Reset
-        this.ResetCircuit();
-
         //Update the selection manager
-        this.selectionManager.Update();
+        if(this.canvasFocused)
+            this.selectionManager.Update();
+        
         //restore
         this.graphics.restore();
     }
@@ -87,17 +112,14 @@ class Main
         {
             startNodes[i].UpdateCharge();
         }
-
-
     }
 
     ResetCircuit()
     {
         for(let i = 0; i < this.circuit.length; ++i)
         {
-
             //If we never visited the circuit, it's not part of the main circuit, deactivate it's charge
-            if(!this.circuit[i].visited)
+            if(!this.circuit[i].visited && !this.circuit[i].updated)
                 this.circuit[i].charge = false;
 
             //Reset for next loop
