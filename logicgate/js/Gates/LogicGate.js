@@ -42,11 +42,51 @@ class LogicGate
     {
     }
 
+    CanUpdateCharge()
+    {
+        //If we have visited this node return to the previous one
+        if(this.visited == true)
+        return false;
+
+        this.visited = true;
+
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+        {
+            if(this.incomingNodes[i].incomingConnection == null )
+            {
+                this.charge = false;
+                return false;
+            }
+        }
+
+        //Make sure both incoming connections are update
+        for (let i = 0; i < this.incomingNodes.length; i++) 
+        {
+            if(!this.incomingNodes[i].incomingConnection.parent.updated)
+                this.incomingNodes[i].incomingConnection.parent.UpdateCharge();
+        }
+
+        return true;
+    }
+
     /**
      * This method is called when the Logic Gate Charge needs to be calculated
      */
     UpdateCharge()
     {
+        //ADD YOUR CODE HERE IN THE SPECIFIC GATE
+        console.error("Need to add code to update charge in specific gate");
+    }
+
+    UpdateNextGate()
+    {
+        //If we don't have outgoing connections return
+        if(!this.outgoingNodes.outgoingConnections)
+            return;
+
+        //Continue the charge forward
+        for (let i = 0; i < this.outgoingNodes.outgoingConnections.length; i++) 
+            this.outgoingNodes.outgoingConnections[i].gate.parent.UpdateCharge();
     }
 
     /**

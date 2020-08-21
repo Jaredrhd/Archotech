@@ -16,35 +16,16 @@ class NotGate extends LogicGate
 
     UpdateCharge()
     {
-        //If we have visited this node return to the previous one
-        if(this.visited == true)
+        //Make sure we can update this gate
+        if(!super.CanUpdateCharge())
             return;
-
-        this.visited = true;
-
-        if(this.incomingNodes[0].incomingConnection == null)
-        {
-            this.charge = false;
-            return null;
-        }
-
-        //Make sure both incoming connections are update
-        if(!this.incomingNodes[0].incomingConnection.parent.updated)
-            this.incomingNodes[0].incomingConnection.parent.UpdateCharge();
 
         //Calculate the new charge and pass forward
         this.charge = !this.incomingNodes[0].incomingConnection.parent.charge;
         this.updated = true;
 
-        //If we don't have outgoing connections return
-        if(!this.outgoingNodes.outgoingConnections)
-            return;
-
-        //Continue the charge forward
-        for (let i = 0; i < this.outgoingNodes.outgoingConnections.length; i++) 
-        {
-            this.outgoingNodes.outgoingConnections[i].gate.parent.UpdateCharge();
-        }
+        //Update the next gate
+        super.UpdateNextGate();
     }
 
     Draw(graphics)

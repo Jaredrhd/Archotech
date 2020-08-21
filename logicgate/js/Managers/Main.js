@@ -16,7 +16,7 @@ class Main
         this.canvas.onmousemove = Input.UpdateMousePos.bind(this);
         this.canvas.onmouseleave = this.OnCanvasLeave.bind(this);
         this.canvas.onmouseenter = this.OnCanvasEnter.bind(this);
-        
+
         //Circuit stuff
         this.circuit = Array();
 
