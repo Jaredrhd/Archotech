@@ -22,7 +22,7 @@ class IncomingNode extends LogicGate
         {
             for (let i = 0; i < this.incomingConnection.outgoingConnections.length; i++) 
             {
-                //Shorten name out the outgoing connection
+                //Shorten name to out which is the outgoing connection
                 let out = this.incomingConnection.outgoingConnections[i];
 
                 //If the out gate matches this incoming node we found the one we wanted
@@ -67,12 +67,12 @@ class IncomingNode extends LogicGate
 
     SelectedUpdate()
     {
-        //If we have an incoming connection already and we are getting a new one
+        //If we have an incoming connection already and we select the input node
         if(this.incomingConnection != null)
         {
             for (let i = 0; i < this.incomingConnection.outgoingConnections.length; i++) 
             {
-                //Shorten name out the outgoing connection
+                //Shorten name to out which is the outgoing connection
                 let out = this.incomingConnection.outgoingConnections[i];
 
                 //If the out gate matches this incoming node we found the one we wanted
@@ -82,9 +82,11 @@ class IncomingNode extends LogicGate
                     this.incomingConnection.RemoveOutgoingConnection(out);
                     let gate = this.incomingConnection;
                     this.incomingConnection = null;
-                    return gate;
+                    return gate; //Swap to outgoing gate
                 }
             }
         }
+
+        //TODO if no incoming connection create wire from input node
     }
 }

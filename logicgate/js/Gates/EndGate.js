@@ -18,6 +18,12 @@ class EndGate extends LogicGate
             return this.incomingNodes[0].SelectedUpdate();
     }
 
+    //Overrides the default behaviour since we want to swap to the new connection if a new wire is attached to this
+    AddIncomingConnection(gate)
+    {
+        return this.incomingNodes[0].AddIncomingConnection(gate);
+    }
+
     //Update the charge of the end gate with whatever came in
     UpdateCharge()
     {
