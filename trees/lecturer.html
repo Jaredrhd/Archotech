@@ -5,50 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tree</title>
 </head>
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;" onload="init()">
 
 <noscript>
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
     
 <div id="layout">
-    <textarea id="bst-values" autocomplete="off" style="display: none;" readonly></textarea>
+    <textarea id="canvas:bst-values" class="bst-values" autocomplete="off" style="display: none;" readonly></textarea>
+    <!-- QUESTION SETUP ELEMENTS -->
     <button type="button" id="insert-bst-value" style="display: none;">INSERT</button>
     <button type="button" id="undo-insert-bst-value" style="display: none;">UNDO</button>
     <span id="invalid-bst-value" style="display: none;"></span>
     <button type="button" id="copy-tree">COPY</button>
     <span id="copied" style="display: block; opacity: 0;">COPIED</span>
-    <div style="float:left; border: 2px solid black">
-        <canvas id="canvas" width="700" height="700" style="display:block"></canvas>
-    </div>
-    <div id="toolbar">
-        <div id="modify-tree-tools" style="display: none;">
-            <label for="node-value" class="no-margin">NODE VALUE</label>
-            <input id="node-value" type="number" min="0" max="99" autocomplete="off">
-            <div id="random-tools">
-                <label for="random-node-value" style="margin-bottom: 5px;">RANDOM VALUE</label>
-                <input id="random-node-value" type="checkbox" autocomplete="off">
+    <!--  -->
+    <canvas id="canvas" width="700" height="700" style="display:block; float:left; border: 2px solid black;"></canvas>
+    <!-- DATABASE MISC -->
+    <div lecturer='true' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders=''
+        disablecanvas='false' displaytools='true'></div>
+    <!--  -->
+    <div id="canvas:toolbar" class="toolbar">
+        <div id="canvas:modify-tree-tools" class="modify-tree-tools" style="display: none;">
+            <label for="canvas:node-value" class="no-margin">NODE VALUE</label>
+            <input id="canvas:node-value" class="node-value" type="number" min="0" max="99" autocomplete="off">
+            <div id="canvas:random-node-value-tools">
+                <label for="canvas:random-node-value" style="margin-bottom: 5px;">RANDOM VALUE</label>
+                <input id="canvas:random-node-value" type="checkbox" autocomplete="off">
             </div>
-            <button type="button" id="add-root" class="modify-tree-tools">ADD ROOT</button>
-            <button type="button" id="remove-node" style="display: none;" class="modify-tree-tools">REMOVE</button>
-            <button type="button" id="edit-node" style="display: none;" class="modify-tree-tools">EDIT VALUE</button>
-            <button type="button" id="bst-undo" style="display: none;" class="modify-tree-tools">UNDO</button>
+            <button type="button" id="canvas:add-root" class="modify-tree-tools add-root">ADD ROOT</button>
+            <button type="button" id="canvas:remove-node" style="display: none;" class="modify-tree-tools remove-node">REMOVE</button>
+            <button type="button" id="canvas:edit-node" style="display: none;" class="modify-tree-tools edit-node">EDIT VALUE</button>
+            <button type="button" id="canvas:bst-undo" style="display: none;" class="modify-tree-tools bst-undo">UNDO</button>
         </div>
-        <div id="answer-question-tools" style="display: none;">
+        <div id="canvas:answer-question-tools" style="display: none;">
             <label for='ANSWER_ID'></label>
             <input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''> 
         </div>
     </div>
 </div>
-<script>
-    var lecturer = true;
-</script>
-<script src="/question/type/trees/js/Board.js" type="module"></script>
+<!-- <script src="/question/type/trees/js/Board.js" type="module"></script>
 <script src="/question/type/trees/js/Node.js" type="module"></script>
 <script src="/question/type/trees/js/Tree.js" type="module"></script>
 <script src="/question/type/trees/js/QuestionSetup.js" type="module"></script>
 <script src="/question/type/trees/js/TraversalQuestion.js" type="module"></script>
 <script src="/question/type/trees/js/BSTQuestion.js" type="module"></script>
-<script src="/question/type/trees/js/main.js" type="module"></script>
+<script src="/question/type/trees/js/main.js" type="module"></script> -->
+<script>
+    function init() {
+        loadScript("/question/type/trees/js/Board.js");
+        loadScript("/question/type/trees/js/Node.js");
+        loadScript("/question/type/trees/js/Tree.js");
+        loadScript("/question/type/trees/js/TraversalQuestion.js");
+        loadScript("/question/type/trees/js/BSTQuestion.js");
+        loadScript("/question/type/trees/js/QuestionSetup.js");
+        loadScript("/question/type/trees/js/Main.js");
+
+        let manager = loadScript("/question/type/trees/js/Manager.js");
+
+        if(manager != null) {
+            manager.onload = function() {
+                let manager = new Manager(true);
+            }
+        }
+    }
+
+    function loadScript(url) {
+        let scripts = document.getElementsByTagName("script");
+        for(let i = 0; i < scripts.length; i++) {
+            if(scripts[i].src === url) return; // Script already added
+        }
+
+        let script = document.createElement("script");
+        script.async = false;
+        script.src = url;
+        document.body.appendChild(script);
+
+        return script;
+    }
+</script>
 </body>
 </html>
