@@ -1,33 +1,30 @@
-import {tree, qTypes, addRootButton, toolbar, buildTreeFromString, nodeValueInput, randNodeValueCheckbox, 
-    canvas, modifyTreeTools, answerQuestionTools, bstValueList, events} from "./main.js";
-import TraversalQuestion from "./TraversalQuestion.js";
-import BSTQuestion from "./BSTQuestion.js";
-
 class QuestionSetup {
-    constructor() {
-        this._trvQuestion = new TraversalQuestion();
-        this._bstQuestion = new BSTQuestion();
+    constructor(main) {
+        this.main = main;
 
-        this._lecturerTree = document.getElementById("lecturer_tree");
-        this._qType = document.getElementById("q_type");
-        this._qType.value = "traversal"; // qType has intial value of traversal
+        this.trvQuestion = new TraversalQuestion(this.main);
+        this.bstQuestion = new BSTQuestion(this.main);
 
-        this._createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
+        this.lecturerTree = document.getElementById("lecturer_tree");
+        this.qType = document.getElementById("q_type");
+        this.qType.value = "traversal"; // qType has intial value of traversal
 
-        this._copyPasteTreeInput = document.getElementById("id_copy_paste_tree");
-        this._copyButton = document.getElementById("copy-tree");
-        this._copiedSpan = document.getElementById("copied");
-        this._copyPasteTreeInput.parentElement.insertBefore(this._copiedSpan, this._copyPasteTreeInput.nextSibling);
-        this._copyPasteTreeInput.parentElement.insertBefore(this._copyButton, this._copiedSpan);
+        this.createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
+
+        this.copyPasteTreeInput = document.getElementById("id_copy_paste_tree");
+        this.copyButton = document.getElementById("copy-tree");
+        this.copiedSpan = document.getElementById("copied");
+        this.copyPasteTreeInput.parentElement.insertBefore(this.copiedSpan, this.copyPasteTreeInput.nextSibling);
+        this.copyPasteTreeInput.parentElement.insertBefore(this.copyButton, this.copiedSpan);
         
-        this._validCopyPaste = false;
+        this.validCopyPaste = false;
 
-        this._copyPasteTreeInput.addEventListener("keydown", this.validatePasteOnly.bind(this));
-        this._copyPasteTreeInput.addEventListener("keyup", this.clearInvalidCopyPasteInput.bind(this));
-        this._copyPasteTreeInput.addEventListener("paste", this.buildCopiedTree.bind(this));
-        this._copyButton.addEventListener("click", this.copyTree.bind(this));
+        this.copyPasteTreeInput.addEventListener("keydown", this.validatePasteOnly.bind(this));
+        this.copyPasteTreeInput.addEventListener("keyup", this.clearInvalidCopyPasteInput.bind(this));
+        this.copyPasteTreeInput.addEventListener("paste", this.buildCopiedTree.bind(this));
+        this.copyButton.addEventListener("click", this.copyTree.bind(this));
 
-        this._currQuestion = {
+        this.currQuestion = {
             TRAVERSAL: true,
             BST: false
         };
@@ -35,89 +32,47 @@ class QuestionSetup {
         this.configureHTML();
     }
 
-    get trvQuestion() {
-        return this._trvQuestion;
-    }
-
-    get bstQuestion() {
-        return this._bstQuestion;
-    }
-
-    get qType() {
-        return this._qType;
-    }
-
-    get lecturerTree() {
-        return this._lecturerTree;
-    }
-
-    get createQuestionHeader() {
-        return this._createQuestionHeader;
-    }
-
-    get copyPasteTreeInput() {
-        return this._copyPasteTreeInput;
-    }
-
-    get copiedSpan() {
-        return this._copiedSpan;
-    }
-
-    get validCopyPaste() {
-        return this._validCopyPaste;
-    }
-
-    get currQuestion() {
-        return this._currQuestion;
-    }
-
-    set validCopyPaste(value) {
-        this._validCopyPaste = value;
-    }
-
     /** Configure respective html on lecturer's side */
     configureHTML() {
         switch(this.qType.value) {
-            case qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
-            case qTypes.BST: this.configureBstHTML(); break;
+            case this.main.qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
+            case this.main.qTypes.BST: this.configureBstHTML(); break;
         }
     }
 
     configureTraversalHTML() {
-        if(this.lecturerTree.value !== "") {
-            buildTreeFromString(this.lecturerTree.value);
-            addRootButton.style.display = "none";
+        if(this.lecturerTree.value !== "") { // Rebuild a previously constructed tree
+            this.main.buildTreeFromString(this.lecturerTree.value);
+            this.main.addRootButton.style.display = "none";
             this.trvQuestion.performTraversal();
             this.copyPasteTreeInput.value = this.lecturerTree.value;
         }
 
         this.createQuestionHeader.innerHTML = "Build Tree";
 
-        nodeValueInput.disabled = false;
-        nodeValueInput.value = "";
-        nodeValueInput.style.color = "#000000";
+        this.main.nodeValueInput.disabled = false;
+        this.main.nodeValueInput.value = "";
+        this.main.nodeValueInput.style.color = "#000000";
 
-        randNodeValueCheckbox.disabled = false;
+        this.main.randNodeValueCheckbox.disabled = false;
 
-        canvas.style.display = "block";
-        canvas.parentElement.style.display = "block";
+        this.main.canvas.style.display = "block";
 
-        toolbar.style.display = "flex";
-        modifyTreeTools.style.display = "block";
+        this.main.toolbar.style.display = "flex";
+        this.main.modifyTreeTools.style.display = "block";
         
-        answerQuestionTools.style.display = "none";
+        this.main.answerQuestionTools.style.display = "none";
     }
 
     configureBstHTML() {
         this.createQuestionHeader.innerHTML = "BST Values";
 
-        canvas.style.display = "none";
-        canvas.parentElement.style.display = "none";
+        this.main.canvas.style.display = "none";
 
-        toolbar.style.display = "none";
-        modifyTreeTools.style.display = "none";
+        this.main.toolbar.style.display = "none";
+        this.main.modifyTreeTools.style.display = "none";
 
-        bstValueList.style.display = "block";
+        this.main.bstValueList.style.display = "block";
     }
 
     updateCurrentQuestion(newQuestion) {
@@ -136,10 +91,10 @@ class QuestionSetup {
     }
 
     treeToString() {
-        tree.convertToString(tree.root);
-        this.lecturerTree.value = tree.string;
-        this.copyPasteTreeInput.value = tree.string;
-        tree.string = "";
+        this.main.tree.convertToString(this.main.tree.root);
+        this.lecturerTree.value = this.main.tree.string;
+        this.copyPasteTreeInput.value = this.main.tree.string;
+        this.main.tree.string = "";
     }
 
     copyTree() {
@@ -173,8 +128,8 @@ class QuestionSetup {
 
     buildCopiedTree() {
         setTimeout( () => {
-            buildTreeFromString(this.copyPasteTreeInput.value);
-            addRootButton.style.display = "none";
+            this.main.buildTreeFromString(this.copyPasteTreeInput.value);
+            this.main.addRootButton.style.display = "none";
             this.trvQuestion.performTraversal();
             this.lecturerTree.value = this.copyPasteTreeInput.value;
         }, 1);
@@ -182,10 +137,10 @@ class QuestionSetup {
 
     handleEvent(event) {
         switch(event) {
-            case events.ADDROOT: this.addRootEvent(); break;
-            case events.ADDCHILD: this.addChildEvent(); break;
-            case events.REMOVE: this.removeNodeEvent(); break;
-            case events.DRAG: this.dragEvent(); break;
+            case this.main.events.ADDROOT: this.addRootEvent(); break;
+            case this.main.events.ADDCHILD: this.addChildEvent(); break;
+            case this.main.events.REMOVE: this.removeNodeEvent(); break;
+            case this.main.events.DRAG: this.dragEvent(); break;
         }
     }
 
@@ -217,5 +172,3 @@ class QuestionSetup {
         this.treeToString();
     }
 }
-
-export default QuestionSetup;

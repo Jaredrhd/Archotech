@@ -1,4 +1,4 @@
-#toolbar {
+.toolbar {
     width: 200px;
     height: 600px;
     display: flex;
@@ -9,7 +9,7 @@
     text-align: center;
 }
 
-#modify-tree-tools {
+.modify-tree-tools {
     font-weight: bold;
 }
 
@@ -17,13 +17,13 @@
     margin: 0;
 }
 
-#node-value {
+.node-value {
     display: block;
     margin: 5px auto;
     width: 160px;
 }
 
-#answer-question-tools {
+.answer-question-tools {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -32,9 +32,9 @@
     float: left;
 }
 
-#ANSWER_ID {
+.ANSWER_ID {
     display: block;
-    width: 705px;
+    width: 705px !important;
     height: 50px;
     resize: none;
     margin-bottom: 5px;
@@ -43,7 +43,7 @@
     text-align: center;
 }
 
-#bst-values {
+.bst-values {
     width: 705px;
     height: 50px;
     resize: none;
@@ -69,39 +69,39 @@ button {
     text-decoration: none;
 }
 
-#add-root {
+.add-root {
     background-color:hsl(136, 63%, 47%);
     margin: 5px;
 }
 
-#add-root:hover {
+.add-root:hover {
 	background-color:#0fda2a;
 }
 
-#remove-node {
+.remove-node {
     background-color:hsl(12, 71%, 57%);
     margin: 5px;
 }
 
-#remove-node:hover {
+.remove-node:hover {
 	background-color:#f14805;
 }
 
-#bst-undo {
+.bst-undo {
     background-color:hsl(12, 71%, 57%);
     margin: 5px;
 }
 
-#bst-undo:hover {
+.bst-undo:hover {
 	background-color:#f14805;
 }
 
-#edit-node {
+.edit-node {
     background-color:hsl(216, 82%, 57%);
     margin: 5px;
 }
 
-#edit-node:hover {
+.edit-node:hover {
 	background-color:#1c6cff;
 }
 
