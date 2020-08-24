@@ -285,8 +285,10 @@ function onBoardClick(event) {
             editNodeValueButton.style.display = "inline-block";
         }
         else {
-            if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
+            if(student.qType === qTypes.BST){ //Student's can use arrow keys on BST question
                 addEventListener("keydown", onArrowClick);
+            }
+            if(student.qType !== qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
                 removeNodeButton.style.display = "inline-block";
                 editNodeValueButton.style.display = "inline-block";
             }
