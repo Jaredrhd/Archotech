@@ -17,7 +17,7 @@ class Board {
             this.main.context.save();
 
             this.main.context.lineWidth = 2;
-            this.main.context.globalAlpha = 0.15;
+            this.main.context.globalAlpha = 0.125;
             this.main.context.setLineDash([2, 3]);
             this.main.context.beginPath();
             this.main.context.moveTo(0, this.cellHeight * i);
@@ -31,7 +31,7 @@ class Board {
             this.main.context.save();
 
             this.main.context.lineWidth = 2;
-            this.main.context.globalAlpha = 0.15;
+            this.main.context.globalAlpha = 0.125;
             this.main.context.setLineDash([2, 3]);
             this.main.context.beginPath();
             this.main.context.moveTo(this.cellWidth * j, 0);

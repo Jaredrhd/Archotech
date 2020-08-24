@@ -15,6 +15,7 @@ class Main {
         this.editNodeValueButton = document.getElementById(canvas.id+":edit-node");
         /** The list of BST values shown to the student and lecturer */
         this.bstValueList = document.getElementById(canvas.id+":bst-values");
+        this.bstTools = document.getElementById(canvas.id+":bst-tools");
         //#endregion
 
         //#region BOARD MISC
@@ -26,6 +27,7 @@ class Main {
         /** DRAGGING */
         this.prevX = null;
         this.prevY = null;
+        this.lastValidCellCoords = null;
         this.dragging = false;
         //#endregion
 
@@ -208,6 +210,7 @@ class Main {
 
         if(this.dragging) {
             this.dragging = false;
+            this.lastValidCellCoords = null;
             this.redrawCanvas();
         }
     }
@@ -359,14 +362,16 @@ class Main {
         }
         else if(this.selectedNode) { // No node in the hovered cell but an existing node is selected
             if(this.dragging) { 
-                if(this.canDrag()) {
+                if(this.canDrag()) { // Valid cell to drag into
                     this.redrawCanvas();
-                    this.selectedNode.drawOutline();
+                    this.lastValidCellCoords = this.selectedNode.drawOutline();
                     document.body.style.cursor = "move";
                 }
-                else {
+                else { // Invalid cell to drag into
                     this.redrawCanvas();
                     document.body.style.cursor = "not-allowed";
+                    if(!this.lastValidCellCoords) return;
+                    if(!this.selectedNode.isRoot) this.selectedNode.drawOutline(this.lastValidCellCoords); // Use last valid cell coords to draw outline at that cell
                 }
             }
             else{

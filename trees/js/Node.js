@@ -17,7 +17,7 @@ class Node {
     draw(parent, cellX, cellY) { 
         this.main.context.save();
         
-        this.main.context.lineWidth = 2;
+        this.main.context.lineWidth = 2.25;
         this.main.context.beginPath();
 
         this.cellCoords.x = cellX;
@@ -47,22 +47,32 @@ class Node {
         }
     }
 
-    drawOutline() {
+    /**
+     * Draws the outline of a node when it is being dragged. lastValidCellCoords is non-null when the user is dragging in an invalid cell
+     * @param {object} lastValidCellCoords The cell coordinates of the last valid
+     */
+    drawOutline(lastValidCellCoords) {
         this.main.context.save();
 
-        this.main.context.lineWidth = 2;
+        this.main.context.lineWidth = 2.25;
         this.main.context.setLineDash([3, 3]);
 
         this.main.context.beginPath();
 
-        let cellCoords = {x: this.main.board.cellX, y: this.main.board.cellY};
-        let boardCoords = this.main.board.cellToBoardCoords(this.main.board.cellX, this.main.board.cellY);
+        let cellCoords;
+        if(lastValidCellCoords) { // Draw the node outline in the last valid cell
+            this.main.context.globalAlpha = 0.3;
+            cellCoords = {x: lastValidCellCoords.x, y: lastValidCellCoords.y};
+        }
+        else { // Draw the node outline in the cell that the user is dragging over
+            cellCoords = {x: this.main.board.cellX, y: this.main.board.cellY};
+        }
+        let boardCoords = this.main.board.cellToBoardCoords(cellCoords.x, cellCoords.y);
         
         this.main.context.arc(boardCoords.x, boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node outline
-
         this.main.context.stroke();
 
-        this.drawEdge(this.parent.boardCoords, boardCoords, this.parent.cellCoords, this.main.board.cellX, this.main.board.cellY, this);
+        this.drawEdge(this.parent.boardCoords, boardCoords, this.parent.cellCoords, cellCoords.x, cellCoords.y, this);
 
         if(this.hasLeftChild()) {
             this.drawEdge(boardCoords, this.children.leftChild.boardCoords, cellCoords, this.children.leftChild.cellCoords.x, this.children.leftChild.cellCoords.y, this.children.leftChild);
@@ -72,6 +82,8 @@ class Node {
         }
 
         this.main.context.restore();
+
+        return cellCoords;
     }
 
     drawEdge(parentBoardCoords, childBoardCoords, parentCellCoords, cellX, cellY, child) {
@@ -93,7 +105,7 @@ class Node {
 
         this.main.context.save();
 
-        this.main.context.lineWidth = 2;
+        this.main.context.lineWidth = 2.25;
         this.main.context.beginPath();
 
         /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */

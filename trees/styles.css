@@ -1,12 +1,13 @@
 .toolbar {
     width: 200px;
-    height: 600px;
+    height: 600px !important; 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     align-content: space-around;
     text-align: center;
+    float: left;
 }
 
 .modify-tree-tools {
@@ -43,8 +44,17 @@
     text-align: center;
 }
 
+.bst-tools {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bold;
+    float: left;
+}
+
 .bst-values {
-    width: 705px;
+    width: 705px !important;
     height: 50px;
     resize: none;
     margin-bottom: 5px;

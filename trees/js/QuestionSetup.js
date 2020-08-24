@@ -72,7 +72,7 @@ class QuestionSetup {
         this.main.toolbar.style.display = "none";
         this.main.modifyTreeTools.style.display = "none";
 
-        this.main.bstValueList.style.display = "block";
+        this.main.bstTools.style.display = "flex";
     }
 
     updateCurrentQuestion(newQuestion) {

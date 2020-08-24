@@ -81,7 +81,7 @@ class QuestionAttempt {
         }
 
         this.main.bstValueList.value = this.main.databaseMisc.bstvalues; // Set the bstValueList from the database value
-        this.main.bstValueList.style.display = "block";
+        this.main.bstTools.style.display = "flex";
 
         if(this.main.databaseMisc.displaytools) {
             this.main.modifyTreeTools.style.display = "block";

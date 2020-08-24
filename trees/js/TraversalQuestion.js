@@ -30,7 +30,7 @@ class TraversalQuestion {
     
     updateQuestionType() {
         if(this.main.setup.currQuestion.BST) {
-            this.main.bstValueList.style.display = "none";
+            this.main.bstTools.style.display = "none";
         }
 
         this.main.setup.updateCurrentQuestion("TRAVERSAL");
