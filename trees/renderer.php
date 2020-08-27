@@ -45,19 +45,30 @@ class qtype_trees_renderer extends qtype_renderer {
         $question = $qa->get_question();
 
         $html = file_get_contents(new moodle_url('/question/type/trees/student.html'));
+        $canvasID = $qa->get_qt_field_name('answer');
+        $html = str_replace("canvas id=''", "canvas id='$canvasID'", $html);
+        $html = str_replace("id='layout'", "id='$canvasID':layout", $html);
 
         $answer = $qa->get_last_qt_var('answer');
-        
+        $node_order_clicked = $qa->get_last_qt_var('order');
+
         if($question->q_type == "traversal") {
-            $html = str_replace("var student = {qType: '', treeString: '', bstValues: ''};", "var student = {qType: '$question->q_type', treeString: '$question->lecturer_tree', bstValues: ''};", $html);
+            $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='$question->lecturer_tree' bstvalues=''", $html);
             $label = $question->preorder !== "" ? "Pre-order Traversal" : ($question->inorder !== "" ? "In-order Traversal" : "Post-order Traversal");
-            $html = str_replace("<label for='ANSWER_ID'></label>", "<label for='ANSWER_ID'>$label</label>", $html);
+            $html = str_replace("<label updateid for='ANSWER_ID'></label>", "<label updateid for='ANSWER_ID'>$label</label>", $html);
         }
         else if($question->q_type == "bst") {
-            $html = str_replace("var student = {qType: '', treeString: '', bstValues: ''};", "var student = {qType: '$question->q_type', treeString: '', bstValues: '$question->bstvalues'};", $html);
+            $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='' bstvalues='$question->bstvalues'", $html);
         }
-        
-        // echo "<script>console.log('$question->postorder');</script>";
+
+        if($answer != "") {
+            $html = str_replace("lastanswer=''", "lastanswer='$answer'", $html);
+            if($question->q_type == "traversal") {
+                $html = str_replace("lastanswernodeorders=''", "lastanswernodeorders='$node_order_clicked'", $html);
+            }
+        }
+
+        // echo "<script>console.log('$node_order_clicked');</script>";
 
         //Format the question (IE only get the question text back)
         $questiontext = $question->format_questiontext($qa);
@@ -80,18 +91,18 @@ class qtype_trees_renderer extends qtype_renderer {
         if ($options->correctness) {
             //Get the answer
             if($question->q_type == "traversal") {
-                $html = str_replace("<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answer' style='cursor: default;' readonly>", $html);
+                $html = str_replace("<input id='$canvasID:ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='$canvasID:ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answer' style='cursor: default;' readonly>", $html);
             }
             else if($question->q_type == "bst") {
                 $splitString = explode("-", $answer);
                 $treeString = $splitString[1];
 
-                $html = str_replace("treeString: ''", "treeString: '$treeString'", $html);
+                $html = str_replace("treestring=''", "treestring='$treeString'", $html);
 
-                $html = str_replace("var displayTools = true;", " var displayTools = false;", $html);
+                $html = str_replace("displaytools='true'", "displaytools='false'", $html);
             }
 
-            $html = str_replace("var disableCanvas;", "canvas.style.pointerEvents = 'none';", $html);
+            $html = str_replace("disablecanvas='false'", "disablecanvas='true'", $html);
 
             $answer = $question->grade_response(array('answer' => $answer));
             $fraction = $answer[0];
@@ -115,7 +126,11 @@ class qtype_trees_renderer extends qtype_renderer {
         }
 
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
-
+        if($question->q_type == "traversal") {
+            $node_order_clicked = $qa->get_qt_field_name('order');
+            $result = str_replace("TRAVERSAL_ORDER_NAME", $node_order_clicked, $result);
+        }
+        
         /* if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
                     $question->get_validation_error(array('answer' => $currentanswer)),
