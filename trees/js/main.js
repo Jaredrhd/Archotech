@@ -206,32 +206,32 @@ class Main {
     }
 
     onArrowClick(e){ // When using arrow keys
-        if (e.keyCode == 39){ // If right arrow
-            if(selectedNode.children.rightChild != null){
-                selectedNode.selected = false;
-                selectedNode = selectedNode.children.rightChild;
-                selectedNode.selected = true;
-                redrawCanvas();
+        if(e.keyCode == 39){ // If right arrow
+            if(this.selectedNode.children.rightChild != null){
+                this.selectedNode.selected = false;
+                this.selectedNode = this.selectedNode.children.rightChild;
+                this.selectedNode.selected = true;
+                this.redrawCanvas();
             }
         }
-        else if (e.keyCode == 37){ // If left arrow
-            if(selectedNode.children.leftChild != null){
-                selectedNode.selected = false;
-                selectedNode = selectedNode.children.leftChild;
-                selectedNode.selected = true;
-                redrawCanvas();
+        else if(e.keyCode == 37){ // If left arrow
+            if(this.selectedNode.children.leftChild != null){
+                this.selectedNode.selected = false;
+                this.selectedNode = this.selectedNode.children.leftChild;
+                this.selectedNode.selected = true;
+                this.redrawCanvas();
             }
         }
-        else if (e.keyCode == 38){ // If up arrow
+        else if(e.keyCode == 38){ // If up arrow
             e.preventDefault(); // Prevent page from moving when clicking up and down arrows
-            if(selectedNode.parent != null){
-                selectedNode.selected = false;
-                selectedNode = selectedNode.parent;
-                selectedNode.selected = true;
-                redrawCanvas();
+            if(this.selectedNode.parent != null){
+                this.selectedNode.selected = false;
+                this.selectedNode = this.selectedNode.parent;
+                this.selectedNode.selected = true;
+                this.redrawCanvas();
             }
         }
-        else if (e.keyCode == 40){ // Prevent page from moving when clicking up and down arrows
+        else if(e.keyCode == 40){ // Prevent page from moving when clicking up and down arrows
             e.preventDefault();
         }
         else return;
@@ -255,7 +255,7 @@ class Main {
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node at the selected cell
             if(this.tree.nodes[this.board.cellY][this.board.cellX].selected) { // If the current selected node is selected again
                 if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === "traversal") {
-                    removeEventListener("keydown", onArrowClick); // Student cannot use arrow keys in a traversal question
+                    removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
 
                     this.tree.nodes[this.board.cellY][this.board.cellX].selected = false;
                     this.attempt.buildAnswerString(this.tree.nodes[this.board.cellY][this.board.cellX], this.events.DESELECT);
@@ -299,8 +299,8 @@ class Main {
                 if(this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
                     this.attempt.buildAnswerString(this.selectedNode, this.events.SELECT);
                 }
-                else if(student.qType === qTypes.BST){ // Student can use arrow keys on BST question
-                    addEventListener("keydown", onArrowClick);
+                else if(this.databaseMisc.qtype === this.qTypes.BST){ // Student can use arrow keys on BST question
+                    addEventListener("keydown", this.onArrowClick.bind(this));
                 }
             }
         }
