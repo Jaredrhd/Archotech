@@ -60,6 +60,10 @@ class qtype_trees_renderer extends qtype_renderer {
         else if($question->q_type == "bst") {
             $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='' bstvalues='$question->bstvalues'", $html);
         }
+        else if($question->q_type == "properties") {
+            $html = str_replace("qtype='' treestring=''", "qtype='$question->q_type' treestring='$question->lecturer_tree'", $html);
+            $html = str_replace("properties=''", "properties='$question->requested_properties'", $html);
+        }
 
         if($answer != "") {
             $html = str_replace("lastanswer=''", "lastanswer='$answer'", $html);
