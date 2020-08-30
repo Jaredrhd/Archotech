@@ -2,11 +2,19 @@ class QuestionAttempt {
     constructor(main) {
         this.main = main;
 
+        this.traversalAttempt = new TraversalAttempt(this.main);
+
         /** BST */
         this.bst = {values: this.main.databaseMisc.bstvalues.split(",").map(value => parseInt(value)), undoButton: document.getElementById(this.main.canvas.id+":bst-undo"), getIndex: this.getBstValueIndex.bind(this, this.main), stack: []};
         this.bst.undoButton.addEventListener("click", this.bstUndoClicked.bind(this));        
 
         /** PROPERTIES */
+        /** String arrays storing the requested tree and node property names */
+        this.requestedTreeProperties = [];
+        this.requestedNodeProperties = [];
+        this.requestedProperties = [];
+        this.numRequestedTreeProperties = 0;
+        this.numRequestedNodeProperties = 0;
         this.propertyAnswers = {
             num_leaves: "",
             num_edges: "",
@@ -18,13 +26,13 @@ class QuestionAttempt {
         }
         this.propertyTools = document.getElementById(this.main.canvas.id+":property-tools");
         /** TREE PROPERTIES */
-        this.treeProperties = document.getElementById(this.main.canvas.id+":tree-properties"); // Parent div
+        this.treePropertiesDiv = document.getElementById(this.main.canvas.id+":tree-properties"); // Parent div
         this.numLeavesInput = document.getElementById(this.main.canvas.id+":num_leaves");
         this.numEdgesInput = document.getElementById(this.main.canvas.id+":num_edges");
         this.numIntNodesInput = document.getElementById(this.main.canvas.id+":num_internal_nodes");
         this.treePropertyInputs = {num_leaves: this.numLeavesInput, num_edges: this.numEdgesInput, num_internal_nodes: this.numIntNodesInput};
         /** NODE PROPERTIES */
-        this.nodeProperties = document.getElementById(this.main.canvas.id+":node-properties"); // Parent div
+        this.nodePropertiesDiv = document.getElementById(this.main.canvas.id+":node-properties"); // Parent div
         this.nodeHeightInput = document.getElementById(this.main.canvas.id+":height");
         this.nodeDepthInput = document.getElementById(this.main.canvas.id+":depth");
         this.nodeDegreeInput = document.getElementById(this.main.canvas.id+":degree");
@@ -137,61 +145,78 @@ class QuestionAttempt {
         this.main.modifyTreeTools.style.display = "none";
         this.propertyTools.style.display = "block";
 
+        let propertyInfo;
+
         for(const property of this.main.databaseMisc.properties.split(",")) { // For every property the lecturer has included
-            if(property.split(":")[0] === "tree") { // Display any tree property input boxes immediately
-                let treePropertyInput = this.treePropertyInputs[property.split(":")[1]]; // Get the actual input box for the tree property that the lecturer included and display it and its label
-                treePropertyInput.parentElement.style.display = "inline-block";
+            propertyInfo = property.split(":");
+
+            if(propertyInfo[0] === "tree") { // Display any tree property input boxes immediately
+                this.treePropertyInputs[propertyInfo[1]].parentElement.style.display = "inline-block"; // Get the actual input box for the tree property that the lecturer included and display it and its label
+
+                this.requestedTreeProperties.push(propertyInfo[1]);
+                this.numRequestedTreeProperties++;
             }
+            else if(propertyInfo[0] === "node") {
+                this.requestedNodeProperties.push(propertyInfo[1]);
+                this.numRequestedNodeProperties++;
+            }
+
+            this.requestedProperties.push(propertyInfo[1]);
         }
 
         /** Add event listeners to input boxes */
         for(const item in this.treePropertyInputs) {
-            let treePropertyInput = this.treePropertyInputs[item];
-            treePropertyInput.addEventListener("change", this.treePropertyInputChanged.bind(this, treePropertyInput, treePropertyInput.id.split(":")[2]));
+            this.treePropertyInputs[item].addEventListener("change", this.treePropertyInputChanged.bind(this, this.treePropertyInputs[item], this.treePropertyInputs[item].id.split(":")[2]));
         }
 
         for(const item in this.nodePropertyInputs) {
-            let nodePropertyInput = this.nodePropertyInputs[item]
-            nodePropertyInput.addEventListener("change", this.nodePropertyInputChanged.bind(this, nodePropertyInput, nodePropertyInput.id.split(":")[2]));
+            this.nodePropertyInputs[item].addEventListener("change", this.nodePropertyInputChanged.bind(this, this.nodePropertyInputs[item], this.nodePropertyInputs[item].id.split(":")[2]));
         }
     }
 
-    /** Called when a node is selected on a properties question. Displays the node property input boxes that the lecturer included and fills in any previous entered values */
+    /** Called when a node is selected on a properties question. Displays the node property input boxes that the lecturer included and fills in any previously entered values */
     displayNodePropertyInputs(show) {
-        for(const property of this.main.databaseMisc.properties.split(",")) { // For every property the lecturer has included
-            if(property.split(":")[0] === "node") {
-                let nodePropertyInput = this.nodePropertyInputs[property.split(":")[1]]; // Get the actual input box for the node property that the lecturer included
-                if(show) {
-                    /** Fill in previously filled in value for the current property of the currently selected node */
-                    let answerArrayForProperty = this.propertyAnswers[property.split(":")[1]].split("#");
-                    let nodeValue = this.main.selectedNode.value;
-                    let nodeOrder = this.main.selectedNode.orderPlaced;
-                    
-                    let nodeEntry;
-                    let nodeEntryValue;
-                    let nodeEntryOrder;
+        let nodePropertyInput;
 
-                    let index = answerArrayForProperty.findIndex((item) => {
-                        nodeEntry = item.split(":");
-                        nodeEntryValue = Number(nodeEntry[0].split("-")[0]); // Have to split up node value and node order and cast to a Number now since we are comparing with actual selected node value and order
-                        nodeEntryOrder = Number(nodeEntry[0].split("-")[1]);
+        let answerArrayForProperty;
+        let nodeValue;
+        let nodeOrder;
 
-                        return (nodeValue === nodeEntryValue && nodeOrder === nodeEntryOrder);
-                    });
+        let nodeEntry;
+        let nodeEntryValue;
+        let nodeEntryOrder;
 
-                    if(index !== -1) { // The currently selected node had a previous value for the current node property
-                        nodeEntry = answerArrayForProperty[index]; // Now nodeEntry is the entry in answerArrayForProperty whose values we use to fill the current property's input box
-                        nodePropertyInput.value = nodeEntry.split(":")[1]; // The actual property value is in the second index of the node entry
-                    }
-                    else {
-                        nodePropertyInput.value = "";
-                    }
+        let index;
 
-                    nodePropertyInput.parentElement.style.display = "inline-block"; // Show the input box and its label
+        for(const nodePropertyName of this.requestedNodeProperties) {
+            nodePropertyInput = this.nodePropertyInputs[nodePropertyName]; // Get the actual input box for the node property that the lecturer included
+           
+            if(show) {
+                /** Fill in previously filled in value for the current property of the currently selected node */
+                answerArrayForProperty = this.propertyAnswers[nodePropertyName].split("#");
+                nodeValue = this.main.selectedNode.value;
+                nodeOrder = this.main.selectedNode.orderPlaced;
+            
+                index = answerArrayForProperty.findIndex((item) => {
+                    nodeEntry = item.split(":");
+                    nodeEntryValue = Number(nodeEntry[0].split("-")[0]); // Have to split up node value and node order and cast to a Number now since we are comparing with the actual selected node's value and order
+                    nodeEntryOrder = Number(nodeEntry[0].split("-")[1]);
+
+                    return (nodeValue === nodeEntryValue && nodeOrder === nodeEntryOrder);
+                });
+
+                if(index !== -1) { // The currently selected node had a previous value for the current node property
+                    nodeEntry = answerArrayForProperty[index]; // Now nodeEntry is the entry in answerArrayForProperty whose values we use to fill the current property's input box
+                    nodePropertyInput.value = nodeEntry.split(":")[1]; // The actual property value is in the second index of the node entry
                 }
                 else {
-                    nodePropertyInput.parentElement.style.display = "none"; // Hide the input box and its label
+                    nodePropertyInput.value = "";
                 }
+
+                nodePropertyInput.parentElement.style.display = "inline-block"; // Show the input box and its label
+            }
+            else {
+                nodePropertyInput.parentElement.style.display = "none"; // Hide the input box and its label
             }
         }
     }
@@ -206,7 +231,7 @@ class QuestionAttempt {
     }
 
     /**
-     * Called when the input box of one of the node properties receives new input
+     * Called when the input box of one of the node properties receives new input. This function is not called if the input is invalid i.e. NaN
      * @param {object} nodePropertyInput The actual input box of the property receiving new input
      * @param {string} nodePropertyName The name of this node property
      */
@@ -230,6 +255,16 @@ class QuestionAttempt {
         this.propertyAnswers[nodePropertyName] += newEntry;
         this.propertyAnswers[nodePropertyName] = this.sortNodePropertyString(nodePropertyName);
         this.serializePropertyAnswers();
+
+        if(this.selectedNodeHasAllProperties(this.main.selectedNode)) { // If the student has entered all requested node properties for the selected node, indicate this visually on the board
+            this.main.selectedNode.properties.hasAllProperties = true;
+        }
+        else {
+            this.main.selectedNode.properties.hasAllProperties = false;
+        }
+
+        this.main.redrawCanvas();
+
         // console.log(nodePropertyName + ": " + this.propertyAnswers[nodePropertyName]);
     }
 
@@ -294,22 +329,39 @@ class QuestionAttempt {
     serializePropertyAnswers() {
         let string = "";
 
-        let requestedProperties = this.main.databaseMisc.properties.split(",");
-
-        for(const property of requestedProperties) { // For every property the lecturer has included
-            for(const propertyAnswer in this.propertyAnswers) {
-                if(propertyAnswer === property.split(":")[1]) {
-                    if(property !== requestedProperties[requestedProperties.length - 1]) {
-                        string += propertyAnswer + "." + this.propertyAnswers[propertyAnswer] + "|";
+        for(const requestedProperty of this.requestedProperties) {
+            for(const propertyName in this.propertyAnswers) {
+                if(propertyName === requestedProperty) {
+                    if(requestedProperty !==  this.requestedProperties[this.requestedProperties.length - 1]) {
+                        string += propertyName + "." + this.propertyAnswers[propertyName] + "|";
                     }
                     else {
-                        string += propertyAnswer + "." + this.propertyAnswers[propertyAnswer];
+                        string += propertyName + "." + this.propertyAnswers[propertyName];
                     }
                 }
             }
         }
 
         this.answerBox.value = string;
+    }
+
+    /** Called when a node property input box is updated. Checks whether the provided node has values for all requested node properties */
+    selectedNodeHasAllProperties(node) {
+        let nodeString = node.value + "-" + node.orderPlaced; // String used to check if the selected node has an entry in the respective node property answer arrays
+
+        let nodeEntry;
+        let numPropertiesSpecified = 0;
+
+        for(const nodePropertyName of this.requestedNodeProperties) {
+            for(const entry of this.propertyAnswers[nodePropertyName].split("#")) {
+                nodeEntry = entry.split(":");
+                if(nodeEntry[0] === nodeString && nodeEntry[1] !== "") { // Found an entry for the selected node in the nodePropertyName string in propertyAnswers and the node property value was not empty
+                    numPropertiesSpecified++;
+                }
+            }
+        }
+
+        return numPropertiesSpecified === this.numRequestedNodeProperties;
     }
 
     treeToString() {
@@ -421,6 +473,19 @@ class QuestionAttempt {
                 this.treePropertyInputs[propertyName].value = propertyString;
             }
         }
+
+        let hit = 0;
+        /** Find each node in the tree and determine whether all requested node properties for it have been specified */
+        for(const node of this.main.tree.nodeArray) {
+            if(this.selectedNodeHasAllProperties(node)) {
+                hit++;
+                node.properties.hasAllProperties = true;
+            }
+        }
+
+        if(hit > 0) {
+            this.main.redrawCanvas();
+        }   
     }
 
     buildAnswerString(node, action) {

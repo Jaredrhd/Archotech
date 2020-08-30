@@ -16,6 +16,8 @@ class Tree {
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         }
 
+        this.nodeArray = [this.root];
+
         this.numNodes = 1;
         this.root.orderPlaced = this.numNodes;
 
@@ -40,6 +42,8 @@ class Tree {
         newChild.draw(selectedNode, childCellX, childCellY);
         this.nodes[childCellY][childCellX] = newChild;
 
+        this.nodeArray.push(newChild);
+
         this.numNodes++;
         newChild.orderPlaced = this.numNodes;
     }
@@ -57,6 +61,8 @@ class Tree {
             parentNode.children.rightChild.parent = parentNode;
             newChild = parentNode.children.rightChild;
         }
+
+        this.nodeArray.push(newChild);
 
         this.numNodes++;
         newChild.orderPlaced = this.numNodes;
@@ -86,6 +92,8 @@ class Tree {
 
         this.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
 
+        this.nodeArray.splice(this.nodeArray.findIndex(node => node === selectedNode), 1);
+
         if(!selectedNode.isRoot) {
             if(selectedNode.childType() === "L") {
                 selectedNode.parent.children.leftChild = null;
@@ -108,6 +116,7 @@ class Tree {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         }
+        this.nodeArray.push(this.root);
         this.numNodes = 1;
         this.root.orderPlaced = this.numNodes;
     }
