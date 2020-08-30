@@ -73,20 +73,32 @@ class PropertiesQuestion {
     }
 
     generateString() {
-        for(const checkedProperty of this.checkedProperties) {
-            // TODO : CALL FUNCTIONS TO GENERATE MODEL ANSWER
-            var addLeafNumberLabel = document.getElementById("leaf-num-label");
-            var addLeafNumberBox = document.getElementById("leaf-num-count");
+        var addLeafNumberLabel = document.getElementById("leaf-num-label");
+        var addLeafNumberBox = document.getElementById("leaf-num-count");
             
-            if(this.numLeavesCheckbox.checked){
+        if(this.numLeavesCheckbox.checked){
+            if (!this.main.tree) {
+                addLeafNumberLabel.style.display = "inline-block";
+                addLeafNumberBox.style.display = "inline-block";
+                addLeafNumberBox.value = 0;
+            }
+            else{
                 addLeafNumberLabel.style.display = "inline-block";
                 addLeafNumberBox.style.display = "inline-block";
                 addLeafNumberBox.value = this.calculateLeafNumber();
             }
         }
+        if(!this.numLeavesCheckbox.checked){
+                addLeafNumberLabel.style.display = "none";
+                addLeafNumberBox.style.display = "none";
+        }
+            for(const checkedProperty of this.checkedProperties) {
+            // TODO : CALL FUNCTIONS TO GENERATE MODEL ANSWER
+            
+        }
     }
 
     calculateLeafNumber(){
-        return 0;
+        return this.main.tree.numLeaves;
     }
 }
