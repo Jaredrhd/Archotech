@@ -69,11 +69,24 @@ class PropertiesQuestion {
         }
 
         this.requestedProperties.value = this.checkedProperties.toString();
+        this.generateString();
     }
 
     generateString() {
         for(const checkedProperty of this.checkedProperties) {
             // TODO : CALL FUNCTIONS TO GENERATE MODEL ANSWER
+            var addLeafNumberLabel = document.getElementById("leaf-num-label");
+            var addLeafNumberBox = document.getElementById("leaf-num-count");
+            
+            if(this.numLeavesCheckbox.checked){
+                addLeafNumberLabel.style.display = "inline-block";
+                addLeafNumberBox.style.display = "inline-block";
+                addLeafNumberBox.value = this.calculateLeafNumber();
+            }
         }
+    }
+
+    calculateLeafNumber(){
+        return 0;
     }
 }
