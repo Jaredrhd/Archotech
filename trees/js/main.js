@@ -91,12 +91,8 @@ class Main {
         this.context.restore();
 
         /** Redraw the tree */
-        for(let i = 0; i < this.ROWS; i++) {
-            for(let j = 0; j < this.COLS; j++) {
-                if(typeof this.tree.nodes[i][j] !== "undefined") {
-                    this.tree.nodes[i][j].draw(this.tree.nodes[i][j].parent, this.tree.nodes[i][j].cellCoords.x, this.tree.nodes[i][j].cellCoords.y);
-                }
-            }
+        for(const node of this.tree.nodeArray) {
+            node.draw(node.parent, node.cellCoords.x, node.cellCoords.y)
         }
 
         this.board.drawGrid();
@@ -389,8 +385,8 @@ class Main {
             else {
                 if(this.databaseMisc.qtype === this.qTypes.BST) {
                     this.attempt.bstAttempt.bst.stack.push(this.tree.getNode(Number(newNodeValue)));
-                    this.attempt.handleEvent(this.events.ADDCHILD);
                 }
+                this.attempt.handleEvent(this.events.ADDCHILD);
             }
         }
     }
