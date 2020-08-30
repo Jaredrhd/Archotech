@@ -18,26 +18,68 @@
     </div>
     <div updateid id='answer-question-tools' class="answer-question-tools" style="display: none;">
         <label updateid for='ANSWER_ID'></label>
-        <input updateid id='ANSWER_ID' class="ANSWER_ID" type='text' name='ANSWER_NAME_ID' value=''>
+        <input updateid id='ANSWER_ID' class="ANSWER_ID input" type='text' name='ANSWER_NAME_ID' value=''>
+        <!-- HIDDEN -->
         <input updateid id='TRAVERSAL_ORDER' type='text' name='TRAVERSAL_ORDER_NAME' value='' style="display: none;">
     </div>
     <canvas id='' width="700" height="700" style="display:block; float:left; border: 2px solid black;"></canvas>
     <!-- DATABASE MISC -->
-    <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders=''
+    <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders='' properties=''
         disablecanvas='false' displaytools='true'></div>
     <!--  -->
     <div updateid id='toolbar' class="toolbar">
-        <div updateid id='modify-tree-tools' class="modify-tree-tools" style="display: none;">
+        <div updateid id='modify-tree-tools' class="bold" style="display: none;">
             <label updateid for='node-value' class="no-margin">NODE VALUE</label>
-            <input updateid id='node-value' class="node-value" type="number" min="0" max="99" autocomplete="off">
+            <input updateid id='node-value' class="node-value input" type="number" min="0" max="99" autocomplete="off">
             <div updateid id='random-node-value-tools'>
                 <label updateid for='random-node-value'>RANDOM VALUE</label>
-                <input updateid id='random-node-value' type="checkbox" autocomplete="off">
+                <input updateid id='random-node-value' class="input" type="checkbox" autocomplete="off">
             </div>
             <button updateid type="button" id='add-root' class="modify-tree-tools add-root">ADD ROOT</button>
             <button updateid type="button" id='remove-node' style="display: none;" class="modify-tree-tools remove-node">REMOVE</button>
             <button updateid type="button" id='edit-node' style="display: none;" class="modify-tree-tools edit-node">EDIT VALUE</button>
             <button updateid type="button" id='bst-undo' style="display: none;" class="modify-tree-tools bst-undo">UNDO</button>
+        </div>
+        <div updateid id="property-tools" class="bold" style="display: none;">
+            <div updateid id="tree-properties" class="property-section">
+                <!-- NUM LEAVES -->
+                <div updateid id="num_leaves_parent" style="display: none;">
+                    <label updateid for='num_leaves' class="no-margin">No. of Leaves</label>
+                    <input updateid id='num_leaves' class="property-input input" type="number" autocomplete="off">
+                </div>
+                <!-- NUM EDGES -->
+                <div updateid id="num_edges_parent" style="display: none;">
+                    <label updateid for='num_edges' class="no-margin">No. of Edges</label>
+                    <input updateid id='num_edges' class="property-input input" type="number" autocomplete="off">
+                </div>
+                <div updateid id="num_internal_nodes_parent" style="display: none;">
+                    <label updateid for='num_internal_nodes' class="no-margin">No. of Internal Nodes</label>
+                    <input updateid id='num_internal_nodes' class="property-input input" type="number" autocomplete="off">
+                </div>
+                <!-- NUM INTERNAL NODES -->
+            </div>
+            <div updateid id="node-properties" class="property-section">
+                 <!-- NODE HEIGHT -->
+                 <div updateid id="height_parent" style="display: none;">
+                    <label updateid for='height' class="no-margin">Height of Node</label>
+                    <input updateid id='height' class="property-input input" type="number" autocomplete="off">
+                 </div>
+                 <div updateid id="depth_parent" style="display: none;">
+                     <!-- NODE DEPTH -->
+                    <label updateid for='depth' class="no-margin">Depth of Node</label>
+                    <input updateid id='depth' class="property-input input" type="number" autocomplete="off">
+                 </div>
+                <div updateid id="degree_parent" style="display: none;">
+                    <!-- NODE DEGREE -->
+                    <label updateid for='degree' class="no-margin">Degree of Node</label>
+                    <input updateid id='degree' class="property-input input" type="number" autocomplete="off">
+                </div>
+                 <div updateid id="level_parent" style="display: none;">
+                     <!-- NODE LEVEL -->
+                    <label updateid for='level' class="no-margin">Level of Node</label>
+                    <input updateid id='level' class="property-input input" type="number" autocomplete="off">
+                 </div>
+            </div>
         </div>
     </div>
 </div>
@@ -53,6 +95,9 @@
         loadScript("/question/type/trees/js/Board.js");
         loadScript("/question/type/trees/js/Node.js");
         loadScript("/question/type/trees/js/Tree.js");
+        loadScript("/question/type/trees/js/TraversalAttempt.js");
+        loadScript("/question/type/trees/js/BSTAttempt.js");
+        loadScript("/question/type/trees/js/PropertiesAttempt.js");
         loadScript("/question/type/trees/js/QuestionAttempt.js");
         loadScript("/question/type/trees/js/Main.js");
 

@@ -18,7 +18,7 @@ class Manager {
             }
 
             if(!canvas.getContext) {
-                console.error("CANVAS NOT SUPPORTED");
+                console.error("Canvas not supported.");
                 return;
             }
 

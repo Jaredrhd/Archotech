@@ -46,7 +46,7 @@ class Main {
             SELECT: "select",
             DESELECT: "deselect"
         };
-        this.qTypes = {TRAVERSAL: "traversal", BST: "bst"};
+        this.qTypes = {TRAVERSAL: "traversal", BST: "bst", PROPERTIES: "properties"};
         //#endregion
 
         //#region TREE
@@ -107,7 +107,8 @@ class Main {
         this.canvas.addEventListener("mousemove", this.onBoardHover.bind(this));
         this.canvas.addEventListener("mouseleave", this.onBoardExit.bind(this));
 
-        if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.TRAVERSAL) return;
+        if(!this.databaseMisc.lecturer && (this.databaseMisc.qtype === this.qTypes.TRAVERSAL || 
+                this.databaseMisc.qtype === this.qTypes.PROPERTIES)) return;
 
         this.canvas.addEventListener("mousedown", this.beginDrag.bind(this));
         document.addEventListener("mouseup", this.exitDrag.bind(this));
@@ -254,13 +255,16 @@ class Main {
 
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node at the selected cell
             if(this.tree.nodes[this.board.cellY][this.board.cellX].selected) { // If the current selected node is selected again
-                if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === "traversal") {
+                if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
                     removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
 
                     this.tree.nodes[this.board.cellY][this.board.cellX].selected = false;
                     this.attempt.buildAnswerString(this.tree.nodes[this.board.cellY][this.board.cellX], this.events.DESELECT);
                 }
                 else {
+                    if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES) {
+                        this.attempt.displayNodePropertyInputs(false); // Hide the node property input boxes
+                    }
                     this.selectedNode.selected = false;
                     this.selectedNode = null;
                 }
@@ -301,6 +305,9 @@ class Main {
                 }
                 else if(this.databaseMisc.qtype === this.qTypes.BST){ // Student can use arrow keys on BST question
                     addEventListener("keydown", this.onArrowClick.bind(this));
+                }
+                else if(this.databaseMisc.qtype === this.qTypes.PROPERTIES) {
+                    this.attempt.displayNodePropertyInputs(true);
                 }
             }
         }
@@ -394,7 +401,7 @@ class Main {
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node in the hovered cell
             document.body.style.cursor = "pointer";
         }
-        else if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === "traversal") {
+        else if(!this.databaseMisc.lecturer && (this.databaseMisc.qtype === this.qTypes.TRAVERSAL || this.databaseMisc.qtype === this.qTypes.PROPERTIES)) {
             document.body.style.cursor = "default";
             return;
         }

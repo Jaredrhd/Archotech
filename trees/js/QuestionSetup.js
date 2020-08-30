@@ -4,6 +4,7 @@ class QuestionSetup {
 
         this.trvQuestion = new TraversalQuestion(this.main);
         this.bstQuestion = new BSTQuestion(this.main);
+        this.propertiesQuestion = new PropertiesQuestion(this.main);
 
         this.lecturerTree = document.getElementById("lecturer_tree");
         this.qType = document.getElementById("q_type");
@@ -26,7 +27,8 @@ class QuestionSetup {
 
         this.currQuestion = {
             TRAVERSAL: true,
-            BST: false
+            BST: false,
+            PROPERTIES: false
         };
 
         this.configureHTML();

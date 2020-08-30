@@ -11,6 +11,7 @@ class Node {
         this.parent = null;
         this.children = {leftChild: null, rightChild: null};
         this.orderPlaced;
+        this.properties = {hasAllProperties: false, height: false, depth: false, degree: false};
     }
 
     /** Draws a node on the canvas */
@@ -32,6 +33,11 @@ class Node {
         this.main.context.font = fontSize + " Arial";
         this.main.context.textAlign = "center"; 
         this.main.context.textBaseline = "middle";
+
+        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties) { // If the student has entered values for all requested node properties for this node on a properties question
+            this.main.context.globalAlpha = 0.5;
+            this.main.context.strokeStyle = "#2db1dc";
+        }
         this.main.context.fillText(this.value, this.boardCoords.x, this.boardCoords.y); // Draw node value
 
         if(this.selected) {
@@ -111,6 +117,11 @@ class Node {
         /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
         this.main.context.moveTo(this.nodeRadius*Math.cos(angleParent) + parentBoardCoords.x, this.nodeRadius*Math.sin(angleParent) + parentBoardCoords.y);
         this.main.context.lineTo(this.nodeRadius*Math.cos(angleChild) + childBoardCoords.x, this.nodeRadius*Math.sin(angleChild) + childBoardCoords.y);
+
+        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties) { // If the student has entered values for all requested node properties for this node on a properties question
+            this.main.context.globalAlpha = 0.5;
+            // this.main.context.strokeStyle = "green";
+        }
 
         this.main.context.stroke();
 
