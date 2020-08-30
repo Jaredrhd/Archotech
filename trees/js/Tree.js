@@ -70,18 +70,18 @@ class Tree {
 
     /** Returns the first node whose value (and potentially order) matches the argument(s) */
     getNode(value, order=null) {
-        for(let i = 0; i < this.main.ROWS; i++) {
-            for(let j = 0; j < this.main.COLS; j++) {
-                if(typeof this.nodes[i][j] !== "undefined") {
-                    if(order) {
-                        if(this.nodes[i][j].value === value && this.nodes[i][j].orderPlaced === order) return this.nodes[i][j];
-                    }
-                    else {
-                        if(this.nodes[i][j].value === value) return this.nodes[i][j];
-                    }
+        for(const node of this.nodeArray) {
+            if(node.value === value) {
+                if(order) {
+                    if(node.orderPlaced === order) return node;
+                }
+                else {
+                    return node;
                 }
             }
         }
+
+        return null;
     }
 
     removeNodeAndChildren(selectedNode) {
