@@ -2,6 +2,7 @@
 class Tree {
     constructor(main, rootValue, draw=true) {
         this.main = main;
+        this.propertiesQuestion = new PropertiesQuestion(this.main);
 
         // Create matrix for nodes
         this.nodes = new Array(this.main.ROWS);
@@ -19,6 +20,9 @@ class Tree {
         this.nodeArray = [this.root];
 
         this.numNodes = 1;
+        this.numLeaves = 1;
+        var addLeafNumberBox = document.getElementById("leaf-num-count");
+        addLeafNumberBox.value = 1;
         this.root.orderPlaced = this.numNodes;
 
         this.string = "";
@@ -45,6 +49,10 @@ class Tree {
         this.nodeArray.push(newChild);
 
         this.numNodes++;
+        if(selectedNode.children.leftChild !== null && selectedNode.children.rightChild !== null){
+            this.numLeaves++;
+            this.propertiesQuestion.generateString();
+        }
         newChild.orderPlaced = this.numNodes;
     }
 
@@ -95,6 +103,10 @@ class Tree {
         this.nodeArray.splice(this.nodeArray.findIndex(node => node === selectedNode), 1);
 
         if(!selectedNode.isRoot) {
+            if(selectedNode.parent.children.rightChild != null && selectedNode.parent.children.leftChild != null){
+                this.numLeaves--;
+                this.propertiesQuestion.generateString();
+            }
             if(selectedNode.childType() === "L") {
                 selectedNode.parent.children.leftChild = null;
             }
@@ -106,6 +118,8 @@ class Tree {
         else {
             this.root = null;
             this.numNodes = 0;
+            this.numLeaves = 0;
+            this.propertiesQuestion.generateString();
         }
     }
 
@@ -118,6 +132,8 @@ class Tree {
         }
         this.nodeArray.push(this.root);
         this.numNodes = 1;
+        this.numLeaves=1;
+        this.propertiesQuestion.generateString();
         this.root.orderPlaced = this.numNodes;
     }
 
