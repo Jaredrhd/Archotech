@@ -137,8 +137,8 @@ class Main {
             if(this.databaseMisc.bstvalues.length === 0) return;
             
             newNodeValue = Number(this.nodeValueInput.value);
-            this.nodeValueInput.value = this.attempt.bst.values[this.attempt.bst.getIndex("next")];
-            this.attempt.bst.undoButton.style.display = "inline-block";
+            this.nodeValueInput.value = this.attempt.bstAttempt.bst.values[this.attempt.bstAttempt.bst.getIndex("next")];
+            this.attempt.bstAttempt.bst.undoButton.style.display = "inline-block";
         }
         else {
             newNodeValue = this.getNewNodeValue();
@@ -159,7 +159,9 @@ class Main {
             this.setup.handleEvent(this.events.ADDROOT);
         }
         else {
-            this.attempt.bst.stack.push(this.tree.root);
+            if(this.databaseMisc.qtype === this.qTypes.BST) {
+                this.attempt.bstAttempt.bst.stack.push(this.tree.root);
+            }
             this.attempt.handleEvent(this.events.ADDROOT);
         }
     }
@@ -259,11 +261,11 @@ class Main {
                     removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
 
                     this.tree.nodes[this.board.cellY][this.board.cellX].selected = false;
-                    this.attempt.buildAnswerString(this.tree.nodes[this.board.cellY][this.board.cellX], this.events.DESELECT);
+                    this.attempt.traversalAttempt.buildAnswerString(this.tree.nodes[this.board.cellY][this.board.cellX], this.events.DESELECT);
                 }
                 else {
                     if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES) {
-                        this.attempt.displayNodePropertyInputs(false); // Hide the node property input boxes
+                        this.attempt.propertiesAttempt.displayNodePropertyInputs(false); // Hide the node property input boxes
                     }
                     this.selectedNode.selected = false;
                     this.selectedNode = null;
@@ -301,13 +303,13 @@ class Main {
                 }
 
                 if(this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
-                    this.attempt.buildAnswerString(this.selectedNode, this.events.SELECT);
+                    this.attempt.traversalAttempt.buildAnswerString(this.selectedNode, this.events.SELECT);
                 }
                 else if(this.databaseMisc.qtype === this.qTypes.BST){ // Student can use arrow keys on BST question
                     addEventListener("keydown", this.onArrowClick.bind(this));
                 }
                 else if(this.databaseMisc.qtype === this.qTypes.PROPERTIES) {
-                    this.attempt.displayNodePropertyInputs(true);
+                    this.attempt.propertiesAttempt.displayNodePropertyInputs(true);
                 }
             }
         }
@@ -359,7 +361,7 @@ class Main {
             let newNodeValue;
             if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST) {
                 newNodeValue = Number(this.nodeValueInput.value);
-                this.nodeValueInput.value = this.attempt.bst.values[this.attempt.bst.getIndex("next")]; // The index will be attempt.bst.values.length + 1 after adding the final BST value (i.e. nodeValueInput will be an empty string)
+                this.nodeValueInput.value = this.attempt.bstAttempt.bst.values[this.attempt.bstAttempt.bst.getIndex("next")]; // The index will be attempt.bst.values.length + 1 after adding the final BST value (i.e. nodeValueInput will be an empty string)
             }
             else {
                 newNodeValue = this.getNewNodeValue();
@@ -386,7 +388,7 @@ class Main {
             }
             else {
                 if(this.databaseMisc.qtype === this.qTypes.BST) {
-                    this.attempt.bst.stack.push(this.tree.getNode(Number(newNodeValue)));
+                    this.attempt.bstAttempt.bst.stack.push(this.tree.getNode(Number(newNodeValue)));
                     this.attempt.handleEvent(this.events.ADDCHILD);
                 }
             }
@@ -423,7 +425,7 @@ class Main {
                 if(this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
                     (this.board.cellX < this.selectedNode.cellCoords.x && this.selectedNode.hasLeftChild()) ||
                         (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
-                        (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bst.stack.length === this.attempt.bst.values.length)) { // Invalid cell to place new child
+                        (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length)) { // Invalid cell to place new child
 
                             document.body.style.cursor = "not-allowed";
                 }
