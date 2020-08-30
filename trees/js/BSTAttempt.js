@@ -87,18 +87,11 @@ class BSTAttempt {
         let bst = treeString[0];
         let nodes = bst.split(":");
 
-        let currIndex = 1;
         let currNode;
-        
-        while(nodes.length !== 0) {
-            for(let i = 0; i < nodes.length; i++) {
-                currNode = this.main.tree.getNode(Number(nodes[i].split("#")[0])); // Can get node by value since all values in BST are unique
-                if(currNode.orderPlaced === currIndex) { // Add nodes to the stack in the order they were added by the student
-                    this.bst.stack.push(currNode);
-                    nodes.splice(i, 1);
-                    currIndex++;
-                }
-            }
+
+        for(let i = 0; i < nodes.length; i++) {
+            currNode = this.main.tree.getNode(Number(nodes[i].split("#")[0])); // Can get node by just value since all values in BST are unique
+            this.bst.stack.push(currNode);
         }
 
         this.main.nodeValueInput.value = this.bst.values[this.bst.stack.length]; // Would be undefined if all the nodes from the BST value list had been added before (this.bst.stack.length === this.bst.values.length) and so nodeValueInput would be blank, otherwise will be the next value in BST value list that student hadn't added before

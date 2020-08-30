@@ -32,9 +32,11 @@ class QuestionAttempt {
         if(this.main.databaseMisc.qtype === this.main.qTypes.BST) {
             this.answerBox.value = "";
 
-            this.main.tree.convertToStringForBST(this.main.tree.root);
+            this.main.tree.convertToStringForBST(this.bstAttempt.bst.stack);
             this.answerBox.value = this.main.tree.string;
             this.main.tree.string = "";
+
+            console.log(this.answerBox.value);
 
             this.main.tree.convertToString(this.main.tree.root);
             this.answerBox.value += "-" + this.main.tree.string;
