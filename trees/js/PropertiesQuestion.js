@@ -42,6 +42,7 @@ class PropertiesQuestion {
 
         for(const option of this.propertyOptions) {
             option.parentElement.style.marginLeft += "30px";
+            option.addEventListener("change", this.propertyChecked.bind(this, option));
         }
 
         for(const property of this.propertyList) {
@@ -57,6 +58,8 @@ class PropertiesQuestion {
         }
 
         this.main.setup.updateCurrentQuestion("PROPERTIES");
+        this.main.propertyTools.style.display = "inline-block";
+        this.generateString();
     }
 
     propertyChecked(property) {
@@ -76,19 +79,12 @@ class PropertiesQuestion {
         var addLeafNumberLabel = document.getElementById("leaf-num-label");
         var addLeafNumberBox = document.getElementById("leaf-num-count");
             
-        if(this.numLeavesCheckbox.checked){
-            if (!this.main.tree) {
-                addLeafNumberLabel.style.display = "inline-block";
-                addLeafNumberBox.style.display = "inline-block";
-                addLeafNumberBox.value = 0;
-            }
-            else{
-                addLeafNumberLabel.style.display = "inline-block";
-                addLeafNumberBox.style.display = "inline-block";
-                addLeafNumberBox.value = this.calculateLeafNumber();
-            }
+        if(this.numLeavesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
+            addLeafNumberLabel.style.display = "inline-block";
+            addLeafNumberBox.style.display = "inline-block";
+            this.calculateLeafNumber(addLeafNumberLabel,addLeafNumberBox);
         }
-        if(!this.numLeavesCheckbox.checked){
+        else{
                 addLeafNumberLabel.style.display = "none";
                 addLeafNumberBox.style.display = "none";
         }
@@ -99,6 +95,15 @@ class PropertiesQuestion {
     }
 
     calculateLeafNumber(){
-        return this.main.tree.numLeaves;
+        if (!this.main.tree) {
+            addLeafNumberBox.value = 0; //If root doesn't exist yet
+        }
+        else if(this.main.tree.numLeaves>0){ //Update Leaves
+            addLeafNumberBox.value = this.main.tree.numLeaves;
+        }
+        else{
+            addLeafNumberBox.value = 0;//If Root removed or if tree exists and no root exists yet = 0
+        }
+        return;
     }
 }
