@@ -9,20 +9,21 @@ class Tree {
         for(let i = 0; i < this.nodes.length; i++) {
             this.nodes[i] = new Array(this.main.COLS);
         }
+        this.numLeaves = 0;
 
         this.root = new Node(this.main, rootValue);
         this.root.parent = null;
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+            this.numLeaves++;
+            var addLeafNumberBox = document.getElementById("leaf-num-count");
+            addLeafNumberBox.value = 1;
         }
 
         this.nodeArray = [this.root];
 
         this.numNodes = 1;
-        this.numLeaves = 1;
-        var addLeafNumberBox = document.getElementById("leaf-num-count");
-        addLeafNumberBox.value = 1;
         this.root.orderPlaced = this.numNodes;
 
         this.string = "";
@@ -42,7 +43,6 @@ class Tree {
             selectedNode.children.rightChild.parent = selectedNode;
             newChild = selectedNode.children.rightChild;
         }
-
         newChild.draw(selectedNode, childCellX, childCellY);
         this.nodes[childCellY][childCellX] = newChild;
 
@@ -129,10 +129,10 @@ class Tree {
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+            this.numLeaves=1;
         }
         this.nodeArray.push(this.root);
         this.numNodes = 1;
-        this.numLeaves=1;
         this.propertiesQuestion.generateString();
         this.root.orderPlaced = this.numNodes;
     }
