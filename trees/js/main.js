@@ -448,9 +448,21 @@ class Main {
             if(newNodeValue === "" || Number(newNodeValue) < this.MIN_NODE_VALUE || Number(newNodeValue) > this.MAX_NODE_VALUE || !Number.isInteger(Number(newNodeValue))) {
                 return;
             }
+
+            if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                return;
+            }
         }
         else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+
+            if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
+
+                while(this.tree.isDuplicateValue(newNodeValue)) {
+                    newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                }
+            }
         }
 
         return Number(newNodeValue);

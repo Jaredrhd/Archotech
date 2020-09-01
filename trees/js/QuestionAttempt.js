@@ -36,8 +36,6 @@ class QuestionAttempt {
             this.answerBox.value = this.main.tree.string;
             this.main.tree.string = "";
 
-            console.log(this.answerBox.value);
-
             this.main.tree.convertToString(this.main.tree.root);
             this.answerBox.value += "-" + this.main.tree.string;
             this.main.tree.string = "";

@@ -214,4 +214,12 @@ class Tree {
 
         return childPos;
     }
+
+    isDuplicateValue(nodeValue) {
+        for(const node of this.nodeArray) {
+            if(nodeValue === node.value) return true;
+        }
+
+        return false;
+    }
 }
