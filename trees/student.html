@@ -22,10 +22,18 @@
         <!-- HIDDEN -->
         <input updateid id='TRAVERSAL_ORDER' type='text' name='TRAVERSAL_ORDER_NAME' value='' style="display: none;">
     </div>
+    <div updateid id="traversal-tools" class="traversal-tools" style="display: none;">
+        <button updateid id="edit-traversal-btn" class="edit-traversal-btn" type="button">EDIT</button>
+        <button updateid id="save-traversal-btn" class="save-traversal-btn" type="button" style="display: none;">SAVE</button>
+    </div>
+    <div updateid id="invalid-answer-div" class="invalid-answer-div no-select">
+        <i updateid class='fas fa-exclamation-triangle'></i>
+        <span updateid id="invalid-answer-value" class="invalid-answer-value"></span>
+    </div>
     <canvas id='' width="700" height="700" style="display:block; float:left; border: 2px solid black;"></canvas>
     <!-- DATABASE MISC -->
     <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders='' properties=''
-        disablecanvas='false' displaytools='true'></div>
+    disablecanvas='false' displaytools='true'></div>
     <!--  -->
     <div updateid id='toolbar' class="toolbar">
         <div updateid id='modify-tree-tools' class="bold" style="display: none;">
@@ -90,6 +98,7 @@
 <script src="/question/type/trees/js/QuestionAttempt.js" type="module"></script>
 <script src="/question/type/trees/js/main.js" type="module"></script>
 <script src="/question/type/trees/js/Manager.js" type="module"></script> -->
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
 <script>
     function init() {
         loadScript("/question/type/trees/js/Board.js");

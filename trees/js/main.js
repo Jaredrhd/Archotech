@@ -247,7 +247,7 @@ class Main {
     }
 
     onBoardClick(event) {
-        if(!this.tree) return;
+        if(!this.tree || (!this.databaseMisc.lecturer && !this.attempt.traversalAttempt.validInput)) return;
 
         this.board.boardCoordsFromMouse(event); 
 
