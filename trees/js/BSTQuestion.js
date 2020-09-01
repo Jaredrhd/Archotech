@@ -139,6 +139,9 @@ class BSTQuestion {
         let array = this.main.bstValueList.value.split(",").map(value => parseInt(value));
         let rootValue = array[0];
 
+        let bstStack = [];
+        let newNode;
+
         for(let i = 0; i < array.length; i++) {
             if(i === 0) {
                 if(!this.main.tree) {
@@ -147,6 +150,8 @@ class BSTQuestion {
                 else {
                     this.main.tree.setNewRoot(rootValue, false);
                 }
+
+                bstStack.push(this.main.tree.root);
             }
             else {
                 let parent = this.main.tree.root;
@@ -166,11 +171,12 @@ class BSTQuestion {
                     }
                 }
 
-                this.main.tree.addChildNoDraw(parent, childType, array[i]);
+                newNode = this.main.tree.addChildNoDraw(parent, childType, array[i]);
+                bstStack.push(newNode);
             }
         }
 
-        this.main.tree.convertToStringForBST(this.main.tree.root);
+        this.main.tree.convertToStringForBST(bstStack);
         this.bstString.value = this.main.tree.string;
         this.main.tree.string = "";
     }

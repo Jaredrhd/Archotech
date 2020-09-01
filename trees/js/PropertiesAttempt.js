@@ -67,11 +67,11 @@ class PropertiesAttempt {
 
         /** Add event listeners to input boxes */
         for(const item in this.treePropertyInputs) {
-            this.treePropertyInputs[item].addEventListener("change", this.treePropertyInputChanged.bind(this, this.treePropertyInputs[item], this.treePropertyInputs[item].id.split(":")[2]));
+            this.treePropertyInputs[item].addEventListener("input", this.treePropertyInputChanged.bind(this, this.treePropertyInputs[item], this.treePropertyInputs[item].id.split(":")[2]));
         }
 
         for(const item in this.nodePropertyInputs) {
-            this.nodePropertyInputs[item].addEventListener("change", this.nodePropertyInputChanged.bind(this, this.nodePropertyInputs[item], this.nodePropertyInputs[item].id.split(":")[2]));
+            this.nodePropertyInputs[item].addEventListener("input", this.nodePropertyInputChanged.bind(this, this.nodePropertyInputs[item], this.nodePropertyInputs[item].id.split(":")[2]));
         }
     }
 

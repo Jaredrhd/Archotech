@@ -66,6 +66,8 @@ class Tree {
 
         this.numNodes++;
         newChild.orderPlaced = this.numNodes;
+
+        return newChild;
     }
 
     /** Returns the first node whose value (and potentially order) matches the argument(s) */
@@ -179,22 +181,19 @@ class Tree {
         this.convertToString(node.children.rightChild);
     }
 
-    convertToStringForBST(node) {
-        if(!node) return;
+    convertToStringForBST(nodeStack) {
+        for(const node of nodeStack) {
+            if(node.isRoot) {
+                this.string += node.value;
+            }
+            else {
+                this.string += node.value + "#" + this.generateChildPosition(node);
+            }
 
-        if(node.isRoot) {
-            this.string += node.value;
+            if(this.string.split(":").length !== this.numNodes) {
+                this.string += ":";
+            }
         }
-        else {
-            this.string += node.value + "#" + this.generateChildPosition(node);
-        }
-
-        if(this.string.split(":").length !== this.numNodes) {
-            this.string += ":";
-        }
-        
-        this.convertToStringForBST(node.children.leftChild);
-        this.convertToStringForBST(node.children.rightChild);
     }
 
     generateChildPosition(node) {
@@ -214,5 +213,13 @@ class Tree {
         childPos = childPos.split("").reverse().join(""); // Get child position from root to child instead of from child to root e.g. LLR not RLL
 
         return childPos;
+    }
+
+    isDuplicateValue(nodeValue) {
+        for(const node of this.nodeArray) {
+            if(nodeValue === node.value) return true;
+        }
+
+        return false;
     }
 }
