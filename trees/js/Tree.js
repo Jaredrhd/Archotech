@@ -2,23 +2,18 @@
 class Tree {
     constructor(main, rootValue, draw=true) {
         this.main = main;
-        this.propertiesQuestion = new PropertiesQuestion(this.main);
 
         // Create matrix for nodes
         this.nodes = new Array(this.main.ROWS);
         for(let i = 0; i < this.nodes.length; i++) {
             this.nodes[i] = new Array(this.main.COLS);
         }
-        this.numLeaves = 0;
 
         this.root = new Node(this.main, rootValue);
         this.root.parent = null;
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
-            this.numLeaves++;
-            var addLeafNumberBox = document.getElementById("leaf-num-count");
-            addLeafNumberBox.value = 1;
         }
 
         this.nodeArray = [this.root];
@@ -43,16 +38,13 @@ class Tree {
             selectedNode.children.rightChild.parent = selectedNode;
             newChild = selectedNode.children.rightChild;
         }
+
         newChild.draw(selectedNode, childCellX, childCellY);
         this.nodes[childCellY][childCellX] = newChild;
 
         this.nodeArray.push(newChild);
 
         this.numNodes++;
-        if(selectedNode.children.leftChild !== null && selectedNode.children.rightChild !== null){
-            this.numLeaves++;
-            this.propertiesQuestion.generateString();
-        }
         newChild.orderPlaced = this.numNodes;
     }
 
@@ -103,10 +95,6 @@ class Tree {
         this.nodeArray.splice(this.nodeArray.findIndex(node => node === selectedNode), 1);
 
         if(!selectedNode.isRoot) {
-            if(selectedNode.parent.children.rightChild != null && selectedNode.parent.children.leftChild != null){
-                this.numLeaves--;
-                this.propertiesQuestion.generateString();
-            }
             if(selectedNode.childType() === "L") {
                 selectedNode.parent.children.leftChild = null;
             }
@@ -116,10 +104,9 @@ class Tree {
             this.numNodes--;
         }
         else {
+
             this.root = null;
             this.numNodes = 0;
-            this.numLeaves = 0;
-            this.propertiesQuestion.generateString();
         }
     }
 
@@ -129,11 +116,9 @@ class Tree {
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
-            this.numLeaves=1;
         }
         this.nodeArray.push(this.root);
         this.numNodes = 1;
-        this.propertiesQuestion.generateString();
         this.root.orderPlaced = this.numNodes;
     }
 
