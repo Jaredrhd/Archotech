@@ -3,6 +3,7 @@ class PropertiesQuestion {
         this.main = main;
 
         this.radio = document.querySelector('[qtype_name="properties"]');
+        this.updatePropertiesButton = document.getElementById("update-properties");
 
         /** Values stored in DB */
         this.requestedProperties = document.getElementById("requested_properties");
@@ -42,6 +43,7 @@ class PropertiesQuestion {
 
         for(const option of this.propertyOptions) {
             option.parentElement.style.marginLeft += "30px";
+            option.addEventListener("change", this.propertyChecked.bind(this, option));
         }
 
         for(const property of this.propertyList) {
@@ -57,6 +59,10 @@ class PropertiesQuestion {
         }
 
         this.main.setup.updateCurrentQuestion("PROPERTIES");
+        this.main.propertyTools.style.display = "inline-block";
+        this.updatePropertiesButton.style.display = "inline-block";
+        this.updatePropertiesButton.addEventListener("click", this.generateString.bind(this));
+        this.generateString();
     }
 
     propertyChecked(property) {
@@ -69,11 +75,120 @@ class PropertiesQuestion {
         }
 
         this.requestedProperties.value = this.checkedProperties.toString();
+        this.generateString();
     }
 
     generateString() {
-        for(const checkedProperty of this.checkedProperties) {
-            // TODO : CALL FUNCTIONS TO GENERATE MODEL ANSWER
+        var addLeafNumberLabel = document.getElementById("leaf-num-label");
+        var addLeafNumberBox = document.getElementById("leaf-num-count");
+        var addEdgeNumberLabel = document.getElementById("edge-num-label");
+        var addEdgeNumberBox = document.getElementById("edge-num-count");
+        var addInternalNodeNumberLabel = document.getElementById("internal-node-num-label");
+        var addInternalNodeNumberBox = document.getElementById("internal-node-num-count");
+        var addNodeDegreeNumberLabel = document.getElementById("node-degree-num-label");
+        var addNodeDegreeNumberBox = document.getElementById("node-degree-num-count");
+
+        if(this.numLeavesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
+            addLeafNumberLabel.style.display = "inline-block";
+            addLeafNumberBox.style.display = "inline-block";
+            this.calculateLeafNumber(addLeafNumberBox);
         }
+        else{
+                addLeafNumberLabel.style.display = "none";
+                addLeafNumberBox.style.display = "none";
+        } 
+        if(this.numEdgesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
+                addEdgeNumberLabel.style.display = "inline-block";
+                addEdgeNumberBox.style.display = "inline-block";
+                this.calculateEdgeNumber(addEdgeNumberBox);
+        }
+        else{
+                addEdgeNumberLabel.style.display = "none";
+                addEdgeNumberBox.style.display = "none";
+        }
+        if(this.numInternalNodesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
+                addInternalNodeNumberLabel.style.display = "inline-block";
+                addInternalNodeNumberBox.style.display = "inline-block";
+                this.calculateInternalNodeNumber(addInternalNodeNumberBox);
+        }
+        else{
+                addInternalNodeNumberLabel.style.display = "none";
+                addInternalNodeNumberBox.style.display = "none";
+        }
+        if(this.degreeCheckbox.checked && this.nodePropertiesCheckbox.checked && this.radio.checked && this.main.selectedNode){
+                addNodeDegreeNumberLabel.style.display = "inline-block";
+                addNodeDegreeNumberBox.style.display = "inline-block";
+                this.calculateNodeDegreeNumber(addNodeDegreeNumberBox);
+        }
+    else{
+            addNodeDegreeNumberLabel.style.display = "none";
+            addNodeDegreeNumberBox.style.display = "none";
+    }
+            for(const checkedProperty of this.checkedProperties) {
+            // TODO : CALL FUNCTIONS TO GENERATE MODEL ANSWER
+            
+        }
+    }
+
+    calculateLeafNumber(addLeafNumberBox){
+        if (!this.main.tree){
+            addLeafNumberBox.value = 0;
+        }
+        else{
+            let numLeaves = 0;
+            for(let i = 0; i < this.main.tree.nodeArray.length; i++) {
+                if(!this.main.tree.nodeArray[i].children.rightChild && !this.main.tree.nodeArray[i].children.leftChild){
+                    numLeaves++;
+                }
+            }
+            addLeafNumberBox.value = numLeaves;
+        return;
+        }
+    }
+
+    calculateEdgeNumber(addEdgeNumberBox){
+        if (!this.main.tree){
+            addEdgeNumberBox.value = 0;
+        }
+        else{
+            if(this.main.tree.nodeArray.length - 1 < 0){
+                addEdgeNumberBox.value = 0;
+            }
+            else{
+                addEdgeNumberBox.value = this.main.tree.nodeArray.length - 1;
+            }
+        }
+        return;
+    }
+    calculateInternalNodeNumber(addInternalNodeNumberBox){
+        if (!this.main.tree){
+            addInternalNodeNumberBox.value = 0;
+        }
+        else{
+            let numInternalNodes = 0;
+            for(let i = 0; i < this.main.tree.nodeArray.length; i++) {
+                if(this.main.tree.nodeArray[i].children.rightChild || this.main.tree.nodeArray[i].children.leftChild){
+                    numInternalNodes++;
+                }
+            }
+            addInternalNodeNumberBox.value = numInternalNodes;
+        }
+        return;
+    }
+    calculateNodeDegreeNumber(addNodeDegreeNumberBox){
+        console.log(this.main.selectedNode);
+        if(!this.main.tree){
+            addNodeDegreeNumberBox.value = 0;
+        }
+        else if(this.main.selectedNode.children.rightChild && this.main.selectedNode.children.leftChild){
+            addNodeDegreeNumberBox.value = 2;
+        }
+        else if(this.main.selectedNode.children.rightChild || this.main.selectedNode.children.leftChild){
+            addNodeDegreeNumberBox.value = 1;
+        }
+        else{
+            addNodeDegreeNumberBox.value = 0;
+        }
+        return;
     }
 }

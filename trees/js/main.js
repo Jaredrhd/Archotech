@@ -16,6 +16,7 @@ class Main {
         /** The list of BST values shown to the student and lecturer */
         this.bstValueList = document.getElementById(canvas.id+":bst-values");
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
+        this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
 
         //#region BOARD MISC
@@ -148,7 +149,6 @@ class Main {
         else { // Tree instance already exists - will be true if the root node was removed
             this.tree.setNewRoot(newNodeValue);
         }
-
         this.addRootButton.style.display = "none";
 
         if(this.databaseMisc.lecturer) {

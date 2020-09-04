@@ -106,6 +106,7 @@ class Tree {
             this.numNodes--;
         }
         else {
+
             this.root = null;
             this.numNodes = 0;
         }
