@@ -3,6 +3,7 @@ class PropertiesQuestion {
         this.main = main;
 
         this.radio = document.querySelector('[qtype_name="properties"]');
+        this.updatePropertiesButton = document.getElementById("update-properties");
 
         /** Values stored in DB */
         this.requestedProperties = document.getElementById("requested_properties");
@@ -59,6 +60,8 @@ class PropertiesQuestion {
 
         this.main.setup.updateCurrentQuestion("PROPERTIES");
         this.main.propertyTools.style.display = "inline-block";
+        this.updatePropertiesButton.style.display = "inline-block";
+        this.updatePropertiesButton.addEventListener("click", this.generateString.bind(this));
         this.generateString();
     }
 
