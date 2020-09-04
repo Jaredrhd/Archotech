@@ -15,7 +15,8 @@
         <FIELD NAME="bstvalues" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="bst_string" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="lecturer_tree" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="student_tree" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="requested_properties" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="properties_string" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -4,6 +4,7 @@ class QuestionSetup {
 
         this.trvQuestion = new TraversalQuestion(this.main);
         this.bstQuestion = new BSTQuestion(this.main);
+        this.propertiesQuestion = new PropertiesQuestion(this.main);
 
         this.lecturerTree = document.getElementById("lecturer_tree");
         this.qType = document.getElementById("q_type");
@@ -26,7 +27,8 @@ class QuestionSetup {
 
         this.currQuestion = {
             TRAVERSAL: true,
-            BST: false
+            BST: false,
+            PROPERTIES: false
         };
 
         this.configureHTML();
@@ -37,6 +39,7 @@ class QuestionSetup {
         switch(this.qType.value) {
             case this.main.qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
             case this.main.qTypes.BST: this.configureBstHTML(); break;
+            case this.main.qTypes.PROPERTIES: this.configurePropertyHTML(); break;        
         }
     }
 
@@ -73,6 +76,23 @@ class QuestionSetup {
         this.main.modifyTreeTools.style.display = "none";
 
         this.main.bstTools.style.display = "flex";
+    }
+
+    configurePropertyHTML() {
+        this.createQuestionHeader.innerHTML = "Build Tree";
+
+        this.main.nodeValueInput.disabled = false;
+        this.main.nodeValueInput.value = "";
+        this.main.nodeValueInput.style.color = "#000000";
+
+        this.main.randNodeValueCheckbox.disabled = false;
+
+        this.main.canvas.style.display = "block";
+
+        this.main.toolbar.style.display = "flex";
+        this.main.modifyTreeTools.style.display = "block";
+        
+        this.main.answerQuestionTools.style.display = "none";
     }
 
     updateCurrentQuestion(newQuestion) {

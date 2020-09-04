@@ -10,7 +10,12 @@
     float: left;
 }
 
-.modify-tree-tools {
+.input {
+    text-align: center;
+    font-weight: bold;
+}
+
+.bold {
     font-weight: bold;
 }
 
@@ -22,6 +27,17 @@
     display: block;
     margin: 5px auto;
     width: 160px;
+}
+
+.property-input {
+    display: block;
+    margin: 5px auto;
+    width: 100px;
+}
+
+.property-section {
+    display: block;
+    margin: 20px auto;
 }
 
 .answer-question-tools {
@@ -153,7 +169,7 @@ button {
 }
 
 #copied {
-    color: blue;
+    color: lightblue;
     font-weight: bold;
 }
 
