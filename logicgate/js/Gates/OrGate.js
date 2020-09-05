@@ -35,11 +35,11 @@ class OrGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = "white";
+            graphics.fillStyle = "green";
         else
             graphics.fillStyle = "black";
 
-        if(!this.Correct())
+        if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -48,11 +48,6 @@ class OrGate extends LogicGate
     }
 
     DrawCorrect(graphics)
-    {
-        this.DrawBroken(graphics);
-    }
-
-    DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
 
@@ -75,5 +70,11 @@ class OrGate extends LogicGate
         graphics.closePath();
         graphics.fill();
         graphics.stroke();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        this.DrawCorrect(graphics);
     }
 }

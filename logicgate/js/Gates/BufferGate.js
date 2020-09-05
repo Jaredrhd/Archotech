@@ -34,11 +34,11 @@ class BufferGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = 'white';
+            graphics.fillStyle = 'transparent';
         else
             graphics.fillStyle = 'black';
 
-        if(!this.Correct())
+        if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -47,11 +47,6 @@ class BufferGate extends LogicGate
     }
 
     DrawCorrect(graphics)
-    {
-        this.DrawBroken(graphics);
-    }
-
-    DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
         
@@ -72,5 +67,11 @@ class BufferGate extends LogicGate
         graphics.closePath();
         graphics.fill();
         graphics.stroke();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        this.DrawCorrect(graphics);
     }
 }

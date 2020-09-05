@@ -12,7 +12,6 @@ class AndGate extends LogicGate
             circuit.push(this.incomingNodes[i]);
 
         circuit.push(this.outgoingNodes);
-
     }
 
     UpdateCharge()
@@ -35,11 +34,11 @@ class AndGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = "white";
+            graphics.fillStyle = "green";
         else
             graphics.fillStyle = "black";
 
-        if(!this.Correct())
+        if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -48,11 +47,6 @@ class AndGate extends LogicGate
     }
 
     DrawCorrect(graphics)
-    {
-        this.DrawBroken(graphics);
-    }
-
-    DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
 
@@ -78,5 +72,11 @@ class AndGate extends LogicGate
         graphics.arc(0.5, 0, 0.5, -Math.PI/2, Math.PI/2);
         graphics.fill();
         graphics.stroke();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        this.DrawCorrect(graphics);
     }
 }

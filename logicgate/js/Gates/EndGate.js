@@ -35,12 +35,14 @@ class EndGate extends LogicGate
     Draw(graphics)
     {
         graphics.save();
+        graphics.lineWidth += 0.005;
         graphics.translate(this.pos.x,this.pos.y);
+        graphics.scale(0.5,0.5);
 
         if(this.charge)
-            graphics.fillStyle = 'white';
+            graphics.fillStyle = "green";
         else
-            graphics.fillStyle = 'black';
+            graphics.fillStyle = "black";
 
         if(this.Correct())
             this.DrawCorrect(graphics);
@@ -60,6 +62,7 @@ class EndGate extends LogicGate
 
     DrawBroken(graphics)
     {
+        graphics.fillStyle = "transparent";
         graphics.beginPath();
         graphics.arc(0,0,0.5, 1.5 * Math.PI,  0.5 * Math.PI);
         graphics.fill();
