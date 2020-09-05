@@ -37,10 +37,11 @@ class Wire extends LogicGate
         graphics.moveTo(this.pos.x, this.pos.y);
 
         //TODO determine if outgoing or incoming wire and swap +-
+        let extend = 1;
         if(this.connectionTo != null)
-            graphics.bezierCurveTo(this.pos.x + 1,this.pos.y, this.connectionTo.pos.x - 1, this.connectionTo.pos.y, this.connectionTo.pos.x, this.connectionTo.pos.y);
+            graphics.bezierCurveTo(this.pos.x + extend,this.pos.y, this.connectionTo.pos.x - extend, this.connectionTo.pos.y, this.connectionTo.pos.x, this.connectionTo.pos.y);
         else
-            graphics.bezierCurveTo(this.pos.x + 1,this.pos.y, this.mousePos.x - 1, this.mousePos.y, this.mousePos.x, this.mousePos.y);
+            graphics.bezierCurveTo(this.pos.x + extend,this.pos.y, this.mousePos.x - extend, this.mousePos.y, this.mousePos.x, this.mousePos.y);
 
         graphics.stroke();
         graphics.restore();
