@@ -79,15 +79,23 @@ class Main
             this.timer = Date.now() + this.timerUpdate;
         }
 
-        //Then draw the circuit
+        //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
             //Only update gates if we are focused on canvas
             if(this.canvasFocused)
                 this.circuit[i].Update();
             
-            //Draw circuit
-            this.circuit[i].Draw(this.graphics);
+            //Draw Wires
+            if(this.circuit[i] instanceof Wire)
+                this.circuit[i].Draw(this.graphics);
+        }
+
+        //Then draw the circuit
+        for(let i = 0; i < this.circuit.length; ++i)
+        {
+            if(!(this.circuit[i] instanceof Wire))
+                this.circuit[i].Draw(this.graphics);
         }
 
         //Update the selection manager

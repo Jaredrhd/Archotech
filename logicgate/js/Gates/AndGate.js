@@ -12,7 +12,6 @@ class AndGate extends LogicGate
             circuit.push(this.incomingNodes[i]);
 
         circuit.push(this.outgoingNodes);
-
     }
 
     UpdateCharge()

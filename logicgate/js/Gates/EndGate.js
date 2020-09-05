@@ -35,7 +35,9 @@ class EndGate extends LogicGate
     Draw(graphics)
     {
         graphics.save();
+        graphics.lineWidth += 0.005;
         graphics.translate(this.pos.x,this.pos.y);
+        graphics.scale(0.5,0.5);
 
         if(this.charge)
             graphics.fillStyle = "green";
