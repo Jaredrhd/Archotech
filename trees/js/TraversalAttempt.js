@@ -4,11 +4,11 @@ class TraversalAttempt {
         this.answerBox = answerBox;
 
         this.traversalOrder = document.getElementById(this.main.canvas.id+":TRAVERSAL_ORDER");
-        this.invalidAnswerDiv = document.getElementById(this.main.canvas.id+":invalid-answer-div");
-        this.invalidAnswerSpan = document.getElementById(this.main.canvas.id+":invalid-answer-value");
+        this.invalidAnswerIcon = document.getElementById(this.main.canvas.id+":invalid-answer-icon");
+        this.invalidAnswerValue = document.getElementById(this.main.canvas.id+":invalid-answer-value");
         this.traversalTools = document.getElementById(this.main.canvas.id+":traversal-tools");
-        this.editButton = document.getElementById(this.main.canvas.id+":edit-traversal-btn");
-        this.saveButton = document.getElementById(this.main.canvas.id+":save-traversal-btn");
+        this.editButton = document.getElementById(this.main.canvas.id+":edit-traversal-button");
+        this.saveButton = document.getElementById(this.main.canvas.id+":save-traversal-button");
         
         /** Answer string for traversal question */
         this.answerArray = [];
@@ -22,12 +22,13 @@ class TraversalAttempt {
 
         this.traversalTools.style.display = "flex";
         
-        this.answerBox.readOnly = true;
+        // this.answerBox.readOnly = true;
         
         this.editButton.addEventListener("click", this.editInput.bind(this));
         this.saveButton.addEventListener("click", this.saveInput.bind(this));
         this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
-
+        this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
+        
         this.main.modifyTreeTools.style.display = "none";
         this.main.answerQuestionTools.style.display = "flex";
     }
@@ -40,7 +41,6 @@ class TraversalAttempt {
     }
 
     saveInput() {
-        // this.validateInput.bind(this, this.answerBox);
         if(this.validInput) {
             this.answerBox.readOnly = true;
             this.displayAnswerString();
@@ -56,12 +56,13 @@ class TraversalAttempt {
         if(answerBox.value != "") {
             if(!this.validInput) { // Input is invalid
                 answerBox.style.outlineColor = "#FF0000";
-                this.invalidAnswerDiv.style.display = "flex";
-                this.invalidAnswerSpan.innerHTML = "The format of your answer is invalid."
+                this.invalidAnswerValue.innerHTML = "The format of your answer is invalid."
+                this.invalidAnswerIcon.style.display = "flex";
             }
             else {
                 answerBox.style.outlineColor = "#000000";
-                this.invalidAnswerDiv.style.display = "none";
+                this.invalidAnswerValue.innerHTML = " ";
+                this.invalidAnswerIcon.style.display = "none";
 
                 // Convert typed answer string to array to display
                 let answerString = this.answerBox.value;
@@ -72,7 +73,7 @@ class TraversalAttempt {
                 this.deselectNodes();
                 this.answerArray = [];
 
-                let newNode, newNodeValue, tempNode;
+                let newNode, newNodeValue;
                 for(let i = 0; i < tempAnswerArray.length; i++) {
                     newNodeValue = Number(tempAnswerArray[i]);
                     newNode = this.main.tree.getNode(newNodeValue);
@@ -81,22 +82,29 @@ class TraversalAttempt {
                         newNode.selected = true;
                     }
                     else {
-                        tempNode = new Node(this.main, newNodeValue, false); 
-                        this.answerArray.push(tempNode);
-                        
                         this.validInput = false;
                         answerBox.style.outlineColor = "#FF0000";
-                        this.invalidAnswerDiv.style.display = "flex";
-                        this.invalidAnswerSpan.innerHTML = "Invalid node value(s)."
+                        this.invalidAnswerValue.innerHTML = "Invalid node value(s)."
+                        this.invalidAnswerIcon.style.display = "flex";
                     }
                 }
                 this.main.redrawCanvas();
             }
         }
         else {
+            this.validInput = true;
             answerBox.style.outlineColor = "#000000";
-            this.invalidAnswerDiv.style.display = "none";
+            this.invalidAnswerValue.innerHTML = " ";
+            this.invalidAnswerIcon.style.display = "none";
         }
+    }
+
+    clearInvalidInput() {
+        this.displayAnswerString();
+        this.validInput = true;
+        this.answerBox.style.outlineColor = "#000000";
+        this.invalidAnswerValue.innerHTML = " ";
+        this.invalidAnswerIcon.style.display = "none";
     }
 
     buildAnswerString(node, action) {        
@@ -129,7 +137,8 @@ class TraversalAttempt {
 
     deselectNodes() {
         for (const node of this.answerArray) {
-            node.selected = false;            
+            if(node)
+                node.selected = false;            
         }
     }
 

@@ -12,25 +12,31 @@
 </noscript>
 
 <div id="layout">
-    <div updateid id="bst-tools" class="bst-tools" style="display: none;">
+    <div updateid id='bst-tools' class="bst-tools" style="display: none;">
         <label updateid for="bst-values">BST Values</label>
-        <textarea updateid id="bst-values" class="bst-values" autocomplete="off" readonly></textarea>
+        <textarea updateid id='bst-values' class="bst-values" autocomplete="off" readonly></textarea>
     </div>
     <div updateid id='answer-question-tools' class="answer-question-tools" style="display: none;">
-        <label updateid for='ANSWER_ID'></label>
+        <div updateid id='heading-button-wrapper' class="button-wrapper">
+            <div updateid id='heading-text' class="heading-text-alignment">
+                <label updateid for='ANSWER_ID'></label> 
+            </div>
+            <div updateid id='traversal-tools' class="traversal-tools button-alignment" style="display: none;">
+                <button updateid id='edit-traversal-button' class="button button-primary" type="button">Edit</button>
+                <button updateid id='save-traversal-button' class="button button-secondary" type="button" style="display: none;">Save</button>
+            </div>
+        </div>
         <input updateid id='ANSWER_ID' class="ANSWER_ID input" type='text' name='ANSWER_NAME_ID' value=''>
         <!-- HIDDEN -->
         <input updateid id='TRAVERSAL_ORDER' type='text' name='TRAVERSAL_ORDER_NAME' value='' style="display: none;">
     </div>
-    <div updateid id="traversal-tools" class="traversal-tools" style="display: none;">
-        <button updateid id="edit-traversal-btn" class="edit-traversal-btn" type="button">EDIT</button>
-        <button updateid id="save-traversal-btn" class="save-traversal-btn" type="button" style="display: none;">SAVE</button>
+   
+    <div updateid id='invalid-answer-div' class="invalid-answer-div no-select">
+        <i updateid id='invalid-answer-icon' class="fas fa-exclamation-triangle" style="padding-right: 5px; display: none;"></i>
+        <pre updateid id='invalid-answer-value' class="invalid-answer-value"> </pre>
     </div>
-    <div updateid id="invalid-answer-div" class="invalid-answer-div no-select">
-        <i updateid class='fas fa-exclamation-triangle'></i>
-        <span updateid id="invalid-answer-value" class="invalid-answer-value"></span>
-    </div>
-    <canvas id='' width="700" height="700" style="display:block; float:left; border: 2px solid black;"></canvas>
+    
+    <canvas id='' width="700" height="700" style="display:flex; float:left; border: 2px solid black;"></canvas>
     <!-- DATABASE MISC -->
     <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders='' properties=''
     disablecanvas='false' displaytools='true'></div>
@@ -43,10 +49,10 @@
                 <label updateid for='random-node-value'>RANDOM VALUE</label>
                 <input updateid id='random-node-value' class="input" type="checkbox" autocomplete="off">
             </div>
-            <button updateid type="button" id='add-root' class="modify-tree-tools add-root">ADD ROOT</button>
-            <button updateid type="button" id='remove-node' style="display: none;" class="modify-tree-tools remove-node">REMOVE</button>
-            <button updateid type="button" id='edit-node' style="display: none;" class="modify-tree-tools edit-node">EDIT VALUE</button>
-            <button updateid type="button" id='bst-undo' style="display: none;" class="modify-tree-tools bst-undo">UNDO</button>
+            <button updateid type="button" id='add-root' class="modify-tree-tools add-root button button button-primary">ADD ROOT</button>
+            <button updateid type="button" id='remove-node' style="display: none;" class="modify-tree-tools remove-node button button-primary">REMOVE</button>
+            <button updateid type="button" id='edit-node' style="display: none;" class="modify-tree-tools edit-node button button-secondary">EDIT VALUE</button>
+            <button updateid type="button" id='bst-undo' style="display: none;" class="modify-tree-tools bst-undo button button-secondary">UNDO</button>
         </div>
         <div updateid id="property-tools" class="bold" style="display: none;">
             <div updateid id="tree-properties" class="property-section">
