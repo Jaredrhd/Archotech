@@ -1,8 +1,7 @@
 class LogicGate
 {
     /**
-     * @param {incomingConnectionsNeeded} int The required number of incoming connections strictly equal.
-     * @param {outgoingConnectionsNeeded} int The required number of outgoing connections greater than or equal.
+     * @param {pos} Object {x,y} position
      */
     constructor(pos= {x:0, y:0})
     {
@@ -46,7 +45,7 @@ class LogicGate
     {
         //If we have visited this node return to the previous one
         if(this.visited == true)
-        return false;
+            return false;
 
         this.visited = true;
 

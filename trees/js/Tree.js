@@ -1,74 +1,40 @@
+
 class Tree {
-    constructor(rootValue, draw=true) {
+    constructor(main, rootValue, draw=true) {
+        this.main = main;
+
         // Create matrix for nodes
-        this._nodes = new Array(ROWS);
-        for(let i = 0; i < this._nodes.length; i++) {
-            this._nodes[i] = new Array(COLS);
+        this.nodes = new Array(this.main.ROWS);
+        for(let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i] = new Array(this.main.COLS);
         }
 
-        this._root = new Node(rootValue);
-        this._root.parent = null;
+        this.root = new Node(this.main, rootValue);
+        this.root.parent = null;
         if(draw) {
-            this._root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
-            this._nodes[this._root.cellCoords.y][this._root.cellCoords.x] = this._root;
+            this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
+            this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         }
 
-        this._numNodes = 1;
+        this.nodeArray = [this.root];
 
-        this._string = "";
-        this._childPos = "";
-    }
+        this.numNodes = 1;
+        this.root.orderPlaced = this.numNodes;
 
-    get root() {
-        return this._root;
-    }
-
-    get nodes() {
-        return this._nodes;
-    }
-
-    get numNodes() {
-        return this._numNodes;
-    }
-
-    get string() {
-        return this._string;
-    }
-
-    get childPos() {
-        return this._childPos;
-    }
-
-    set root(value) {
-        this._root = value;
-    }
-
-    set nodes(value) {
-        this._nodes = value;
-    }
-
-    set numNodes(value) {
-        this._numNodes = value;
-    }
-
-    set string(value) {
-        this._string = value;
-    }
-
-    set childPos(value) {
-        this._childPos = value;
+        this.string = "";
+        this.childPos = "";
     }
 
     addChild(selectedNode, childType, childValue, childCellX, childCellY) {
         let newChild;
 
         if(childType === "L") {
-            selectedNode.children.leftChild = new Node(childValue, false);
+            selectedNode.children.leftChild = new Node(this.main, childValue, false);
             selectedNode.children.leftChild.parent = selectedNode;
             newChild = selectedNode.children.leftChild;
         }
         else {
-            selectedNode.children.rightChild = new Node(childValue, false);
+            selectedNode.children.rightChild = new Node(this.main, childValue, false);
             selectedNode.children.rightChild.parent = selectedNode;
             newChild = selectedNode.children.rightChild;
         }
@@ -76,28 +42,43 @@ class Tree {
         newChild.draw(selectedNode, childCellX, childCellY);
         this.nodes[childCellY][childCellX] = newChild;
 
+        this.nodeArray.push(newChild);
+
         this.numNodes++;
+        newChild.orderPlaced = this.numNodes;
     }
 
     addChildNoDraw(parentNode, childType, childValue) {
+        let newChild;
+
         if(childType === "L") {
-            parentNode.children.leftChild = new Node(childValue, false);
+            parentNode.children.leftChild = new Node(this.main, childValue, false);
             parentNode.children.leftChild.parent = parentNode;
+            newChild = parentNode.children.leftChild;
         }
         else {
-            parentNode.children.rightChild = new Node(childValue, false);
+            parentNode.children.rightChild = new Node(this.main, childValue, false);
             parentNode.children.rightChild.parent = parentNode;
+            newChild = parentNode.children.rightChild;
         }
 
+        this.nodeArray.push(newChild);
+
         this.numNodes++;
+        newChild.orderPlaced = this.numNodes;
     }
 
-    /** Returns the first node whose value matches the argument */
-    getNode(value) {
-        for(let i = 0; i < ROWS; i++) {
-            for(let j = 0; j < COLS; j++) {
-                if(typeof tree.nodes[i][j] !== "undefined") {
-                    if(tree.nodes[i][j].value === value) return tree.nodes[i][j];
+    /** Returns the first node whose value (and potentially order) matches the argument(s) */
+    getNode(value, order=null) {
+        for(let i = 0; i < this.main.ROWS; i++) {
+            for(let j = 0; j < this.main.COLS; j++) {
+                if(typeof this.nodes[i][j] !== "undefined") {
+                    if(order) {
+                        if(this.nodes[i][j].value === value && this.nodes[i][j].orderPlaced === order) return this.nodes[i][j];
+                    }
+                    else {
+                        if(this.nodes[i][j].value === value) return this.nodes[i][j];
+                    }
                 }
             }
         }
@@ -109,7 +90,9 @@ class Tree {
         this.removeNodeAndChildren(selectedNode.children.leftChild);
         this.removeNodeAndChildren(selectedNode.children.rightChild);
 
-        tree.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
+        this.nodes[selectedNode.cellCoords.y][selectedNode.cellCoords.x] = undefined;
+
+        this.nodeArray.splice(this.nodeArray.findIndex(node => node === selectedNode), 1);
 
         if(!selectedNode.isRoot) {
             if(selectedNode.childType() === "L") {
@@ -121,26 +104,29 @@ class Tree {
             this.numNodes--;
         }
         else {
+
             this.root = null;
             this.numNodes = 0;
         }
     }
 
     setNewRoot(rootValue, draw=true) {
-        this.root = new Node(rootValue);
+        this.root = new Node(this.main, rootValue);
         this.root.parent = null;
         if(draw) {
-            this.root.draw(null, (COLS - 1) * 0.5, 0); // parent, cellX, cellY
+            this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
         }
-        this.numNodes++;
+        this.nodeArray.push(this.root);
+        this.numNodes = 1;
+        this.root.orderPlaced = this.numNodes;
     }
 
     /** TESTING */
     printTree() {
         let tree = "";
-        for(let i = 0; i < ROWS; i++) {
-            for(let j = 0; j < COLS; j++) {
+        for(let i = 0; i < this.main.ROWS; i++) {
+            for(let j = 0; j < this.main.COLS; j++) {
                 if(typeof this.nodes[i][j] !== "undefined") {
                     tree += this.nodes[i][j].value + " ";
                 } 
@@ -157,9 +143,9 @@ class Tree {
 
     remake(direction) {
         /** Create temp matrix for nodes */
-        let tempMatrix = new Array(ROWS);
+        let tempMatrix = new Array(this.main.ROWS);
         for(let i = 0; i < tempMatrix.length; i++) {
-            tempMatrix[i] = new Array(COLS);
+            tempMatrix[i] = new Array(this.main.COLS);
         }
 
         let resizeFactor = direction === "grow" ? 1 : -1;
@@ -180,7 +166,7 @@ class Tree {
         if(!node) return;
 
         if(node.isRoot) {
-            this.string += ROWS + "," + COLS + ":" + node.value + ":ROOT:" + node.cellCoords.y + "," + node.cellCoords.x;
+            this.string += this.main.ROWS + "," + this.main.COLS + ":" + node.value + ":ROOT:" + node.cellCoords.y + "," + node.cellCoords.x;
         }
         else {
             this.string += node.value + ":" + this.generateChildPosition(node) + ":" + node.cellCoords.y + "," + node.cellCoords.x;
@@ -198,10 +184,14 @@ class Tree {
         if(!node) return;
 
         if(node.isRoot) {
-            this.string += node.value + "#:ROOT:#";
+            this.string += node.value;
         }
         else {
-            this.string += node.value + "#:" + this.generateChildPosition(node) + ":#";
+            this.string += node.value + "#" + this.generateChildPosition(node);
+        }
+
+        if(this.string.split(":").length !== this.numNodes) {
+            this.string += ":";
         }
         
         this.convertToStringForBST(node.children.leftChild);

@@ -1,84 +1,58 @@
 class Board {
-    constructor() {
-        this._cellWidth = canvas.width / COLS;
-        this._cellHeight = canvas.height / ROWS;
-        this._mouseX;
-        this._mouseY;
-        this._cellX;
-        this._cellY;
-        this._selectedBoardCoords = {x: null, y: null};
-        this._canvasPixels;
-    }
+    constructor(main) {
+        this.main = main;
 
-    get cellWidth() {
-        return this._cellWidth;
-    }
-
-    get cellHeight() {
-        return this._cellHeight;
-    }
-
-    get cellX() {
-        return this._cellX;
-    }
-
-    get cellY() {
-        return this._cellY;
-    }
-
-    get selectedBoardCoords() {
-        return this._selectedBoardCoords;
-    }
-
-    set cellX(value) {
-        this._cellX = value;
-    }
-
-    set cellY(value) {
-        this._cellY = value;
+        this.cellWidth = this.main.canvas.width / this.main.COLS;
+        this.cellHeight = this.main.canvas.height / this.main.ROWS;
+        this.mouseX;
+        this.mouseY;
+        this.cellX;
+        this.cellY;
+        this.selectedBoardCoords = {x: null, y: null};
+        this.canvasPixels;
     }
 
     drawGrid() {
-        for(let i = 1; i < ROWS; i++) {
-            context.save();
+        for(let i = 1; i < this.main.ROWS; i++) {
+            this.main.context.save();
 
-            context.lineWidth = 2;
-            context.globalAlpha = 0.2;
-            context.setLineDash([2, 3]);
-            context.beginPath();
-            context.moveTo(0, this.cellHeight * i);
-            context.lineTo(canvas.width, this.cellHeight * i);
-            context.stroke();
+            this.main.context.lineWidth = 2;
+            this.main.context.globalAlpha = 0.125;
+            this.main.context.setLineDash([2, 3]);
+            this.main.context.beginPath();
+            this.main.context.moveTo(0, this.cellHeight * i);
+            this.main.context.lineTo(this.main.canvas.width, this.cellHeight * i);
+            this.main.context.stroke();
 
-            context.restore();
+            this.main.context.restore();
         }
 
-        for(let j = 1; j < COLS; j++) {
-            context.save();
+        for(let j = 1; j < this.main.COLS; j++) {
+            this.main.context.save();
 
-            context.lineWidth = 2;
-            context.globalAlpha = 0.2;
-            context.setLineDash([2, 3]);
-            context.beginPath();
-            context.moveTo(this.cellWidth * j, 0);
-            context.lineTo(this.cellWidth * j, canvas.height);
-            context.stroke();
+            this.main.context.lineWidth = 2;
+            this.main.context.globalAlpha = 0.125;
+            this.main.context.setLineDash([2, 3]);
+            this.main.context.beginPath();
+            this.main.context.moveTo(this.cellWidth * j, 0);
+            this.main.context.lineTo(this.cellWidth * j, this.main.canvas.height);
+            this.main.context.stroke();
 
-            context.restore();
+            this.main.context.restore();
         }
     }
 
     canGrow() {
-        return ROWS < 25 && COLS < 25;
+        return this.main.ROWS < 25 && this.main.COLS < 25;
     }
 
     canShrink() {
-        if(ROWS === 13 && COLS === 13) return false;
+        if(this.main.ROWS === 13 && this.main.COLS === 13) return false;
 
-        for(let i = 0; i < ROWS; i++) {
-            for(let j = 0; j < COLS; j++) {
-                if(j < 2 || j > COLS - 3 || i > ROWS - 4) {
-                    if(typeof tree.nodes[i][j] !== "undefined") return false;
+        for(let i = 0; i < this.main.ROWS; i++) {
+            for(let j = 0; j < this.main.COLS; j++) {
+                if(j < 2 || j > this.main.COLS - 3 || i > this.main.ROWS - 4) {
+                    if(typeof this.main.tree.nodes[i][j] !== "undefined") return false;
                 }
             }
         }
@@ -92,13 +66,17 @@ class Board {
     }
 
     boardCoordsFromMouse(event) {
-        this._canvasPixels = canvas.getBoundingClientRect(); // Size of canvas in CSS pixels
+        this.canvasPixels = this.main.canvas.getBoundingClientRect(); // Size of canvas in CSS pixels
         
-        this._mouseX = event.clientX - this._canvasPixels.left;
-        this._mouseY = event.clientY - this._canvasPixels.top;
+        this.mouseX = event.clientX - this.canvasPixels.left;
+        this.mouseY = event.clientY - this.canvasPixels.top;
 
-        this.cellX = Math.floor(this._mouseX / this.cellWidth);
-        this.cellY = Math.floor(this._mouseY / this.cellHeight);
+        this.cellX = Math.floor(this.mouseX / this.cellWidth);
+        this.cellY = Math.floor(this.mouseY / this.cellHeight);
+
+        /** Correct for any out of bounds cell coordinates */
+        this.cellX = this.cellX < 0 ? 0 : (this.cellX >= this.main.COLS ? this.cellX - 1 : this.cellX);
+        this.cellY = this.cellY < 0 ? 0 : (this.cellY >= this.main.ROWS ? this.cellY - 1 : this.cellY);
 
         this.selectedBoardCoords.x = (this.cellX * this.cellWidth) + this.cellWidth * 0.5;
         this.selectedBoardCoords.y = (this.cellY * this.cellHeight) + this.cellHeight * 0.5;
