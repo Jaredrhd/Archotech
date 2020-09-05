@@ -38,11 +38,11 @@ class XorGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = "white";
+            graphics.fillStyle = "green";
         else
             graphics.fillStyle = "black";
 
-        if(!this.Correct())
+        if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -51,11 +51,6 @@ class XorGate extends LogicGate
     }
 
     DrawCorrect(graphics)
-    {
-        this.DrawBroken(graphics);
-    }
-
-    DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
 
@@ -82,5 +77,11 @@ class XorGate extends LogicGate
         graphics.moveTo(-0.1, -0.5);
         graphics.quadraticCurveTo(0.25, 0, -0.1, 0.5); // Copy of bottom curve moved left slightly
         graphics.stroke();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        this.DrawCorrect(graphics);
     }
 }

@@ -18,16 +18,17 @@ class StartGate extends LogicGate
         this.visited = true;
 
         for(let i = 0; i < this.outgoingNode.outgoingConnections.length; i++)
-        {
             this.outgoingNode.outgoingConnections[i].gate.parent.UpdateCharge();
-        }
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
         //For dragging the start gate
         if(stillDragging && Input.GetKey("control"))
+        {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
+            this.outgoingNode.dragWire.mousePos = null;
+        }
         else //Create a wire
             this.outgoingNode.SelectedUpdate(stillDragging, gateDroppedOn);
 
@@ -37,6 +38,7 @@ class StartGate extends LogicGate
 
     Correct()
     {
+        //A Start Node is qualified as correct if it's outgoing node has more then 1 connection
         return this.outgoingNode.outgoingConnections.length > 0;
     }
 
@@ -46,15 +48,24 @@ class StartGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = 'white';
+            graphics.fillStyle = "green";
         else
-            graphics.fillStyle = 'black';
+            graphics.fillStyle = "black";
 
         if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
         graphics.restore();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        graphics.beginPath();
+        graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
+        graphics.fill();
+        graphics.stroke();
     }
 
     DrawCorrect(graphics)
@@ -65,11 +76,4 @@ class StartGate extends LogicGate
         graphics.stroke();
     }
 
-    DrawBroken(graphics)
-    {
-        graphics.beginPath();
-        graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
-        graphics.fill();
-        graphics.stroke();
-    }
 }

@@ -35,11 +35,11 @@ class NorGate extends LogicGate
         graphics.translate(this.pos.x,this.pos.y);
 
         if(this.charge)
-            graphics.fillStyle = "white";
+            graphics.fillStyle = "green";
         else
             graphics.fillStyle = "black";
 
-        if(!this.Correct())
+        if(this.Correct())
             this.DrawCorrect(graphics);
         else
             this.DrawBroken(graphics);
@@ -48,11 +48,6 @@ class NorGate extends LogicGate
     }
 
     DrawCorrect(graphics)
-    {
-        this.DrawBroken(graphics);
-    }
-
-    DrawBroken(graphics)
     {
         graphics.translate(-0.5, 0); // Centre at (0, 0)
 
@@ -68,7 +63,7 @@ class NorGate extends LogicGate
 
         //Circle
         graphics.save();
-        graphics.fillStyle = "white";
+        graphics.fillStyle = "transparent";
         graphics.beginPath();
         graphics.arc(1.135, 0, 0.1, 0, 2*Math.PI);
         graphics.fill();
@@ -84,5 +79,12 @@ class NorGate extends LogicGate
         graphics.closePath();
         graphics.fill();
         graphics.stroke();
+    }
+
+    DrawBroken(graphics)
+    {
+        graphics.fillStyle = "transparent";
+        this.DrawCorrect(graphics);
+
     }
 }

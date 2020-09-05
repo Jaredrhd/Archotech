@@ -106,9 +106,17 @@ class LogicGate
     /**
      * Returns the distance between a point and a gate
      */
-    GetDistanceToGate(point)
+    GetDistanceToPoint(point)
     {
         return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
+    }
+
+    /**
+     * Returns the {X,Y} distance between a point and a gate
+     */
+    GetXYDistanceToPoint(point)
+    {
+        return {x:  point.x - this.pos.x, y: point.y - this.pos.y};
     }
 
      /**
