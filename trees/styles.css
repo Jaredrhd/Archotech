@@ -44,7 +44,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: center;
+    /* align-items: center; */
     font-weight: bold;
     float: left;
 }
@@ -55,8 +55,13 @@
     max-width: 100%;
 }
 
+.heading-text-alignment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .ANSWER_ID {
-    display: block;
     width: 100% !important;
     height: 50px;
     resize: none;
@@ -64,29 +69,6 @@
     font-size: large;
     font-weight: 700;
     text-align: center;
-}
-
-@media screen and (max-width: 1600px) {
-    /* .ANSWER_ID {
-        margin-bottom: 20px;
-    } */
-}
-
-.button-wrapper {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding-bottom: 5px;
-}
-
-.heading-text-alignment {
-    width: 80%;
-    padding-left: 42%;
-    padding-top: 5px;
-}
-
-.button-alignment {
-    display: flex;
 }
 
 .invalid-answer-div {
@@ -97,6 +79,51 @@
     align-items: center;
     padding: 1%;
 }
+
+.invalid-answer-value {
+    font: inherit;
+    font-weight: 400;
+    color: inherit;
+    margin: inherit;
+}
+
+.answer-box-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 105%;
+    margin-left: 6%;
+}
+
+.help .tooltiptext {
+    visibility: hidden;
+    max-width: 25%;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    margin-left: 10px;
+    border-radius: 6px;
+    font-size: 20px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    
+}
+
+.help:hover .tooltiptext {
+    visibility: visible;
+}
+
+.help .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 20%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+  }
 
 .no-select {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -118,8 +145,6 @@
 }
 
 .bst-values {
-    width: 705px !important;
-    height: 50px;
     resize: none;
     margin-bottom: 5px;
     font-size: large;
@@ -128,7 +153,33 @@
 }
 
 canvas {
-    background-color: white;
+    background-color: white;    
+    display: block !important;
+    max-width: 700px;
+    max-height: 700px;
+    width: 700px;
+    height: auto;
+    float: left; 
+    border: 2px solid black;
+}
+
+.help {
+    display: flex;
+    height: 20px;
+    width: auto;
+    color: #1177d1;
+    padding-left: 10px;
+    font-size: 30px;
+}
+
+.help:hover {
+    color: #0E63AE;
+}
+
+.canvas-toolbar-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
 }
 
 .button {
@@ -363,5 +414,59 @@ input[type=number] {
     }
     100% {
       opacity:0;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .heading-text-alignment {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .answer-box-wrapper {
+        display: flex;
+        flex-direction: row;
+        width: 76%;
+        margin-left: 0%;
+    }
+
+    canvas {
+        background-color: white;    
+        display: block !important;
+        max-width: 700px;
+        max-height: 700px;
+        width: 70%;
+        height: auto;
+        float: left; 
+        border: 2px solid black;
+    }
+    
+    .help .tooltiptext {
+        max-width: 20%;
+        padding: 5px 10px;
+        margin-left: 10px;
+        font-size: 15px;
+    }
+
+    .help .tooltiptext::after {
+        content: " ";
+        position: absolute;
+        top: 10%;
+        right: 100%; /* To the left of the tooltip */
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent black transparent transparent;
+    }
+
+    .bst-tools {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-weight: 700;
+        float: left;
+        width: 70%;
     }
 }

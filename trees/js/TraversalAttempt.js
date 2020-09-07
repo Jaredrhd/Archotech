@@ -6,9 +6,6 @@ class TraversalAttempt {
         this.traversalOrder = document.getElementById(this.main.canvas.id+":TRAVERSAL_ORDER");
         this.invalidAnswerIcon = document.getElementById(this.main.canvas.id+":invalid-answer-icon");
         this.invalidAnswerValue = document.getElementById(this.main.canvas.id+":invalid-answer-value");
-        this.traversalTools = document.getElementById(this.main.canvas.id+":traversal-tools");
-        this.editButton = document.getElementById(this.main.canvas.id+":edit-traversal-button");
-        this.saveButton = document.getElementById(this.main.canvas.id+":save-traversal-button");
         
         /** Answer string for traversal question */
         this.answerArray = [];
@@ -19,13 +16,8 @@ class TraversalAttempt {
         if(this.main.databaseMisc.treestring !== "") {
             this.main.buildTreeFromString(this.main.databaseMisc.treestring);
         }
-
-        this.traversalTools.style.display = "flex";
         
         // this.answerBox.readOnly = true;
-        
-        this.editButton.addEventListener("click", this.editInput.bind(this));
-        this.saveButton.addEventListener("click", this.saveInput.bind(this));
         this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
         this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
         
@@ -33,27 +25,11 @@ class TraversalAttempt {
         this.main.answerQuestionTools.style.display = "flex";
     }
 
-    editInput() {
-        this.answerBox.readOnly = false;
-        this.answerBox.focus();
-        this.editButton.style.display = "none";
-        this.saveButton.style.display = "inline-block";
-    }
-
-    saveInput() {
-        if(this.validInput) {
-            this.answerBox.readOnly = true;
-            this.displayAnswerString();
-            this.editButton.style.display = "inline-block";
-            this.saveButton.style.display = "none";
-        }
-    }
-
     validateInput(answerBox) {
         let regex = /^\d+(,\s\d+)*$/;
         this.validInput = regex.test(answerBox.value);
 
-        if(answerBox.value != "") {
+        if(answerBox.value !== "") {
             if(!this.validInput) { // Input is invalid
                 answerBox.style.outlineColor = "#FF0000";
                 this.invalidAnswerValue.innerHTML = "The format of your answer is invalid."
@@ -77,7 +53,7 @@ class TraversalAttempt {
                 for(let i = 0; i < tempAnswerArray.length; i++) {
                     newNodeValue = Number(tempAnswerArray[i]);
                     newNode = this.main.tree.getNode(newNodeValue);
-                    if(newNode) { // If the node exists in the tree
+                    if(newNode && !newNode.selected) { // If the node exists in the tree and is not already selected
                         this.answerArray.push(newNode);
                         newNode.selected = true;
                     }
@@ -92,6 +68,9 @@ class TraversalAttempt {
             }
         }
         else {
+            this.deselectNodes();
+            this.answerArray = [];
+            this.main.redrawCanvas();
             this.validInput = true;
             answerBox.style.outlineColor = "#000000";
             this.invalidAnswerValue.innerHTML = " ";
@@ -137,8 +116,7 @@ class TraversalAttempt {
 
     deselectNodes() {
         for (const node of this.answerArray) {
-            if(node)
-                node.selected = false;            
+            if(node) node.selected = false;            
         }
     }
 
