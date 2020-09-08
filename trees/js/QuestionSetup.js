@@ -2,7 +2,7 @@ class QuestionSetup {
     constructor(main) {
         this.main = main;
 
-        this.trvQuestion = new TraversalQuestion(this.main);
+        this.traversalQuestion = new TraversalQuestion(this.main);
         this.bstQuestion = new BSTQuestion(this.main);
         this.propertiesQuestion = new PropertiesQuestion(this.main);
 
@@ -47,7 +47,7 @@ class QuestionSetup {
         if(this.lecturerTree.value !== "") { // Rebuild a previously constructed tree
             this.main.buildTreeFromString(this.lecturerTree.value);
             this.main.addRootButton.style.display = "none";
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
             this.copyPasteTreeInput.value = this.lecturerTree.value;
         }
 
@@ -150,7 +150,7 @@ class QuestionSetup {
         setTimeout( () => {
             this.main.buildTreeFromString(this.copyPasteTreeInput.value);
             this.main.addRootButton.style.display = "none";
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
             this.lecturerTree.value = this.copyPasteTreeInput.value;
         }, 1);
     }
@@ -166,7 +166,10 @@ class QuestionSetup {
 
     addRootEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();
@@ -174,7 +177,10 @@ class QuestionSetup {
 
     addChildEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();
@@ -182,7 +188,10 @@ class QuestionSetup {
 
     removeNodeEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();
