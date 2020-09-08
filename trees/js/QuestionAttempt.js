@@ -30,18 +30,7 @@ class QuestionAttempt {
 
     treeToString() {
         if(this.main.databaseMisc.qtype === this.main.qTypes.BST) {
-            this.answerBox.value = "";
-
-            this.main.tree.convertToStringForBST(this.bstAttempt.bst.stack);
-            this.answerBox.value = this.main.tree.string;
-            this.main.tree.string = "";
-
-            this.main.tree.convertToString(this.main.tree.root);
-            this.answerBox.value += "-" + this.main.tree.string;
-            this.main.tree.string = "";
-
-            if(this.answerBox.value === "-") this.answerBox.value = "";
-
+            this.bstAttempt.treeToString();
             // var encrypted = CryptoJS.AES.encrypt(this.answerBox.value, "x^3Dgj*21!245##6$2)__@3$5_%6mfG@-3");
             // console.clear();
             // console.log(encrypted.toString());

@@ -78,9 +78,23 @@ class BSTAttempt {
         this.qa.handleEvent(this.main.events.UNDO);
     }
 
+    treeToString() {
+        this.answerBox.value = "";
+
+        this.main.tree.convertToStringForBST(this.bst.stack);
+        this.answerBox.value = this.main.tree.string;
+        this.main.tree.string = "";
+
+        this.main.tree.convertToString(this.main.tree.root);
+        this.answerBox.value += "/" + this.main.tree.string;
+        this.main.tree.string = "";
+
+        if(this.answerBox.value === "/") this.answerBox.value = "";
+    }
+
     /** Rebuilds the BST that the student had created but not yet submitted */
     reconstructLastAnswer() {
-        let treeString = this.main.databaseMisc.lastanswer.split("-"); // treeString[0] is string used for BST marking, treeString[1] is string used to reconstruct actual tree on the canvas
+        let treeString = this.main.databaseMisc.lastanswer.split("/"); // treeString[0] is string used for BST marking, treeString[1] is string used to reconstruct actual tree on the canvas
         this.main.buildTreeFromString(treeString[1]);
         this.answerBox.value = this.main.databaseMisc.lastanswer;
 
