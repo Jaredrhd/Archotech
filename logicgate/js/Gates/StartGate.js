@@ -63,9 +63,10 @@ class StartGate extends LogicGate
 
     DrawBroken(graphics)
     {
-        graphics.fillStyle = "transparent";
+        graphics.fillStyle = "white";
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
+        graphics.closePath();
         graphics.fill();
         graphics.stroke();
     }

@@ -31,7 +31,6 @@ class Wire extends LogicGate
 
         //Save
         graphics.save();
-        graphics.lineWidth += 0.005;
 
         //Begin Draw
         graphics.beginPath();

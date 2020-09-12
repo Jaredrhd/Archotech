@@ -94,7 +94,8 @@ class Main
         //Then draw the circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
-            if(!(this.circuit[i] instanceof Wire))
+            //Wires and Nodes are drawn separately
+            if(!(this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || this.circuit[i] instanceof OutgoingNode))
                 this.circuit[i].Draw(this.graphics);
         }
 
@@ -164,7 +165,7 @@ class Main
         }
         var pixelWidth = Math.abs(( this.xright - this.xleft ) / width);
         var pixelHeight = Math.abs(( this.ybottom - this.ytop ) / height);
-        this.pixelSize = Math.min(pixelWidth,pixelHeight);
+        this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
         graphics.scale( width / (this.xright-this.xleft), height / (this.ybottom-this.ytop) );
         graphics.translate( -this.xleft, -this.ytop );
     }
