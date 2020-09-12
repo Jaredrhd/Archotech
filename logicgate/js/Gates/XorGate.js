@@ -6,13 +6,7 @@ class XorGate extends LogicGate
 
         this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-0.85,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-0.85,y:-0.25})];
         this.outgoingNodes = new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0});
-
-
-        for (let i = 0; i < this.incomingNodes.length; i++) 
-            circuit.push(this.incomingNodes[i]);
-
-        circuit.push(this.outgoingNodes);
-
+        super.AddNodesToCircuit(circuit);
     }
 
     UpdateCharge()
@@ -48,6 +42,7 @@ class XorGate extends LogicGate
             this.DrawBroken(graphics);
 
         graphics.restore();
+        super.DrawNodes(graphics);
     }
 
     DrawCorrect(graphics)
@@ -81,7 +76,7 @@ class XorGate extends LogicGate
 
     DrawBroken(graphics)
     {
-        graphics.fillStyle = "transparent";
+        graphics.fillStyle = "white";
         this.DrawCorrect(graphics);
     }
 }

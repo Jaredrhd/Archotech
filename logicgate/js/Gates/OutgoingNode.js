@@ -64,16 +64,16 @@ class OutgoingNode extends LogicGate
     {
         this.UpdatePos();
         graphics.save();
+        graphics.fillStyle = "white";
 
         //Move to pos and scale
         graphics.translate(this.pos.x,this.pos.y);
-        graphics.scale(0.33,0.33);
 
         //Draw circle
         graphics.beginPath();
-        graphics.arc(0,0,0.5, 0,  2 * Math.PI);
+        graphics.arc(0,0,0.13, 0,  2 * Math.PI);
         graphics.stroke();
-
+        graphics.fill();
         graphics.restore();
     }
 }

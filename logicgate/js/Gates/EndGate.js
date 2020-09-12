@@ -52,19 +52,20 @@ class EndGate extends LogicGate
         graphics.restore();
     }
 
-    DrawCorrect(graphics)
+    DrawBroken(graphics)
     {
+        graphics.fillStyle = "white";
         graphics.beginPath();
-        graphics.arc(0,0,0.5, 0,  2 * Math.PI);
+        graphics.arc(0,0,0.5, 1.5 * Math.PI,  0.5 * Math.PI);
+        graphics.closePath();
         graphics.fill();
         graphics.stroke();
     }
 
-    DrawBroken(graphics)
+    DrawCorrect(graphics)
     {
-        graphics.fillStyle = "transparent";
         graphics.beginPath();
-        graphics.arc(0,0,0.5, 1.5 * Math.PI,  0.5 * Math.PI);
+        graphics.arc(0,0,0.5, 0,  2 * Math.PI);
         graphics.fill();
         graphics.stroke();
     }

@@ -7,7 +7,7 @@ class LogicGate
     {
         this.charge = false;
         this.incomingNodes = Array();
-        this.outgoingNodes = Array();
+        this.outgoingNodes = Object();
 
         this.pos = pos;
 
@@ -19,6 +19,18 @@ class LogicGate
 
         this.visited = false;
         this.updated = false;
+        this.spawner = false;
+    }
+
+    /**
+     * Call this method to add the Incoming and Outgoing Nodes to the circuit so that selection manager works on them
+     */
+    AddNodesToCircuit(circuit)
+    {
+        circuit.push(this.outgoingNodes);
+
+        for(let i = 0; i < this.incomingNodes.length;i++)
+            circuit.push(this.incomingNodes[i]);
     }
 
     /**
@@ -142,5 +154,16 @@ class LogicGate
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.8 * Math.PI,  1.8 * Math.PI);
         graphics.stroke();
+    }
+
+    /**
+     * The function to draw Incoming and Outgoing Nodes
+     */
+    DrawNodes(graphics)
+    {
+        this.outgoingNodes.Draw(graphics);
+
+        for(let i = 0; i < this.incomingNodes.length;i++)
+            this.incomingNodes[i].Draw(graphics);
     }
 }

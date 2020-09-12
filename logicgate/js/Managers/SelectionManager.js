@@ -1,13 +1,17 @@
 class SelectionManager
 {
-    constructor(circuit)
+    constructor(circuit, coords)
     {
         this.circuit = circuit;
         this.selected = null;
+        this.justSpawned = false;
+
+        this.coords = coords;
     }
 
     Update()
     {
+        console.log(Input.GetMousePos().x - (this.coords.xleft + 2) < 0);
         //Check if we clicked
         if(Input.GetMouseButtonDown(0))
         {
@@ -15,6 +19,16 @@ class SelectionManager
             //If we get here and we have a selected, give it some properties for offset and whatnot
             if(this.selected)
             {
+                //If the selected is a spawner
+                if(this.selected.spawner)
+                {
+                    //Get a the spawner constructor and spawn it
+                    let spawnerClass = this.selected.constructor;
+                    this.selected = new spawnerClass(Input.GetMousePos(), this.circuit);
+                    //Add it to the circuit
+                    this.circuit.push(this.selected);
+                    this.justSpawned = true;
+                }
                 this.selected.offset = Object.assign({}, Input.GetMousePos());
                 this.selected.offset.x -= this.selected.pos.x;
                 this.selected.offset.y -= this.selected.pos.y;
@@ -25,7 +39,7 @@ class SelectionManager
         if(this.selected && Input.GetMouseButton(0))
         {
             //If the selected update returns a gate, use it as the newly selected
-            let newSelected = this.selected.SelectedUpdate(true, null);
+            let newSelected = this.selected.SelectedUpdate(true, null, this.justSpawned);
             if(newSelected != null)
                 this.selected = newSelected;
         }
@@ -40,6 +54,7 @@ class SelectionManager
 
             this.selected.SelectedUpdate(false, gate);
             this.selected = null; 
+            this.justSpawned = false;
         }
     }
 
