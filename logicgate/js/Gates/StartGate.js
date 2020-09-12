@@ -23,8 +23,10 @@ class StartGate extends LogicGate
 
     SelectedUpdate(stillDragging, gateDroppedOn, justSpawned)
     {
+        if(Input.GetMouseDoubleClick())
+            this.charge = !this.charge;
         //For dragging the start gate
-        if((stillDragging && Input.GetKey("control")) || justSpawned)
+        else if((stillDragging && Input.GetKey("control")) || justSpawned)
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
             this.outgoingNode.dragWire.mousePos = null;
@@ -63,7 +65,6 @@ class StartGate extends LogicGate
 
     DrawBroken(graphics)
     {
-        graphics.fillStyle = "white";
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
         graphics.closePath();

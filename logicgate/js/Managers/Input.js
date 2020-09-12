@@ -12,13 +12,14 @@ class InputClass
         let mouseButtonDown = new Array(3).fill(0);
         let mouseButtonDownQueue = []; //For making the button go up
 
-
         //space, shift, cntl, alt, escape, tab, enter
         let specialKeyCodes = new Array(7).fill(0);
 
         //Mouse movement
         let mouse = {x:0,y:0};
         let scroll = 0;
+
+        let doubleClick = false;
 
         this.onKeyDown = function(event)
         {
@@ -75,6 +76,11 @@ class InputClass
         {
             scroll = Math.sign(event.deltaY);
         }
+
+        this.onDblClick = function(event)
+        {
+            doubleClick = true;
+        }
     
         //Reset the mouse movement every frame
         this.ResetMouseProperties = function()
@@ -82,9 +88,9 @@ class InputClass
             scroll = 0;
 
             while(mouseButtonDownQueue.length != 0)
-            {
                 mouseButtonDown[mouseButtonDownQueue.pop()] = 0;
-            }
+            
+            doubleClick = false;
         }
 
         //Get Mouse Position based on coordinate system we are using for the specific canvas (Event is binded to the main)
@@ -95,13 +101,13 @@ class InputClass
             let height= rect.height;
             
             //Calculate ratio
-            let x = width / (this.xright-this.xleft);
-            let y = height / (this.ybottom-this.ytop);
+            let x = width / (this.coords.xright-this.coords.xleft);
+            let y = height / (this.coords.ybottom-this.coords.ytop);
 
             //Return mouse position
             mouse = {
-                x: ((event.clientX - rect.left)/x)+this.xleft,
-                y: ((event.clientY - rect.top)/y)+this.ytop
+                x: ((event.clientX - rect.left)/x)+this.coords.xleft,
+                y: ((event.clientY - rect.top)/y)+this.coords.ytop
             };
         }
     
@@ -206,6 +212,14 @@ class InputClass
         }
 
         /**
+         * Returns true during the frame the double click happened
+         */
+        this.GetMouseDoubleClick = function()
+        {
+            return doubleClick;
+        }
+
+        /**
          * @param {button} int The button code.
          * 
          * Returns true while the button is pressed, 0-2
@@ -252,6 +266,7 @@ class InputClass
         window.onmouseup = this.onMouseUp;
         window.onmousemove = this.onMouseMove;
         window.onwheel = this.onWheel;
+        window.ondblclick = this.onDblClick;
     }
 }
 

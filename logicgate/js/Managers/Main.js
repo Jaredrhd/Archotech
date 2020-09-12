@@ -3,10 +3,7 @@ class Main
     constructor(canvas)
     {
         //Canvas coordinates
-        this.xleft = -4;
-        this.xright = 4;
-        this.ybottom = -3;
-        this.ytop = 3;
+        this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
 
         //Set up canvas properties
         this.pixelSize = 1;
@@ -51,7 +48,7 @@ class Main
         this.circuit.push(xnorGate);
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit);
+        this.selectionManager = new SelectionManager(this.circuit, this.coords);
 
         this.timer = Date.now();
         this.timerUpdate = 250;
@@ -149,27 +146,27 @@ class Main
         {
             // Adjust the limits to match the aspect ratio of the drawing area.
             var displayAspect = Math.abs(height / width);
-            var requestedAspect = Math.abs(( this.ybottom-this.ytop ) / ( this.xright-this.xleft ));
+            var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
             var excess;
-            excess = (this.ybottom-this.ytop) * (displayAspect/requestedAspect - 1);
-            this.ybottom += excess/2;
-            this.ytop -= excess/2;
+            excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
+            this.coords.ybottom += excess/2;
+            this.coords.ytop -= excess/2;
 
-            if(this.ytop < 3)
+            if(this.coords.ytop < 3)
             {
-                this.ytop = 3;
-                this.ybottom = -3;
-                excess = (this.xright-this.xleft) * (requestedAspect/displayAspect - 1);
-                this.xright += excess/2;
-                this.xleft -= excess/2;
+                this.coords.ytop = 3;
+                this.coords.ybottom = -3;
+                excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
+                this.coords.xright += excess/2;
+                this.coords.xleft -= excess/2;
             }
         }
         
-        var pixelWidth = Math.abs(( this.xright - this.xleft ) / width);
-        var pixelHeight = Math.abs(( this.ybottom - this.ytop ) / height);
+        var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);
+        var pixelHeight = Math.abs(( this.coords.ybottom - this.coords.ytop ) / height);
         this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
-        graphics.scale( width / (this.xright-this.xleft), height / (this.ybottom-this.ytop) );
-        graphics.translate( -this.xleft, -this.ytop );
+        graphics.scale( width / (this.coords.xright-this.coords.xleft), height / (this.coords.ybottom-this.coords.ytop) );
+        graphics.translate( -this.coords.xleft, -this.coords.ytop );
     }
 
     //For unfocusing canvas

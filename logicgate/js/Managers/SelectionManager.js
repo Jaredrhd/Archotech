@@ -1,14 +1,17 @@
 class SelectionManager
 {
-    constructor(circuit)
+    constructor(circuit, coords)
     {
         this.circuit = circuit;
         this.selected = null;
         this.justSpawned = false;
+
+        this.coords = coords;
     }
 
     Update()
     {
+        console.log(Input.GetMousePos().x - (this.coords.xleft + 2) < 0);
         //Check if we clicked
         if(Input.GetMouseButtonDown(0))
         {
