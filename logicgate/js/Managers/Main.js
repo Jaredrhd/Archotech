@@ -68,7 +68,7 @@ class Main
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
 
         //Apply limits to canvas, graphics
-        this.ApplyLimits(this.graphics,false);
+        this.ApplyLimits(this.graphics, true);
         
         let time = this.timer - Date.now();
         //First Update the the charges
@@ -144,25 +144,27 @@ class Main
     {
         var width = this.canvas.width;   // The width of this drawing area, in pixels.
         var height = this.canvas.height; // The height of this drawing area, in pixels.
+
         if (preserveAspect) 
         {
-              // Adjust the limits to match the aspect ratio of the drawing area.
-           var displayAspect = Math.abs(height / width);
-           var requestedAspect = Math.abs(( this.ybottom-this.ytop ) / ( this.xright-this.xleft ));
-           var excess;
-           if (displayAspect > requestedAspect) 
-           {
-              excess = (this.ybottom-this.ytop) * (displayAspect/requestedAspect - 1);
-              this.ybottom += excess/2;
-              this.ytop -= excess/2;
-           }
-           else if (displayAspect < requestedAspect) 
-           {
-              excess = (this.xright-this.xleft) * (requestedAspect/displayAspect - 1);
-              this.xright += excess/2;
-              this.xleft -= excess/2;
-           }
+            // Adjust the limits to match the aspect ratio of the drawing area.
+            var displayAspect = Math.abs(height / width);
+            var requestedAspect = Math.abs(( this.ybottom-this.ytop ) / ( this.xright-this.xleft ));
+            var excess;
+            excess = (this.ybottom-this.ytop) * (displayAspect/requestedAspect - 1);
+            this.ybottom += excess/2;
+            this.ytop -= excess/2;
+
+            if(this.ytop < 3)
+            {
+                this.ytop = 3;
+                this.ybottom = -3;
+                excess = (this.xright-this.xleft) * (requestedAspect/displayAspect - 1);
+                this.xright += excess/2;
+                this.xleft -= excess/2;
+            }
         }
+        
         var pixelWidth = Math.abs(( this.xright - this.xleft ) / width);
         var pixelHeight = Math.abs(( this.ybottom - this.ytop ) / height);
         this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
