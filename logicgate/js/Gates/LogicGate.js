@@ -19,6 +19,7 @@ class LogicGate
 
         this.visited = false;
         this.updated = false;
+        this.spawner = false;
     }
 
     /**

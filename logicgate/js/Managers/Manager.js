@@ -45,8 +45,11 @@ class Manager
         requestAnimationFrame(this.Update.bind(this));
 
         for(let i = 0, length = this.canvases.length; i < length; i++)
+        {
             //Canvas.canvasDiv.answerSpan.Holder
             this.canvases[i].width = this.canvases[i].parentElement.parentElement.parentElement.clientWidth-40;
+            //this.canvases[i].height = window.innerHeight < 600 ? window.innerHeight * 0.8: 600; //TODO get height working with scaling too
+        }
 
         //Render each circuit
         for(let i = 0, length = this.circuits.length; i < length; i++)

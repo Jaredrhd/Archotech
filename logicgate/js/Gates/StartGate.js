@@ -21,10 +21,10 @@ class StartGate extends LogicGate
             this.outgoingNode.outgoingConnections[i].gate.parent.UpdateCharge();
     }
 
-    SelectedUpdate(stillDragging, gateDroppedOn)
+    SelectedUpdate(stillDragging, gateDroppedOn, justSpawned)
     {
         //For dragging the start gate
-        if(stillDragging && Input.GetKey("control"))
+        if((stillDragging && Input.GetKey("control")) || justSpawned)
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
             this.outgoingNode.dragWire.mousePos = null;
