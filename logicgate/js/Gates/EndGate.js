@@ -1,8 +1,8 @@
 class EndGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, circuit)
+    constructor(pos = {x:0, y:0}, scale = 0.5, circuit, charge = false)
     {
-        super(pos, circuit);
+        super(pos, scale);
         this.incomingNodes = [new IncomingNode(this.pos, circuit, this)];
     }
 
@@ -30,26 +30,6 @@ class EndGate extends LogicGate
         this.visited = true;
         this.charge = this.incomingNodes[0].incomingConnection.parent.charge;
         this.updated = true;
-    }
-
-    Draw(graphics)
-    {
-        graphics.save();
-        graphics.lineWidth += 0.005;
-        graphics.translate(this.pos.x,this.pos.y);
-        graphics.scale(0.5,0.5);
-
-        if(this.charge)
-            graphics.fillStyle = "green";
-        else
-            graphics.fillStyle = "black";
-
-        if(this.Correct())
-            this.DrawCorrect(graphics);
-        else
-            this.DrawBroken(graphics);
-        
-        graphics.restore();
     }
 
     DrawBroken(graphics)

@@ -48,7 +48,6 @@ class Wire extends LogicGate
         //calculate distances to mouse or node
         let distances = (this.connectionTo == null) ? super.GetXYDistanceToPoint(this.mousePos) : super.GetXYDistanceToPoint(this.connectionTo.pos);
 
-
         //COMMENT OUT THIS SECTION FOR FIXED AMOUNT OF BENDS
         //START BENDS---------------------------------------------------------------------------------------------------------------------------------
         //Determine whether to add dynamic bends based on distance 
@@ -63,9 +62,7 @@ class Wire extends LogicGate
 
         if(Math.abs(distances.x) < 1 || Math.abs(distances.y) < 1)
             bends = 2
-        if(manhattanDistance > 12)
-            bends = 4;
-        else if(manhattanDistance > 5 || (startPos.x+0.1) > endPos.x) //Force to be at least three if we have to go backwards
+        else if((startPos.x+0.1) > endPos.x) //Force to be at least three if we have to go backwards
             bends = 3;
 
         //END BENDS---------------------------------------------------------------------------------------------------------------------------------

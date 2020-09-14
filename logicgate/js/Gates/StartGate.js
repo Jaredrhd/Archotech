@@ -1,8 +1,8 @@
 class StartGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, circuit, charge = false)
+    constructor(pos = {x:0, y:0}, scale = 0.5, circuit, charge = false)
     {
-        super(pos, circuit);
+        super(pos, scale);
         this.outgoingNode = new OutgoingNode(this.pos, circuit, this);
 
         this.charge = charge;
@@ -44,27 +44,9 @@ class StartGate extends LogicGate
         return this.outgoingNode.outgoingConnections.length > 0;
     }
 
-    Draw(graphics)
-    {
-        graphics.save();
-        graphics.lineWidth += 0.005;
-        graphics.translate(this.pos.x,this.pos.y);
-        graphics.scale(0.5,0.5);
-
-        if(this.charge)
-            graphics.fillStyle = "green";
-        else
-            graphics.fillStyle = "black";
-
-        if(this.Correct())
-            this.DrawCorrect(graphics);
-        else
-            this.DrawBroken(graphics);
-        graphics.restore();
-    }
-
     DrawBroken(graphics)
     {
+        graphics.fillStyle = "white";
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
         graphics.closePath();

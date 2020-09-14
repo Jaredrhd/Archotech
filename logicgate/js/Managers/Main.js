@@ -13,39 +13,12 @@ class Main
         this.canvas.onmousemove = Input.UpdateMousePos.bind(this);
         this.canvas.onmouseleave = this.OnCanvasLeave.bind(this);
         this.canvas.onmouseenter = this.OnCanvasEnter.bind(this);
-
+        
         //Circuit stuff
         this.circuit = Array();
+        this.sidebar = new Sidebar(this.coords);
 
-        let startGate = new StartGate({x:-3,y:2.5}, this.circuit, true);
-        this.circuit.push(startGate);
-
-        let endGate = new EndGate({x:2,y:0}, this.circuit);
-        this.circuit.push(endGate);
-
-        let bufferGate = new BufferGate({x:-3,y:1}, this.circuit);
-        this.circuit.push(bufferGate);
-        
-        let notGate = new NotGate({x:-3,y:0}, this.circuit);
-        this.circuit.push(notGate);
-
-        let andGate = new AndGate({x:-3,y:-1}, this.circuit);
-        this.circuit.push(andGate);
-
-        let nandGate = new NandGate({x:-3,y:-2.5}, this.circuit);
-        this.circuit.push(nandGate);
-
-        let orGate = new OrGate({x:-1,y:2.5}, this.circuit);
-        this.circuit.push(orGate);
-
-        let norGate = new NorGate({x:-1,y:1}, this.circuit);
-        this.circuit.push(norGate);
-
-        let xorGate = new XorGate({x:-1,y:0}, this.circuit);
-        this.circuit.push(xorGate);
-
-        let xnorGate = new XnorGate({x:-1,y:-1}, this.circuit);
-        this.circuit.push(xnorGate);
+        this.circuit.push(this.sidebar);
 
         //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit, this.coords);
@@ -56,6 +29,12 @@ class Main
 
     Render()
     {
+        //Apply limits to canvas, graphics
+        this.ApplyLimits(this.graphics, true);
+
+        if(this.circuit.length == 1)
+            this.CreateAllGates();
+
         //Save
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
@@ -63,9 +42,6 @@ class Main
         //Set color
         this.graphics.fillStyle = "white";  // background color
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
-
-        //Apply limits to canvas, graphics
-        this.ApplyLimits(this.graphics, true);
         
         let time = this.timer - Date.now();
         //First Update the the charges
@@ -80,8 +56,7 @@ class Main
         for(let i = 0; i < this.circuit.length; ++i)
         {
             //Only update gates if we are focused on canvas
-            if(this.canvasFocused)
-                this.circuit[i].Update();
+            this.circuit[i].Update();
             
             //Draw Wires
             if(this.circuit[i] instanceof Wire)
@@ -102,6 +77,62 @@ class Main
         
         //restore
         this.graphics.restore();
+    }
+
+    CreateAllGates()
+    {
+        let spawnerSize = 0.65;
+        let startGate = new StartGate({x: this.coords.xleft + 0.75, y:2.65}, 0.5, this.circuit, true);
+        startGate.spawner = true;
+        this.circuit.push(startGate);
+
+        let endGate = new EndGate({x: this.coords.xleft + 1.25,y:2.65}, 0.5, this.circuit);
+        this.circuit.push(endGate);
+        endGate.spawner = true;
+
+        let bufferGate = new BufferGate({x: this.coords.xleft + 1,y:1.5}, spawnerSize, this.circuit);
+        this.circuit.push(bufferGate);
+        bufferGate.spawner = true;
+        
+        let notGate = new NotGate({x: this.coords.xleft + 1,y:0}, spawnerSize, this.circuit);
+        this.circuit.push(notGate);
+        notGate.spawner = true;
+
+        let andGate = new AndGate({x: this.coords.xleft + 1,y:-1}, spawnerSize, this.circuit);
+        this.circuit.push(andGate);
+        andGate.spawner = true;
+
+        let nandGate = new NandGate({x: this.coords.xleft + 1,y:-2.5}, spawnerSize, this.circuit);
+        this.circuit.push(nandGate);
+        nandGate.spawner = true;
+
+        let orGate = new OrGate({x: this.coords.xleft + 1,y:2.5}, spawnerSize, this.circuit);
+        this.circuit.push(orGate);
+        orGate.spawner = true;
+
+        let norGate = new NorGate({x: this.coords.xleft + 1,y:1}, spawnerSize, this.circuit);
+        this.circuit.push(norGate);
+        norGate.spawner = true;
+
+        let xorGate = new XorGate({x: this.coords.xleft + 1,y:0}, spawnerSize, this.circuit);
+        this.circuit.push(xorGate);
+        xorGate.spawner = true;
+
+        let xnorGate = new XnorGate({x: this.coords.xleft + 1,y:-1}, spawnerSize, this.circuit);
+        this.circuit.push(xnorGate);
+        xnorGate.spawner = true;
+
+        this.sidebar.AddSpawner(startGate);
+        this.sidebar.AddSpawner(endGate);
+        this.sidebar.AddSpawner(bufferGate);
+        this.sidebar.AddSpawner(notGate);
+        this.sidebar.AddSpawner(andGate);
+        this.sidebar.AddSpawner(nandGate);
+        this.sidebar.AddSpawner(orGate);
+        this.sidebar.AddSpawner(norGate);
+        this.sidebar.AddSpawner(xorGate);
+        this.sidebar.AddSpawner(xnorGate);
+        this.sidebar.Update();
     }
 
     UpdateCircuitCharge()

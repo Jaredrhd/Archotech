@@ -24,7 +24,7 @@ class SelectionManager
                 {
                     //Get a the spawner constructor and spawn it
                     let spawnerClass = this.selected.constructor;
-                    this.selected = new spawnerClass(Input.GetMousePos(), this.circuit);
+                    this.selected = new spawnerClass(Input.GetMousePos(), undefined, this.circuit);
                     //Add it to the circuit
                     this.circuit.push(this.selected);
                     this.justSpawned = true;

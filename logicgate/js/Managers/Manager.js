@@ -17,7 +17,7 @@ class Manager
             //Create canvas
             let canvas = document.createElement("canvas");
             canvas.width = "800";
-            canvas.height = "600";
+            canvas.height = "800";
             canvas.style = "display:block";
 
             //Add canvas to div

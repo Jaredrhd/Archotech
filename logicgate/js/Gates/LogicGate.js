@@ -2,14 +2,17 @@ class LogicGate
 {
     /**
      * @param {pos} Object {x,y} position
+     * @param {scale} int scale of the logic gate
+     * 
      */
-    constructor(pos= {x:0, y:0})
+    constructor(pos= {x:0, y:0}, scale = 1)
     {
         this.charge = false;
         this.incomingNodes = Array();
         this.outgoingNodes = Object();
 
         this.pos = pos;
+        this.scale = scale;
 
         this.radius = 0.55;
         this.selectable = true;
@@ -150,7 +153,32 @@ class LogicGate
      */
     Draw(graphics)
     {
-        //Draw an incorrect node to force the use of a proper gate rather then the LogicGate
+
+        graphics.save();
+        graphics.translate(this.pos.x,this.pos.y);
+        graphics.scale(this.scale,this.scale);
+
+        if(this.charge)
+            graphics.fillStyle = "green";
+        else
+            graphics.fillStyle = "black";
+
+        if(this.Correct())
+            this.DrawCorrect(graphics);
+        else
+            this.DrawBroken(graphics);
+
+        graphics.restore();
+    }
+
+    DrawCorrect()
+    {
+        //Draw an incorrect node to force the use of a proper draw gate function rather then the LogicGate Draw Correct
+        DrawBroken();
+    }
+
+    DrawBroken()
+    {
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.8 * Math.PI,  1.8 * Math.PI);
         graphics.stroke();
@@ -161,9 +189,11 @@ class LogicGate
      */
     DrawNodes(graphics)
     {
+        graphics.save();
         this.outgoingNodes.Draw(graphics);
 
         for(let i = 0; i < this.incomingNodes.length;i++)
             this.incomingNodes[i].Draw(graphics);
+        graphics.restore();
     }
 }

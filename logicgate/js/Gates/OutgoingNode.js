@@ -56,8 +56,8 @@ class OutgoingNode extends LogicGate
 
     UpdatePos()
     {
-        this.pos.x = this.parentOffset.x + this.parent.pos.x;
-        this.pos.y = this.parentOffset.y + this.parent.pos.y;
+        this.pos.x = this.parentOffset.x * this.parent.scale + this.parent.pos.x;
+        this.pos.y = this.parentOffset.y * this.parent.scale + this.parent.pos.y;
     }
 
     Draw(graphics)
@@ -68,6 +68,7 @@ class OutgoingNode extends LogicGate
 
         //Move to pos and scale
         graphics.translate(this.pos.x,this.pos.y);
+        graphics.scale(this.parent.scale,this.parent.scale);
 
         //Draw circle
         graphics.beginPath();

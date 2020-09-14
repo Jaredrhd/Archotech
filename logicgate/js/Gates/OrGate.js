@@ -1,8 +1,8 @@
 class OrGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, circuit)
+    constructor(pos = {x:0, y:0}, scale = 1, circuit, charge = false)
     {
-        super(pos);
+        super(pos, scale);
 
         this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-0.85,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-0.85,y:-0.25})];
         this.outgoingNodes = new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0});
@@ -25,20 +25,7 @@ class OrGate extends LogicGate
 
     Draw(graphics)
     {
-        graphics.save();
-        graphics.translate(this.pos.x,this.pos.y);
-
-        if(this.charge)
-            graphics.fillStyle = "green";
-        else
-            graphics.fillStyle = "black";
-
-        if(this.Correct())
-            this.DrawCorrect(graphics);
-        else
-            this.DrawBroken(graphics);
-
-        graphics.restore();
+        super.Draw(graphics);
         super.DrawNodes(graphics);
     }
 
