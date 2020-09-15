@@ -7,6 +7,7 @@ class Main {
         this.modifyTreeTools = document.getElementById(canvas.id+":modify-tree-tools");
         this.answerQuestionTools = document.getElementById(canvas.id+":answer-question-tools");
         this.nodeValueInput = document.getElementById(canvas.id+":node-value");
+        this.navbar = document.querySelector('[aria-controls="nav-drawer"]');
         // this.nodeValueInputTool = document.getElementById("node-value-tool");
         this.randNodeValueCheckbox = document.getElementById(canvas.id+":random-node-value");
         this.randNodeValueTools = document.getElementById(canvas.id+":random-node-value-tools");
@@ -21,9 +22,16 @@ class Main {
         //#region BOARD MISC
         this.canvas = canvas;
         this.context = this.canvas.getContext("2d");
+        this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
+        this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
+        this.boardThickness = Math.round(this.canvasWidth * 1/350);
+        this.nodeThickness = this.boardThickness + 0.25;
+        this.canvas.style.border = this.boardThickness + "px solid black";
         this.board = null;
-        this.ROWS = 13;
         this.COLS = 13;
+        this.ROWS = 13;
         /** DRAGGING */
         this.prevX = null;
         this.prevY = null;
@@ -86,19 +94,23 @@ class Main {
         this.context.save();
 
         this.context.fillStyle = "white";
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         
         this.context.restore();
 
         /** Redraw the tree */
-        for(const node of this.tree.nodeArray) {
-            node.draw(node.parent, node.cellCoords.x, node.cellCoords.y)
+        if(this.tree) {
+            for(const node of this.tree.nodeArray) {
+                node.draw(node.parent, node.cellCoords.x, node.cellCoords.y)
+            }
         }
 
         this.board.drawGrid();
     }
 
     initListeners() {
+        window.addEventListener("resize", this.expandCanvas.bind(this));
+        this.navbar.addEventListener("click", this.navbarClicked.bind(this));
         this.canvas.addEventListener("click", this.onBoardClick.bind(this));
         this.canvas.addEventListener("mousemove", this.onBoardHover.bind(this));
         this.canvas.addEventListener("mouseleave", this.onBoardExit.bind(this));
@@ -113,6 +125,27 @@ class Main {
         this.addRootButton.addEventListener("click", this.addRoot.bind(this));
         this.removeNodeButton.addEventListener("click", this.removeNodeAndChildren.bind(this));
         this.editNodeValueButton.addEventListener("click", this.editNodeValue.bind(this));
+    }
+
+    expandCanvas() {
+        this.canvas.width = 700;
+        this.canvas.height = 700;
+        this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
+        this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
+
+        this.boardThickness = Math.round(this.canvasWidth * 1/350);
+        this.nodeThickness = this.boardThickness + 0.25;
+
+        this.canvas.style.border = this.boardThickness + "px solid black";
+
+        this.board.recalculateCellDimensions();
+        this.redrawCanvas();
+    }
+
+    navbarClicked() {
+        setTimeout(this.expandCanvas.bind(this), 500);
     }
 
     randNodeValueChecked(checkbox) {

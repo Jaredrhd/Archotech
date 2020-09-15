@@ -18,7 +18,7 @@ class Node {
     draw(parent, cellX, cellY) { 
         this.main.context.save();
         
-        this.main.context.lineWidth = 2.25;
+        this.main.context.lineWidth = this.main.nodeThickness;
         this.main.context.beginPath();
 
         this.cellCoords.x = cellX;
@@ -28,7 +28,7 @@ class Node {
 
         this.main.context.arc(this.boardCoords.x, this.boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node circle
 
-        let fontSize = String(Math.floor(Math.min(this.main.board.cellWidth, this.main.board.cellHeight)) / 2) + "px";
+        let fontSize = Math.floor(this.main.board.cellWidth / 2) + "px";
 
         this.main.context.font = fontSize + " Arial";
         this.main.context.textAlign = "center"; 
@@ -60,7 +60,7 @@ class Node {
     drawOutline(lastValidCellCoords) {
         this.main.context.save();
 
-        this.main.context.lineWidth = 2.25;
+        this.main.context.lineWidth = this.main.nodeThickness;
         this.main.context.setLineDash([3, 3]);
 
         this.main.context.beginPath();
@@ -111,7 +111,7 @@ class Node {
 
         this.main.context.save();
 
-        this.main.context.lineWidth = 2.25;
+        this.main.context.lineWidth = this.main.nodeThickness;
         this.main.context.beginPath();
 
         /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */

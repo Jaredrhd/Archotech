@@ -55,7 +55,7 @@ class qtype_trees_renderer extends qtype_renderer {
         if($question->q_type == "traversal") {
             $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='$question->lecturer_tree' bstvalues=''", $html);
             $label = $question->preorder !== "" ? "Pre-order Traversal" : ($question->inorder !== "" ? "In-order Traversal" : "Post-order Traversal");
-            $html = str_replace("<label updateid for='ANSWER_ID'></label>", "<label updateid for='ANSWER_ID'>$label</label>", $html);
+            $html = str_replace("<label updateid for='ANSWER_ID' class='no-select'></label>", "<label updateid for='ANSWER_ID' class='no-select'>$label</label>", $html);
         }
         else if($question->q_type == "bst") {
             $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='' bstvalues='$question->bstvalues'", $html);

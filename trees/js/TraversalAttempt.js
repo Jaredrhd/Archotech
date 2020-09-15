@@ -17,6 +17,8 @@ class TraversalAttempt {
             this.main.buildTreeFromString(this.main.databaseMisc.treestring);
         }
         
+        this.answerBox.style.width = document.getElementsByTagName("canvas").width;
+        
         // this.answerBox.readOnly = true;
         this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
         this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
@@ -60,7 +62,7 @@ class TraversalAttempt {
                     else {
                         this.validInput = false;
                         answerBox.style.outlineColor = "#FF0000";
-                        this.invalidAnswerValue.innerHTML = "Invalid node value(s)."
+                        this.invalidAnswerValue.innerHTML = "Invalid node value(s).";
                         this.invalidAnswerIcon.style.display = "flex";
                     }
                 }
