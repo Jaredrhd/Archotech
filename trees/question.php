@@ -36,6 +36,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_trees_question extends question_graded_automatically_with_countback {
 
+    public $propertiesFraction = 0; // Used to get the result of a properties attempt when displaying the correct response on review
+    public $resultString = '';
+
     public function get_expected_data() {
         // TODO.
         return array('answer' => PARAM_RAW, 'order' => PARAM_RAW);
@@ -88,6 +91,9 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         else if($this->q_type == 'bst') {
             $fraction = $this->grade_bst($response);
         }
+        else if($this->q_type == "properties") {
+            $fraction = $this->grade_properties($response);
+        }
 
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
@@ -118,5 +124,158 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
         if($answer === $this->bst_string) $result = 1;
 
         return $result;
+    }
+
+    public function grade_properties(array $response) {
+        if($this->properties_string === "") return 1; // If the lecturer didn't select any properties or the tree has no nodes (accounted for in js on lecturer's side) there is nothing to answer
+        
+        $result = 0;
+        $num_items = 0; // Total number of property values student had to enter
+        $num_items_correct = 0;
+        $answer = $response["answer"];
+
+        $this->resultString = $this->generateResultString($answer);
+
+        $student_answer = $this->getPropertiesAnswerString($answer);
+        $model_answer = $this->getPropertiesAnswerString($this->properties_string);
+
+        $split_result_string = explode("#", $result_string);
+
+        $split_student_answer = explode("#", $student_answer);
+        $split_model_answer = explode("#", $model_answer);
+
+        $num_items = count($split_model_answer);
+
+        // echo "<script>console.log('$result_string')</script>";
+        // echo "<script>console.log('student:$student_answer')</script>";
+        // echo "<script>console.log('model:$model_answer')</script>";
+
+        // echo "<script>console.log('num_items:$num_items')</script>";
+
+        // echo "<script>console.log('".json_encode($split_student_answer)."')</script>";
+
+        $studentNodeEntryInfo; // All info for a specific node entry for a node property (node value, node order and actual node property value for that node) 
+        $studentNodeEntryPropertyValue; // The actual property value that the student entered for this node
+        
+        $modelNodeEntryInfo;
+        $modelNodeEntryPropertyValue;
+
+        for($i = 0; $i < $num_items; $i++) {
+            $studentNodeEntryInfo = explode(":", $split_student_answer[$i]);
+            $modelNodeEntryInfo = explode(":", $split_model_answer[$i]);
+            
+            if(count($modelNodeEntryInfo) > 1) { // Node property entry
+                $studentNodeEntryPropertyValue = $studentNodeEntryInfo[1];
+                $modelNodeEntryPropertyValue = $modelNodeEntryInfo[1];
+
+                if($studentNodeEntryPropertyValue === $modelNodeEntryPropertyValue) { // TODO: Possibly revise: check first entry matches as well?
+                    $num_items_correct++;
+                }
+            }
+            else { // Tree property (so just a single value)
+                if($studentNodeEntryInfo[0] === $modelNodeEntryInfo[0]) {
+                    $num_items_correct++;
+                }
+            }
+        }
+
+        $result = $num_items_correct / $num_items;
+
+        $this->propertiesFraction = $result;
+
+        return $result;
+    }
+
+    /** Returns a combined string with all requested properties separated by # */
+    public function getPropertiesAnswerString($answer) {
+        $string = '';
+        
+        $propertyName = '';
+        $propertyString = '';
+        $properties = explode("|", $answer);
+
+        foreach($properties as $property) {
+            $propertyName = explode(".", $property)[0];
+            $propertyString = explode(".", $property)[1];
+
+            if($propertyString === "") $propertyString = "<>"; // No answer for tree property
+
+            if($property === end($properties)) {
+                $string .= $propertyString;
+            }
+            else {
+                $string .= $propertyString . "#";
+            }
+        }
+
+        return $string;
+    }
+
+    /** Generates a string where there is a 0 or 1 after each property / node value indicating whether the student input the correct answer (1) or not (0) */
+    public function generateResultString($answer) {
+        $split_student_answer = explode("|", $answer);
+        $split_model_answer = explode("|", $this->properties_string);
+
+        $student_property_info = '';
+        $student_node_property_info = '';
+        $student_node_value_and_order = '';
+        $student_node_property_value = '';
+
+        $model_property_info = '';
+        $model_node_property_info = '';
+        $model_node_value_and_order = '';
+        $model_node_property_value = '';
+
+        $result_string = '';
+
+        for($i = 0; $i < count($split_model_answer); $i++) { // For each property
+            $student_property_info = explode(".", $split_student_answer[$i]);
+            $student_node_property_info = explode("#", $student_property_info[1]);
+
+            $model_property_info = explode(".", $split_model_answer[$i]);
+            $model_node_property_info = explode("#", $model_property_info[1]);
+
+            $result_string .= $student_property_info[0] . "."; // Add property name to result string
+
+            for($j = 0; $j < count($model_node_property_info); $j++) {
+                $student_node_value_and_order = explode(":", $student_node_property_info[$j])[0];
+                $model_node_value_and_order = explode(":", $model_node_property_info[$j])[0];
+
+                if(count(explode(":", $student_node_property_info[$j])) === 1 && count(explode(":", $model_node_property_info[$j])) === 1) { // Tree property (so just a single value not a string of colon separated nodes)
+                    if($student_node_value_and_order === $model_node_value_and_order) { // Correct tree property value
+                        $result_string .= "1|";
+                    }
+                    else { // Incorrect tree property value
+                        $result_string .= "0|";
+                    }
+                }
+                else { // Node property
+                    $student_node_property_value = explode(":", $student_node_property_info[$j])[1];
+                    $model_node_property_value = explode(":", $model_node_property_info[$j])[1];
+
+                    if($student_node_property_value === $model_node_property_value) { // Correct node property value
+                        $result_string .= $student_node_value_and_order . ":1";
+                    }
+                    else { // Incorrect node property value
+                        $result_string .= $student_node_value_and_order . ":0";
+                    }
+
+                    if($j !== count($model_node_property_info) - 1) {
+                        $result_string .= "#";
+                    }
+                    else {
+                        if($i !== count($split_model_answer) - 1) {
+                            $result_string .= "|";
+                        }
+                    }
+                }
+            }
+        }
+
+        // echo "<script>console.log('student:".json_encode($split_student_answer)."')</script>";
+        // echo "<script>console.log('model:".json_encode($split_model_answer)."')</script>";
+
+        // echo "<script>console.log('$result_string');</script>";
+        return $result_string;
     }
 }
