@@ -208,7 +208,6 @@ class PropertiesQuestion {
 
     /** Called when the property answer strings are updated. Serializes the property answers into one answer string */
     serializePropertyAnswers() {
-        console.log(this.main.tree.nodeArray);
         let string = "";
         
         let checkedPropertyInfo;

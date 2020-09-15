@@ -88,6 +88,7 @@ class PropertiesAttempt {
         if(this.main.databaseMisc.propertiescorrectness !== "") { // A marked record of what the student answered. Will have a value if we are showing the student whether they were correct
             this.populateResults();
             this.colourTreePropertyInputBoxes(); // Colour the tree property input boxes immediately. Colouring of node property input boxes handled when a node is actually selected
+            this.colourNodes(); // Fill the actual nodes with the student's results
         }
     }
 
@@ -102,6 +103,7 @@ class PropertiesAttempt {
         }
     }
 
+    /** Fill arrays with the student's results (correct / incorrect) for the requested tree and node properties */
     populateResults() {
         let properties = this.main.databaseMisc.propertiescorrectness.split("|");
         let propertyName;
@@ -138,7 +140,34 @@ class PropertiesAttempt {
         }
     }
 
-    /** Colours the node property input boxes indicating whether the answer was correct or not*/
+    /** Colours the actual nodes on the board indicating whether or not the student answered all node properties for that node correctly */
+    colourNodes() {
+        let key;
+
+        let nodePropertyInfo;
+        let nodePropertyName;
+        let nodePropertyNodeList;
+
+        let index;
+
+        for(const node of this.main.tree.nodeArray) {
+            key = node.value + "-" + node.orderPlaced;
+
+            for(const nodeProperty of this.nodePropertyResults) {
+                nodePropertyInfo = nodeProperty.split(".");
+                nodePropertyName = nodePropertyInfo[0];
+
+                nodePropertyNodeList = nodePropertyInfo[1].split("#");
+                index = nodePropertyNodeList.findIndex(nodeEntry => nodeEntry.split(":")[0] === key); // Find node in nodePropertyNodeList
+                
+                if(nodePropertyNodeList[index].split(":")[1] === "0") node.properties.correct = false; // The student input an incorrect property value for this node
+            }
+        }
+
+        this.main.redrawCanvas();
+    }
+
+    /** Colours the node property input boxes indicating whether the answer was correct or not */
     colourNodePropertyInputBoxes() {
         let key = this.main.selectedNode.value + "-" + this.main.selectedNode.orderPlaced;
 
@@ -241,22 +270,12 @@ class PropertiesAttempt {
     nodePropertyInputChanged(nodePropertyInput, nodePropertyName) {
         let newEntry = this.main.selectedNode.value + "-" + this.main.selectedNode.orderPlaced + ":" + nodePropertyInput.value; // Each entry is uniquely identified by the node value and the node order
 
-        if(this.propertyAnswers[nodePropertyName] !== "") { // If the current property string isn't empty
-            let answerArrayForProperty = this.propertyAnswers[nodePropertyName].split("#"); // Array of all entries for the current node property
-            let index = answerArrayForProperty.findIndex((nodeEntry) => nodeEntry.split(":")[0] === newEntry.split(":")[0]); // Check if the currently selected node already has an entry in the current node property string
+        let answerArrayForProperty = this.propertyAnswers[nodePropertyName].split("#"); // Array of all entries for the current node property
+        let index = answerArrayForProperty.findIndex((nodeEntry) => nodeEntry.split(":")[0] === newEntry.split(":")[0]); // Find the index of the new entry in the node property answer string identified with the new entry's node value and order
 
-            if(index !== -1) { // We've found an entry i.e. the currently selected node had previously been assigned a value for the current node property and so we must remove this previous value
-                answerArrayForProperty.splice(index, 1);
-                this.propertyAnswers[nodePropertyName] = answerArrayForProperty.join("#"); // Join remaining entries with a delimeter
-            }
-        }
+        answerArrayForProperty[index] = newEntry; // Replace the previosu entry matching the new entry's node order and value
+        this.propertyAnswers[nodePropertyName] = answerArrayForProperty.join("#"); // Update the property answer string for the current node property
 
-        if(this.propertyAnswers[nodePropertyName] !== "") {
-            newEntry = "#" + newEntry;
-        }
-
-        this.propertyAnswers[nodePropertyName] += newEntry;
-        this.propertyAnswers[nodePropertyName] = this.sortNodePropertyString(nodePropertyName);
         this.serializePropertyAnswers();
 
         if(this.selectedNodeHasAllProperties(this.main.selectedNode)) { // If the student has entered all requested node properties for the selected node, indicate this visually on the board
@@ -271,69 +290,12 @@ class PropertiesAttempt {
         // console.log(nodePropertyName + ": " + this.propertyAnswers[nodePropertyName]);
     }
 
-    /** Called whenever a node property string from propertyAnswers is updated. Returns a string sorted by the node orders of the node entries in the appropriate node property string */
-    sortNodePropertyString(nodePropertyName) {
-        let answerArrayForProperty = this.propertyAnswers[nodePropertyName].split("#");
-        let answerArrayForPropertyLength = answerArrayForProperty.length;
-        let sortedArray = [];
-        
-        let nodeEntry;
-        let nodeEntryOrder;
-
-        let index;
-
-        let currLowestNodeOrder;
-
-        currLowestNodeOrder = this.findNextLowestNodeOrder(answerArrayForProperty);
-
-        while(sortedArray.length !== answerArrayForPropertyLength) { // Sort entries in the current node property array by node order
-         
-            index = answerArrayForProperty.findIndex((item) => { // Find the index of the entry in the node property array with the current lowest node order
-                nodeEntry = item.split(":");
-                nodeEntryOrder = Number(nodeEntry[0].split("-")[1]);
-
-                return nodeEntryOrder === currLowestNodeOrder;
-            });
-
-            sortedArray.push(answerArrayForProperty[index]); // Add the entry with the current lowest node order to the sorted array
-            answerArrayForProperty.splice(index, 1); // Remove the entry with the current lowest node order from the node property array
-
-            currLowestNodeOrder = this.findNextLowestNodeOrder(answerArrayForProperty);
-        }
-
-        return sortedArray.join("#");
-    }
-
-    /** Loop through the entries in the current node property array and find the lowest node order */
-    findNextLowestNodeOrder(nodePropertyArray) {
-        let nodeEntry;
-        let nodeEntryOrder;
-
-        let currLowestNodeOrder = -1;
-
-        for(let i = 0; i < nodePropertyArray.length; i++) {
-            nodeEntry = nodePropertyArray[i].split(":");
-            nodeEntryOrder = Number(nodeEntry[0].split("-")[1]);
-
-            if(currLowestNodeOrder === -1) { // currNodeOrder hasn't been assigned a valid starting order yet
-                currLowestNodeOrder = nodeEntryOrder;
-            } 
-            else {
-                if(nodeEntryOrder < currLowestNodeOrder) { // If there is a lower node order, replace currNodeOrder with that value
-                    currLowestNodeOrder = nodeEntryOrder;
-                }
-            }
-        }
-
-        return currLowestNodeOrder;
-    }
-
     /** Called when the HTML for the properties question is being configured. Fills up every requested node property with all existing nodes but empty property values so that even if the student doesn't answer anything, their submission can still be compared to the model answer */
     fillIntialNodePropertyAnswers() {
         let string = "";
 
         for(const nodeProperty of this.requestedNodeProperties) {
-            for(const node of this.main.tree.nodeArray) {
+            for(const node of this.main.tree.nodeArray) { // Nodes in nodeArray are arranged according to their order placed
                 string = node.value + "-" + node.orderPlaced + ":";
                 
                 if(this.propertyAnswers[nodeProperty] === "") {
