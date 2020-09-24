@@ -22,10 +22,8 @@ class Main {
         //#region BOARD MISC
         this.canvas = canvas;
         this.context = this.canvas.getContext("2d");
-        this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
-        this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
-        this.canvas.width = this.canvasWidth;
-        this.canvas.height = this.canvasHeight;
+        this.canvasWidth = 700;
+        this.canvasHeight = 700;
         this.boardThickness = Math.round(this.canvasWidth * 1/350);
         this.nodeThickness = this.boardThickness + 0.25;
         this.canvas.style.border = this.boardThickness + "px solid black";
@@ -76,6 +74,8 @@ class Main {
     init() {
         this.board = new Board(this);
         this.board.drawGrid();
+
+        this.expandCanvas();
 
         this.initListeners();
 
@@ -130,10 +130,12 @@ class Main {
     expandCanvas() {
         this.canvas.width = 700;
         this.canvas.height = 700;
-        this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
-        this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
-        this.canvas.width = this.canvasWidth;
-        this.canvas.height = this.canvasHeight;
+        if(this.canvas.getBoundingClientRect().width > 0) { // Only reassign the canvas dimension if the canvas is valid already
+            this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
+            this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
+            this.canvas.width = this.canvasWidth;
+            this.canvas.height = this.canvasHeight;
+        }
 
         this.boardThickness = Math.round(this.canvasWidth * 1/350);
         this.nodeThickness = this.boardThickness + 0.25;
