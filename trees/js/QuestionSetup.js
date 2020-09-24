@@ -2,7 +2,7 @@ class QuestionSetup {
     constructor(main) {
         this.main = main;
 
-        this.trvQuestion = new TraversalQuestion(this.main);
+        this.traversalQuestion = new TraversalQuestion(this.main);
         this.bstQuestion = new BSTQuestion(this.main);
         this.propertiesQuestion = new PropertiesQuestion(this.main);
 
@@ -39,6 +39,7 @@ class QuestionSetup {
         switch(this.qType.value) {
             case this.main.qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
             case this.main.qTypes.BST: this.configureBstHTML(); break;
+            case this.main.qTypes.PROPERTIES: this.configurePropertyHTML(); break;        
         }
     }
 
@@ -46,7 +47,7 @@ class QuestionSetup {
         if(this.lecturerTree.value !== "") { // Rebuild a previously constructed tree
             this.main.buildTreeFromString(this.lecturerTree.value);
             this.main.addRootButton.style.display = "none";
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
             this.copyPasteTreeInput.value = this.lecturerTree.value;
         }
 
@@ -75,6 +76,23 @@ class QuestionSetup {
         this.main.modifyTreeTools.style.display = "none";
 
         this.main.bstTools.style.display = "flex";
+    }
+
+    configurePropertyHTML() {
+        this.createQuestionHeader.innerHTML = "Build Tree";
+
+        this.main.nodeValueInput.disabled = false;
+        this.main.nodeValueInput.value = "";
+        this.main.nodeValueInput.style.color = "#000000";
+
+        this.main.randNodeValueCheckbox.disabled = false;
+
+        this.main.canvas.style.display = "block";
+
+        this.main.toolbar.style.display = "flex";
+        this.main.modifyTreeTools.style.display = "block";
+        
+        this.main.answerQuestionTools.style.display = "none";
     }
 
     updateCurrentQuestion(newQuestion) {
@@ -132,7 +150,7 @@ class QuestionSetup {
         setTimeout( () => {
             this.main.buildTreeFromString(this.copyPasteTreeInput.value);
             this.main.addRootButton.style.display = "none";
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
             this.lecturerTree.value = this.copyPasteTreeInput.value;
         }, 1);
     }
@@ -148,7 +166,10 @@ class QuestionSetup {
 
     addRootEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();
@@ -156,7 +177,10 @@ class QuestionSetup {
 
     addChildEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();
@@ -164,7 +188,10 @@ class QuestionSetup {
 
     removeNodeEvent() {
         if(this.currQuestion.TRAVERSAL) {
-            this.trvQuestion.performTraversal();
+            this.traversalQuestion.performTraversal();
+        }
+        else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.updatePropertyAnswers();
         }
 
         this.treeToString();

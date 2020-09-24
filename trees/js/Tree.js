@@ -14,12 +14,10 @@ class Tree {
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+            this.nodeArray = [this.root];
+            this.numNodes = 1;
+            this.root.orderPlaced = this.numNodes;
         }
-
-        this.nodeArray = [this.root];
-
-        this.numNodes = 1;
-        this.root.orderPlaced = this.numNodes;
 
         this.string = "";
         this.childPos = "";
@@ -61,26 +59,33 @@ class Tree {
             parentNode.children.rightChild.parent = parentNode;
             newChild = parentNode.children.rightChild;
         }
-
-        this.nodeArray.push(newChild);
-
-        this.numNodes++;
-        newChild.orderPlaced = this.numNodes;
-
+        
         return newChild;
     }
 
     /** Returns the first node whose value (and potentially order) matches the argument(s) */
-    getNode(value, order=null) {
+    getNode(value, order = null) {
         for(const node of this.nodeArray) {
-            if(node.value === value) {
-                if(order) {
-                    if(node.orderPlaced === order) return node;
-                }
-                else {
-                    return node;
-                }
+            if(value && order) {
+                if(node.value === value && node.orderPlaced === order) return node;
             }
+            else if(value) {
+                if(node.value === value) return node;
+            }
+            else if(order) {
+                if(node.orderPlaced === order) return node;
+            }
+            else {
+                break; // Nothing specified - return null
+            }
+        }
+
+        return null;
+    }
+
+    getNodeByOrder(order) {
+        for(const node of this.nodeArray) {
+            if(node.orderPlaced === order) return node;
         }
 
         return null;
@@ -104,8 +109,16 @@ class Tree {
                 selectedNode.parent.children.rightChild = null;
             }
             this.numNodes--;
+
+            let currOrder = 0;
+            for(const node of this.nodeArray) { // Reset the order that each node was placed by starting at 1 for the root and incrementing by 1 (this is so that we can use getNodeByOrder in convertToString)
+                currOrder++;
+                node.orderPlaced = currOrder;
+            }
+
+            selectedNode = null;
         }
-        else {
+        else { // Deleting the root
             this.root = null;
             this.numNodes = 0;
         }
@@ -117,10 +130,10 @@ class Tree {
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
+            this.nodeArray.push(this.root);
+            this.numNodes = 1;
+            this.root.orderPlaced = this.numNodes;
         }
-        this.nodeArray.push(this.root);
-        this.numNodes = 1;
-        this.root.orderPlaced = this.numNodes;
     }
 
     /** TESTING */
@@ -163,6 +176,7 @@ class Tree {
         this.nodes = tempMatrix;
     }
 
+    /** Generates a string representation of the tree so that it can be reconstructed. Nodes are arranged by order placed */
     convertToString(node) {
         if(!node) return;
 
@@ -177,8 +191,7 @@ class Tree {
             this.string += "#";
         }
         
-        this.convertToString(node.children.leftChild);
-        this.convertToString(node.children.rightChild);
+        this.convertToString(this.getNode(null, node.orderPlaced + 1));
     }
 
     convertToStringForBST(nodeStack) {

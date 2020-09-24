@@ -11,7 +11,7 @@ class Node {
         this.parent = null;
         this.children = {leftChild: null, rightChild: null};
         this.orderPlaced;
-        this.properties = {hasAllProperties: false, height: false, depth: false, degree: false};
+        this.properties = {hasAllProperties: false, height: false, depth: false, degree: false, correct: true};
     }
 
     /** Draws a node on the canvas */
@@ -28,16 +28,34 @@ class Node {
 
         this.main.context.arc(this.boardCoords.x, this.boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node circle
 
+        if(!this.main.databaseMisc.lecturer && this.main.databaseMisc.qtype === this.main.qTypes.PROPERTIES) {
+            if(this.main.databaseMisc.propertiescorrectness !== "") { // Showing the student whether they are correct or not
+                
+                this.main.context.save();
+                this.main.context.globalAlpha = 0.55;
+
+                if(this.properties.correct) {
+                    this.main.context.fillStyle = "#a0eca5";
+                }
+                else {
+                    this.main.context.fillStyle = "#f0afaa";
+                }
+
+                this.main.context.fill();
+                this.main.context.restore();
+            }
+            else if(this.properties.hasAllProperties) { // During the attempt, if the student has entered values for all requested node properties for this node on a properties question
+                this.main.context.globalAlpha = 0.5;
+                this.main.context.strokeStyle = "#2db1dc";
+            }
+        }
+
         let fontSize = Math.floor(this.main.board.cellWidth / 2) + "px";
 
         this.main.context.font = fontSize + " Arial";
         this.main.context.textAlign = "center"; 
         this.main.context.textBaseline = "middle";
 
-        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties) { // If the student has entered values for all requested node properties for this node on a properties question
-            this.main.context.globalAlpha = 0.5;
-            this.main.context.strokeStyle = "#2db1dc";
-        }
         this.main.context.fillText(this.value, this.boardCoords.x, this.boardCoords.y); // Draw node value
 
         if(this.selected) {
@@ -118,7 +136,7 @@ class Node {
         this.main.context.moveTo(this.nodeRadius*Math.cos(angleParent) + parentBoardCoords.x, this.nodeRadius*Math.sin(angleParent) + parentBoardCoords.y);
         this.main.context.lineTo(this.nodeRadius*Math.cos(angleChild) + childBoardCoords.x, this.nodeRadius*Math.sin(angleChild) + childBoardCoords.y);
 
-        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties) { // If the student has entered values for all requested node properties for this node on a properties question
+        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties && this.main.databaseMisc.propertiescorrectness === "") { // If the student has entered values for all requested node properties for this node on a properties question
             this.main.context.globalAlpha = 0.5;
             // this.main.context.strokeStyle = "green";
         }

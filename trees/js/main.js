@@ -17,6 +17,7 @@ class Main {
         /** The list of BST values shown to the student and lecturer */
         this.bstValueList = document.getElementById(canvas.id+":bst-values");
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
+        this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
 
         //#region BOARD MISC
@@ -183,7 +184,6 @@ class Main {
         else { // Tree instance already exists - will be true if the root node was removed
             this.tree.setNewRoot(newNodeValue);
         }
-
         this.addRootButton.style.display = "none";
 
         if(this.databaseMisc.lecturer) {
@@ -491,11 +491,13 @@ class Main {
         else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
-            if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
-                if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
+            if(this.tree) {
+                if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
 
-                while(this.tree.isDuplicateValue(newNodeValue)) {
-                    newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                    while(this.tree.isDuplicateValue(newNodeValue)) {
+                        newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                    }
                 }
             }
         }
@@ -540,6 +542,7 @@ class Main {
         this.redrawCanvas();
     }
 
+    /** Constructs a tree from the given string. Adds nodes to the tree in the order they were placed when the string was constructed */
     buildTreeFromString(string) {
         let temp = string;
         let tempArr = temp.split("#");

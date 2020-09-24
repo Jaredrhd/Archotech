@@ -34,7 +34,10 @@ class TraversalQuestion {
         if(this.main.setup.currQuestion.BST) {
             this.main.bstTools.style.display = "none";
         }
-
+        else if(this.main.setup.currQuestion.PROPERTIES){
+            this.main.propertyTools.style.display = "none";
+        }
+        
         this.main.setup.updateCurrentQuestion("TRAVERSAL");
     }
 
