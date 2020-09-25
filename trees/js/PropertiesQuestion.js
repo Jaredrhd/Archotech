@@ -265,11 +265,26 @@ class PropertiesQuestion {
     }
 
     getNodeHeight(node) {
-        return 999;
+        if(node.isLeaf()) return 0;
+
+        if(node.hasLeftChild() && node.hasRightChild()) {
+            return Math.max(1 + this.getNodeHeight(node.children.leftChild), 1 + this.getNodeHeight(node.children.rightChild));
+        }
+        else if(node.hasLeftChild()) {
+            return 1 + this.getNodeHeight(node.children.leftChild);
+        }
+        else {
+            return 1 + this.getNodeHeight(node.children.rightChild);
+        }
     }
 
     getNodeDepth(node) {
-        return 999;
+        let depth = 0;
+        while(node.parent) {
+            depth++;
+            node = node.parent;
+        }
+        return depth;
     }
 
     getNodeDegree(node) {

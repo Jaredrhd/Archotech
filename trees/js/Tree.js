@@ -11,10 +11,11 @@ class Tree {
 
         this.root = new Node(this.main, rootValue);
         this.root.parent = null;
+        this.nodeArray = [];
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
-            this.nodeArray = [this.root];
+            this.nodeArray.push(this.root);
             this.numNodes = 1;
             this.root.orderPlaced = this.numNodes;
         }
