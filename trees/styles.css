@@ -159,7 +159,7 @@
 
 canvas {
     background-color: white;    
-    display: block !important;
+    display: block;
     max-width: 700px;
     max-height: 700px;
     width: 100%;

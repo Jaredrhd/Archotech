@@ -131,7 +131,7 @@ class Main {
     expandCanvas() {
         this.canvas.width = 700;
         this.canvas.height = 700;
-        if(this.canvas.getBoundingClientRect().width > 0) { // Only reassign the canvas dimension if the canvas is valid already
+        if(this.canvas.getBoundingClientRect().width > 0) { // Only reassign the canvas dimension if the canvas is of width greater than 0
             this.canvasWidth = this.canvas.getBoundingClientRect().width - 4;
             this.canvasHeight = this.canvas.getBoundingClientRect().height - 4;
             this.canvas.width = this.canvasWidth;
