@@ -1,10 +1,11 @@
 class Sidebar
 {
-    constructor(coords, circuit)
+    constructor(coords, circuit, origin)
     {
         this.circuit = circuit;
         this.coords = coords;
         this.spawners = Array();
+        this.origin = origin;
 
         //Start,end, buffer, not and nand or nor xor xnor
         //this.enabledSpawners = [StartGate, EndGate, BufferGate, NotGate, AndGate, NandGate, OrGate, NorGate, XorGate, XnorGate];
@@ -21,7 +22,7 @@ class Sidebar
             let scale = (i == 0 || i == 1) ? 0.5 : 0.6;
             if(this.enabledSpawners[i])
             {
-                let gate = new this.enabledSpawners[i](undefined, scale, this.circuit);
+                let gate = new this.enabledSpawners[i](undefined, scale, this.circuit, this.origin);
                 gate.spawner = true;
                 this.spawners.push(gate);
                 this.circuit.push(gate);
@@ -165,7 +166,6 @@ class Sidebar
             {
                 
                 this.spawners[i].pos.y = yPos;
-                //this.spawners[i].pos.y = top - (i+forceOffset) * spacing;
                 this.spawners[i].pos.x = left + (i+forceOffset) * spacing;
             }
         }

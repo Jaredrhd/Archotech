@@ -5,13 +5,19 @@ class LogicGate
      * @param {scale} int scale of the logic gate
      * 
      */
-    constructor(pos= {x:0, y:0}, scale = 1)
+    constructor(position = {x:0, y:0}, scale = 1, origin = {x : 0, y : 0, offsetX : 0, offsetY : 0})
     {
         this.charge = false;
         this.incomingNodes = Array();
         this.outgoingNodes = Object();
 
-        this.pos = pos;
+        //The local position
+        this.pos = position;
+        this.origin = origin;
+
+        //The global position
+        this.position = position;
+        
         this.scale = scale;
 
         this.radius = 0.55;
@@ -42,11 +48,21 @@ class LogicGate
     SelectedUpdate()
     {
         let mousePos = Object.assign({}, Input.GetMousePos());
-        mousePos.x -= this.offset.x;
-        mousePos.y -= this.offset.y;
+        mousePos.x -= (this.offset.x);
+        mousePos.y -= (this.offset.y);
 
         //Set position
         this.pos = mousePos;
+    }
+
+    UpdatePosition()
+    {
+        //Dont shift spawners, they have their own update method in SideBar
+        if(this.spawner)
+            return;
+
+        this.position.x = this.pos.x + this.origin.x;
+        this.position.y = this.pos.y + this.origin.y;
     }
 
     /**
@@ -123,7 +139,7 @@ class LogicGate
      */
     GetDistanceToPoint(point)
     {
-        return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
+        return Math.sqrt(Math.pow(this.position.x - point.x,2) + Math.pow(this.position.y - point.y,2));
     }
 
     /**
@@ -131,7 +147,7 @@ class LogicGate
      */
     GetXYDistanceToPoint(point)
     {
-        return {x:  point.x - this.pos.x, y: point.y - this.pos.y};
+        return {x:  point.x - this.position.x, y: point.y - this.position.y};
     }
 
      /**
@@ -153,9 +169,9 @@ class LogicGate
      */
     Draw(graphics)
     {
-
         graphics.save();
-        graphics.translate(this.pos.x,this.pos.y);
+        this.UpdatePosition();
+        graphics.translate(this.position.x,this.position.y);
         graphics.scale(this.scale,this.scale);
 
         if(this.charge)

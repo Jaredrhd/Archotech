@@ -1,8 +1,8 @@
 class NandGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, scale = 0.8, circuit, charge = false)
+    constructor(pos = {x:0, y:0}, scale = 0.8, circuit, origin, charge = false)
     {
-        super(pos, scale);
+        super(pos, scale, origin);
 
         this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-1,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-1,y:-0.25})];
         this.outgoingNodes = new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0});

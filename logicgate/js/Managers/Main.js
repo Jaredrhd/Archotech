@@ -17,7 +17,7 @@ class Main
         
         //Circuit stuff
         this.circuit = Array();
-        this.sidebar = new Sidebar(this.coords, this.circuit);
+        this.sidebar = new Sidebar(this.coords, this.circuit, this.origin);
 
         //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
@@ -52,7 +52,6 @@ class Main
         this.sidebar.Draw(this.graphics);
         this.sidebar.Update();
 
-        this.graphics.translate(this.origin.x,this.origin.y);
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
@@ -69,26 +68,13 @@ class Main
         {
             //Wires and Nodes are drawn separately
             if(!(this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || this.circuit[i] instanceof OutgoingNode))
-            {
-                if(this.circuit[i].spawner)
-                {
-                    //Undo the origin offset and then draw
-                    this.graphics.translate(-this.origin.x,-this.origin.y);
-                    this.circuit[i].Draw(this.graphics);
-                    this.graphics.translate(this.origin.x,this.origin.y);
-                }
-                else
-                    this.circuit[i].Draw(this.graphics);
-            }
+                this.circuit[i].Draw(this.graphics);
         }
-
-        console.log(Input.GetMousePos());
 
         //Update the selection manager
         if(this.canvasFocused)
             this.selectionManager.Update();
 
-        
         //restore
         this.graphics.restore();
     }

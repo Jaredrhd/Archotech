@@ -61,8 +61,8 @@ class IncomingNode extends LogicGate
     //For updating the position of the node with an offset from the parent
     UpdatePos()
     {
-        this.pos.x = this.parentOffset.x * this.parent.scale + this.parent.pos.x;
-        this.pos.y = this.parentOffset.y * this.parent.scale + this.parent.pos.y;
+        this.pos.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
+        this.pos.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
     }
 
     SelectedUpdate()
