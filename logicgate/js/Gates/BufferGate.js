@@ -1,6 +1,6 @@
 class BufferGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, scale = 1, circuit, charge = false)
+    constructor(pos = {x:0, y:0}, scale = 0.8, circuit, charge = false)
     {
         super(pos, scale);
 

@@ -4,6 +4,7 @@ class Main
     {
         //Canvas coordinates
         this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
+        this.origin = {x : 0, y : 0, offsetX : 0, offsetY : 0};
 
         //Set up canvas properties
         this.pixelSize = 1;
@@ -16,12 +17,10 @@ class Main
         
         //Circuit stuff
         this.circuit = Array();
-        this.sidebar = new Sidebar(this.coords);
-
-        this.circuit.push(this.sidebar);
+        this.sidebar = new Sidebar(this.coords, this.circuit);
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords);
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
 
         this.timer = Date.now();
         this.timerUpdate = 250;
@@ -31,9 +30,6 @@ class Main
     {
         //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics, true);
-
-        if(this.circuit.length == 1)
-            this.CreateAllGates();
 
         //Save
         this.graphics.save();
@@ -52,6 +48,11 @@ class Main
             this.timer = Date.now() + this.timerUpdate;
         }
 
+        //Draw Sidebar and update the gates on it
+        this.sidebar.Draw(this.graphics);
+        this.sidebar.Update();
+
+        this.graphics.translate(this.origin.x,this.origin.y);
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
@@ -68,71 +69,28 @@ class Main
         {
             //Wires and Nodes are drawn separately
             if(!(this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || this.circuit[i] instanceof OutgoingNode))
-                this.circuit[i].Draw(this.graphics);
+            {
+                if(this.circuit[i].spawner)
+                {
+                    //Undo the origin offset and then draw
+                    this.graphics.translate(-this.origin.x,-this.origin.y);
+                    this.circuit[i].Draw(this.graphics);
+                    this.graphics.translate(this.origin.x,this.origin.y);
+                }
+                else
+                    this.circuit[i].Draw(this.graphics);
+            }
         }
+
+        console.log(Input.GetMousePos());
 
         //Update the selection manager
         if(this.canvasFocused)
             this.selectionManager.Update();
+
         
         //restore
         this.graphics.restore();
-    }
-
-    CreateAllGates()
-    {
-        let spawnerSize = 0.65;
-        let startGate = new StartGate({x: this.coords.xleft + 0.75, y:2.65}, 0.5, this.circuit, true);
-        startGate.spawner = true;
-        this.circuit.push(startGate);
-
-        let endGate = new EndGate({x: this.coords.xleft + 1.25,y:2.65}, 0.5, this.circuit);
-        this.circuit.push(endGate);
-        endGate.spawner = true;
-
-        let bufferGate = new BufferGate({x: this.coords.xleft + 1,y:1.5}, spawnerSize, this.circuit);
-        this.circuit.push(bufferGate);
-        bufferGate.spawner = true;
-        
-        let notGate = new NotGate({x: this.coords.xleft + 1,y:0}, spawnerSize, this.circuit);
-        this.circuit.push(notGate);
-        notGate.spawner = true;
-
-        let andGate = new AndGate({x: this.coords.xleft + 1,y:-1}, spawnerSize, this.circuit);
-        this.circuit.push(andGate);
-        andGate.spawner = true;
-
-        let nandGate = new NandGate({x: this.coords.xleft + 1,y:-2.5}, spawnerSize, this.circuit);
-        this.circuit.push(nandGate);
-        nandGate.spawner = true;
-
-        let orGate = new OrGate({x: this.coords.xleft + 1,y:2.5}, spawnerSize, this.circuit);
-        this.circuit.push(orGate);
-        orGate.spawner = true;
-
-        let norGate = new NorGate({x: this.coords.xleft + 1,y:1}, spawnerSize, this.circuit);
-        this.circuit.push(norGate);
-        norGate.spawner = true;
-
-        let xorGate = new XorGate({x: this.coords.xleft + 1,y:0}, spawnerSize, this.circuit);
-        this.circuit.push(xorGate);
-        xorGate.spawner = true;
-
-        let xnorGate = new XnorGate({x: this.coords.xleft + 1,y:-1}, spawnerSize, this.circuit);
-        this.circuit.push(xnorGate);
-        xnorGate.spawner = true;
-
-        this.sidebar.AddSpawner(startGate);
-        this.sidebar.AddSpawner(endGate);
-        this.sidebar.AddSpawner(bufferGate);
-        this.sidebar.AddSpawner(notGate);
-        this.sidebar.AddSpawner(andGate);
-        this.sidebar.AddSpawner(nandGate);
-        this.sidebar.AddSpawner(orGate);
-        this.sidebar.AddSpawner(norGate);
-        this.sidebar.AddSpawner(xorGate);
-        this.sidebar.AddSpawner(xnorGate);
-        this.sidebar.Update();
     }
 
     UpdateCircuitCharge()
@@ -175,22 +133,23 @@ class Main
 
         if (preserveAspect) 
         {
-            // Adjust the limits to match the aspect ratio of the drawing area.
-            var displayAspect = Math.abs(height / width);
-            var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
-            var excess;
-            excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
-            this.coords.ybottom += excess/2;
-            this.coords.ytop -= excess/2;
-
-            if(this.coords.ytop < 3)
-            {
-                this.coords.ytop = 3;
-                this.coords.ybottom = -3;
-                excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
-                this.coords.xright += excess/2;
-                this.coords.xleft -= excess/2;
-            }
+               // Adjust the limits to match the aspect ratio of the drawing area.
+            //    var displayAspect = Math.abs(height / width);
+            //    var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
+            //    var excess;
+               
+            //    excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
+            //    this.coords.ybottom += excess/2;
+            //    this.coords.ytop -= excess/2;
+   
+            //    if(this.coords.ytop < 3)
+            //    {
+            //        this.coords.ytop = 3;
+            //        this.coords.ybottom = -3;
+            //        excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
+            //        this.coords.xright += excess/2;
+            //        this.coords.xleft -= excess/2;
+            //    }
         }
         
         var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);

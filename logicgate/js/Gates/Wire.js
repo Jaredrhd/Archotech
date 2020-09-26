@@ -60,9 +60,7 @@ class Wire extends LogicGate
             manhattanDistance = Math.abs(manhattanDistance.x) + Math.abs(manhattanDistance.y);
         }
 
-        if(Math.abs(distances.x) < 1 || Math.abs(distances.y) < 1)
-            bends = 2
-        else if((startPos.x+0.1) > endPos.x) //Force to be at least three if we have to go backwards
+        if(startPos.x > endPos.x) //Force to be at least three if we have to go backwards
             bends = 3;
 
         //END BENDS---------------------------------------------------------------------------------------------------------------------------------

@@ -1,17 +1,18 @@
 class SelectionManager
 {
-    constructor(circuit, coords)
+    constructor(circuit, coords, origin)
     {
         this.circuit = circuit;
         this.selected = null;
         this.justSpawned = false;
 
         this.coords = coords;
+        this.origin = origin;
     }
 
     Update()
     {
-        console.log(Input.GetMousePos().x - (this.coords.xleft + 2) < 0);
+        //console.log(Input.GetMousePos().x - (this.coords.xleft + 2) < 0);
         //Check if we clicked
         if(Input.GetMouseButtonDown(0))
         {
@@ -24,7 +25,7 @@ class SelectionManager
                 {
                     //Get a the spawner constructor and spawn it
                     let spawnerClass = this.selected.constructor;
-                    this.selected = new spawnerClass(Input.GetMousePos(), undefined, this.circuit);
+                    this.selected = new spawnerClass(Input.GetMousePos(), 0.7, this.circuit);
                     //Add it to the circuit
                     this.circuit.push(this.selected);
                     this.justSpawned = true;
@@ -33,11 +34,30 @@ class SelectionManager
                 this.selected.offset.x -= this.selected.pos.x;
                 this.selected.offset.y -= this.selected.pos.y;
             }
+            else
+            {
+                this.selected = this.origin;
+                this.selected.offsetX = Input.GetMousePos().x - this.origin.x;
+                this.selected.offsetY = Input.GetMousePos().y - this.origin.y;
+            }
         }
         
-        //If we have selected the node, and the mouse is still held down, drag it
-        if(this.selected && Input.GetMouseButton(0))
+        //If we have selected the origin, pan the canvas instead
+        if(this.selected == this.origin && Input.GetMouseButton(0))
         {
+            let mousePos = Object.assign({}, Input.GetMousePos());
+            mousePos.x -= this.selected.offsetX;
+            mousePos.y -= this.selected.offsetY;
+    
+            //Set position
+            this.origin.x = mousePos.x;
+            this.origin.y = mousePos.y;
+
+        }
+        //If we have selected the node, and the mouse is still held down, drag it
+        else if(this.selected && Input.GetMouseButton(0))
+        {
+
             //If the selected update returns a gate, use it as the newly selected
             let newSelected = this.selected.SelectedUpdate(true, null, this.justSpawned);
             if(newSelected != null)
@@ -45,6 +65,11 @@ class SelectionManager
         }
         else if(this.selected)
         {
+            if(this.selected == this.origin )
+            {
+                this.selected = null; 
+                return;
+            }
             //Find the nearest gate to where we dropped
             let gate = this.GetNearestGate();
 

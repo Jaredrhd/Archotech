@@ -2,6 +2,8 @@ class StartGate extends LogicGate
 {
     constructor(pos = {x:0, y:0}, scale = 0.5, circuit, charge = false)
     {
+        //Force this from spawner to be 0.5
+        scale = 0.5;
         super(pos, scale);
         this.outgoingNode = new OutgoingNode(this.pos, circuit, this);
 
