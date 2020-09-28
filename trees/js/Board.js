@@ -2,8 +2,8 @@ class Board {
     constructor(main) {
         this.main = main;
 
-        this.cellWidth = this.main.canvas.width / this.main.COLS;
-        this.cellHeight = this.main.canvas.height / this.main.ROWS;
+        this.cellWidth = this.main.canvasWidth / this.main.COLS;
+        this.cellHeight = this.main.canvasHeight / this.main.ROWS;
         this.mouseX;
         this.mouseY;
         this.cellX;
@@ -16,12 +16,12 @@ class Board {
         for(let i = 1; i < this.main.ROWS; i++) {
             this.main.context.save();
 
-            this.main.context.lineWidth = 2;
+            this.main.context.lineWidth = this.main.boardThickness;
             this.main.context.globalAlpha = 0.125;
             this.main.context.setLineDash([2, 3]);
             this.main.context.beginPath();
             this.main.context.moveTo(0, this.cellHeight * i);
-            this.main.context.lineTo(this.main.canvas.width, this.cellHeight * i);
+            this.main.context.lineTo(this.main.canvasWidth, this.cellHeight * i);
             this.main.context.stroke();
 
             this.main.context.restore();
@@ -30,16 +30,21 @@ class Board {
         for(let j = 1; j < this.main.COLS; j++) {
             this.main.context.save();
 
-            this.main.context.lineWidth = 2;
+            this.main.context.lineWidth = this.main.boardThickness;
             this.main.context.globalAlpha = 0.125;
             this.main.context.setLineDash([2, 3]);
             this.main.context.beginPath();
             this.main.context.moveTo(this.cellWidth * j, 0);
-            this.main.context.lineTo(this.cellWidth * j, this.main.canvas.height);
+            this.main.context.lineTo(this.cellWidth * j, this.main.canvasHeight);
             this.main.context.stroke();
 
             this.main.context.restore();
         }
+    }
+
+    recalculateCellDimensions() {        
+        this.cellWidth = this.main.canvasWidth / this.main.COLS;
+        this.cellHeight = this.main.canvasHeight / this.main.ROWS;
     }
 
     canGrow() {

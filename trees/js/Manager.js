@@ -14,7 +14,7 @@ class Manager {
             }
             else {
                 canvas = document.getElementById(canvases[i].id);
-                this.updateHTMLElementIds(canvas, canvas.parentElement);
+                this.updateHTMLElementIds(canvas, canvas.parentElement.parentElement);
             }
 
             if(!canvas.getContext) {
