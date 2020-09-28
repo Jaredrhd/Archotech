@@ -11,7 +11,7 @@ class EndGate extends LogicGate
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
         //For dragging the start gate
-        if(stillDragging && (Input.GetKey("control") || this.incomingNodes[0].incomingConnection == null))
+        if(stillDragging && (Input.GetKey("control") || this.incomingNodes[0].incomingConnectionNode == null))
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
             this.incomingNodes[0].UpdatePos();
@@ -30,7 +30,7 @@ class EndGate extends LogicGate
     UpdateCharge()
     {
         this.visited = true;
-        this.charge = this.incomingNodes[0].incomingConnection.parent.charge;
+        this.charge = this.incomingNodes[0].incomingConnectionNode.parent.charge;
         this.updated = true;
     }
 

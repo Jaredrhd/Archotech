@@ -16,6 +16,10 @@ class OutgoingNode extends LogicGate
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
+        //If we clicked on an outgoing node that is a spawners node, return it
+        if(this.parent.spawner)
+            return this.parent;
+            
         //Make sure the drag wire is deleted each round
         this.dragWire.mousePos = null;
 
@@ -47,11 +51,21 @@ class OutgoingNode extends LogicGate
         this.circuit.push(wire);
     }
 
-    //Handles removing of the connection
+    //Handles removing of a single connection
     RemoveOutgoingConnection(gateWire)
     {
         this.outgoingConnections.splice(this.outgoingConnections.indexOf(gateWire),1);
         this.circuit.splice(this.circuit.indexOf(gateWire.wire),1);
+    }
+
+    RemoveAllOutgoingConnections()
+    {
+        //remove all outgoing connections
+        for(let i = this.outgoingConnections.length-1; i >= 0; --i)
+            this.circuit.splice(this.circuit.indexOf(this.outgoingConnections[i].wire),1);
+
+        //Set back to Array()
+        this.outgoingConnections = Array();;
     }
 
     UpdatePos()

@@ -12,7 +12,6 @@ class SelectionManager
 
     Update()
     {
-        //console.log(Input.GetMousePos().x - (this.coords.xleft + 2) < 0);
         //Check if we clicked
         if(Input.GetMouseButtonDown(0))
         {
@@ -23,17 +22,7 @@ class SelectionManager
                 //If the selected is a spawner
                 if(this.selected.spawner)
                 {
-                    //Get a the spawner constructor and spawn it
-                    let spawnerClass = this.selected.constructor;
-                    this.selected = new spawnerClass(undefined, 0.7, this.circuit, this.origin);
-                    
-                    //Set the position
-                    this.selected.pos.x = Input.GetMousePos().x - this.origin.x;
-                    this.selected.pos.y = Input.GetMousePos().y - this.origin.y;
-
-                    //Add it to the circuit
-                    this.circuit.push(this.selected);
-                    this.justSpawned = true;
+                    this.SpawnGate();
                 }
                 this.selected.offset = Object.assign({}, Input.GetMousePos());
                 this.selected.offset.x -= this.selected.pos.x;
@@ -62,11 +51,14 @@ class SelectionManager
         //If we have selected the node, and the mouse is still held down, drag it
         else if(this.selected && Input.GetMouseButton(0))
         {
-
             //If the selected update returns a gate, use it as the newly selected
             let newSelected = this.selected.SelectedUpdate(true, null, this.justSpawned);
             if(newSelected != null)
+            {
                 this.selected = newSelected;
+                if(newSelected.spawner)
+                    this.SpawnGate();
+            }
         }
         else if(this.selected)
         {
@@ -79,13 +71,34 @@ class SelectionManager
             let gate = this.GetNearestGate();
 
             //Don't return the same gate to itself      TODO Maybe connect to itself in future
-            if(gate === this.selected)
+            if(gate != null && (gate === this.selected || gate.spawner))
                 gate = null;
 
+            //Update the gate
             this.selected.SelectedUpdate(false, gate);
+
+            //Make sure the user did not drop a wire over the bar and If we are holding this over the left side bar, delete gate
+            if(!(this.selected instanceof OutgoingNode) && Input.GetMousePos().x - (this.coords.xleft + 1.5) < 0)
+                this.selected.DeleteGate(this.circuit);
+
             this.selected = null; 
             this.justSpawned = false;
         }
+    }
+
+    SpawnGate()
+    {
+        //Get a the spawner constructor and spawn it
+        let spawnerClass = this.selected.constructor;
+        this.selected = new spawnerClass(undefined, 0.7, this.circuit, this.origin);
+        
+        //Set the position
+        this.selected.pos.x = Input.GetMousePos().x - this.origin.x;
+        this.selected.pos.y = Input.GetMousePos().y - this.origin.y;
+
+        //Add it to the circuit
+        this.circuit.push(this.selected);
+        this.justSpawned = true;
     }
 
     GetNearestGate()

@@ -10,6 +10,7 @@ class Sidebar
         //Start,end, buffer, not and nand or nor xor xnor
         //this.enabledSpawners = [StartGate, EndGate, BufferGate, NotGate, AndGate, NandGate, OrGate, NorGate, XorGate, XnorGate];
         this.enabledSpawners = [StartGate, EndGate, BufferGate, NotGate, AndGate, NandGate, OrGate, NorGate, XorGate, XnorGate];
+        //this.enabledSpawners = [null, null, null, null, null, null, null, null, XorGate, XnorGate];
 
         this.DrawLeft = true;
         this.AddSpawners();
@@ -94,11 +95,17 @@ class Sidebar
             forceOffset = 0;
             spawnersLength--;
         }
-        
+
         //Initial values
         let xPos = this.coords.xleft+0.75;
         let top = this.coords.ytop+0.35;
         let bottom = this.coords.ybottom+0.35;
+
+        if(this.spawners.length < 8)
+        {
+            top = this.coords.ytop-0.35;
+            spawnersLength++;
+        }
 
         //Spacing between gates
         let spacing = (top + Math.abs(bottom)) / spawnersLength;

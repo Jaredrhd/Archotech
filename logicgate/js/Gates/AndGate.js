@@ -16,7 +16,7 @@ class AndGate extends LogicGate
             return;
         
         //Calculate the new charge and pass forward
-        this.charge = this.incomingNodes[0].incomingConnection.parent.charge && this.incomingNodes[1].incomingConnection.parent.charge;
+        this.charge = this.incomingNodes[0].incomingConnectionNode.parent.charge && this.incomingNodes[1].incomingConnectionNode.parent.charge;
         this.updated = true;
 
         //Update the next gate

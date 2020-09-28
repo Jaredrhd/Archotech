@@ -5,7 +5,7 @@ class StartGate extends LogicGate
         //Force this from spawner to be 0.5
         scale = 0.5;
         super(pos, scale, origin);
-        this.outgoingNode = new OutgoingNode(this.pos, circuit, this);
+        this.outgoingNodes = new OutgoingNode(this.pos, circuit, this);
 
         this.charge = charge;
         this.updated = true;
@@ -19,34 +19,35 @@ class StartGate extends LogicGate
 
         this.visited = true;
 
-        for(let i = 0; i < this.outgoingNode.outgoingConnections.length; i++)
-            this.outgoingNode.outgoingConnections[i].gate.parent.UpdateCharge();
+        for(let i = 0; i < this.outgoingNodes.outgoingConnections.length; i++)
+            this.outgoingNodes.outgoingConnections[i].gate.parent.UpdateCharge();
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn, justSpawned)
     {
+        //If double clicking change charge
         if(Input.GetMouseDoubleClick())
         {
             this.charge = !this.charge;
-            this.outgoingNode.dragWire.mousePos = null;
+            this.outgoingNodes.dragWire.mousePos = null;
         }
         //For dragging the start gate
         else if((stillDragging && Input.GetKey("control")) || justSpawned)
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
-            this.outgoingNode.dragWire.mousePos = null;
+            this.outgoingNodes.dragWire.mousePos = null;
         }
         else //Create a wire
-            this.outgoingNode.SelectedUpdate(stillDragging, gateDroppedOn);
+            this.outgoingNodes.SelectedUpdate(stillDragging, gateDroppedOn);
 
         //Since a startGate outgoingNode isn't drawn we need to make sure it's position is updated
-        this.outgoingNode.UpdatePos();
+        this.outgoingNodes.UpdatePos();
     }
 
     Correct()
     {
         //A Start Node is qualified as correct if it's outgoing node has more then 1 connection
-        return this.outgoingNode.outgoingConnections.length > 0;
+        return this.outgoingNodes.outgoingConnections.length > 0;
     }
 
     DrawBroken(graphics)

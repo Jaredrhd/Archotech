@@ -6,7 +6,7 @@ class IncomingNode extends LogicGate
         this.circuit = circuit;
         this.parentOffset = parentOffset;
 
-        this.incomingConnection;
+        this.incomingConnectionNode;
         this.parent = parent;
     }
 
@@ -14,28 +14,28 @@ class IncomingNode extends LogicGate
     AddIncomingConnection(gate)
     {
         //Don't re-add the same gate
-        if(this.incomingConnection === gate)
+        if(this.incomingConnectionNode === gate)
             return;
 
         //If we have an incoming connection already and we are getting a new one
-        if(this.incomingConnection != null)
+        if(this.incomingConnectionNode != null)
         {
-            for (let i = 0; i < this.incomingConnection.outgoingConnections.length; i++) 
+            for (let i = 0; i < this.incomingConnectionNode.outgoingConnections.length; i++) 
             {
                 //Shorten name to out which is the outgoing connection
-                let out = this.incomingConnection.outgoingConnections[i];
+                let out = this.incomingConnectionNode.outgoingConnections[i];
 
                 //If the out gate matches this incoming node we found the one we wanted
                 if(out.gate == this)
                 {
                     //Delete the outgoing connection
-                    this.incomingConnection.RemoveOutgoingConnection(out);
+                    this.incomingConnectionNode.RemoveOutgoingConnection(out);
                 }
             }
         }
 
         //Set new gate and return this class
-        this.incomingConnection = gate;
+        this.incomingConnectionNode = gate;
         return this;
     }
 
@@ -67,26 +67,33 @@ class IncomingNode extends LogicGate
 
     SelectedUpdate()
     {
+        //If we clicked on an outgoing node that is a spawners node, return it
+        if(this.parent.spawner)
+            return this.parent;
+
         //If we have an incoming connection already and we select the input node
-        if(this.incomingConnection != null)
+        return this.RemoveIncomingConnection();
+    }
+
+    RemoveIncomingConnection()
+    {
+        if(this.incomingConnectionNode != null)
         {
-            for (let i = 0; i < this.incomingConnection.outgoingConnections.length; i++) 
+            for (let i = 0; i < this.incomingConnectionNode.outgoingConnections.length; i++) 
             {
                 //Shorten name to out which is the outgoing connection
-                let out = this.incomingConnection.outgoingConnections[i];
-
-                //If the out gate matches this incoming node we found the one we wanted
+                let out = this.incomingConnectionNode.outgoingConnections[i];
+    
+                //If the out gate connection matches this incoming node we found the one we wanted
                 if(out.gate == this)
                 {
                     //Delete the outgoing connection
-                    this.incomingConnection.RemoveOutgoingConnection(out);
-                    let gate = this.incomingConnection;
-                    this.incomingConnection = null;
+                    this.incomingConnectionNode.RemoveOutgoingConnection(out);
+                    let gate = this.incomingConnectionNode;
+                    this.incomingConnectionNode = null;
                     return gate; //Swap to outgoing gate
                 }
             }
         }
-
-        //TODO if no incoming connection create wire from input node
     }
 }

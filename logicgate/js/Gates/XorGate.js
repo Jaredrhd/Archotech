@@ -16,8 +16,8 @@ class XorGate extends LogicGate
             return;
         
         //Calculate the new charge and pass forward
-        let charge1 = this.incomingNodes[0].incomingConnection.parent.charge;
-        let charge2 = this.incomingNodes[1].incomingConnection.parent.charge;
+        let charge1 = this.incomingNodes[0].incomingConnectionNode.parent.charge;
+        let charge2 = this.incomingNodes[1].incomingConnectionNode.parent.charge;
 
         this.charge = (!(charge1 && charge2) && (charge1 || charge2));
         this.updated = true;

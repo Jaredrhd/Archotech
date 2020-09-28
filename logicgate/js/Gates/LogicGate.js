@@ -9,7 +9,7 @@ class LogicGate
     {
         this.charge = false;
         this.incomingNodes = Array();
-        this.outgoingNodes = Object();
+        this.outgoingNodes = null;
 
         //The local position
         this.pos = position;
@@ -42,6 +42,29 @@ class LogicGate
             circuit.push(this.incomingNodes[i]);
     }
 
+    DeleteGate(circuit)
+    {
+        //If we have an outgoing node
+        if(this.outgoingNodes)
+        {
+            //Remove outgoing node connections
+            this.outgoingNodes.RemoveAllOutgoingConnections();
+        
+            //Remove outgoing node
+            circuit.splice(circuit.indexOf(this.outgoingNodes),1);
+        }
+
+        //Remove incoming nodes and their connections
+        for(let i = 0; i < this.incomingNodes.length;i++)
+        {
+            this.incomingNodes[i].RemoveIncomingConnection();
+            circuit.splice(circuit.indexOf(this.incomingNodes[i]),1);
+        }
+
+        //Remove Gate
+        circuit.splice(circuit.indexOf(this),1);
+    }
+
     /**
      * This method is called when the gate/node has been selected
      */
@@ -57,10 +80,11 @@ class LogicGate
 
     UpdatePosition()
     {
-        //Dont shift spawners, they have their own update method in SideBar
+        //Don't shift spawners, they have their own update method in SideBar
         if(this.spawner)
             return;
 
+        //Update the global position for drawing
         this.position.x = this.pos.x + this.origin.x;
         this.position.y = this.pos.y + this.origin.y;
     }
@@ -80,9 +104,10 @@ class LogicGate
 
         this.visited = true;
 
+        //Check that we have all incoming connections
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null )
+            if(this.incomingNodes[i].incomingConnectionNode == null )
             {
                 this.charge = false;
                 return false;
@@ -92,8 +117,8 @@ class LogicGate
         //Make sure both incoming connections are update
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(!this.incomingNodes[i].incomingConnection.parent.updated)
-                this.incomingNodes[i].incomingConnection.parent.UpdateCharge();
+            if(!this.incomingNodes[i].incomingConnectionNode.parent.updated)
+                this.incomingNodes[i].incomingConnectionNode.parent.UpdateCharge();
         }
 
         return true;
@@ -127,7 +152,7 @@ class LogicGate
         let correctlyConnected = true;
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null)
+            if(this.incomingNodes[i].incomingConnectionNode == null)
                 correctlyConnected = false;
         }
 
@@ -157,7 +182,7 @@ class LogicGate
     {
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null)
+            if(this.incomingNodes[i].incomingConnectionNode == null)
             {
                 return this.incomingNodes[i].AddIncomingConnection(gate);
             }
