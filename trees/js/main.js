@@ -325,6 +325,7 @@ class Main {
 
             if(this.databaseMisc.lecturer) {
                 this.removeNodeButton.style.display = "inline-block";
+                addEventListener("keydown", this.onArrowClick.bind(this));
                 this.editNodeValueButton.style.display = "inline-block";
             }
             else {
