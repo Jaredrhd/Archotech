@@ -329,6 +329,7 @@ class Main {
                 this.editNodeValueButton.style.display = "inline-block";
             }
             else {
+                removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
                 if(this.databaseMisc.qtype !== this.qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
                     this.removeNodeButton.style.display = "inline-block";
                     this.editNodeValueButton.style.display = "inline-block";
