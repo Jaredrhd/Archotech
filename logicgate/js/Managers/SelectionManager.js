@@ -74,13 +74,14 @@ class SelectionManager
             if(gate != null && (gate === this.selected || gate.spawner))
                 gate = null;
 
-            //Update the gate
+            //Update the selected gate
             this.selected.SelectedUpdate(false, gate);
 
-            //Make sure the user did not drop a wire over the bar and If we are holding this over the left side bar, delete gate
-            if(!(this.selected instanceof OutgoingNode) && Input.GetMousePos().x - (this.coords.xleft + 1.5) < 0)
+            //Don't delete if it is an outgoing node since its a wire, or the start gate wire
+            let shouldDeleteGate = !(this.selected instanceof OutgoingNode || (this.selected instanceof StartGate && this.selected.outgoingNodes.spawnedWire));
+            if(shouldDeleteGate && Input.GetMousePos().x - (this.coords.xleft + 1.5) < 0)
                 this.selected.DeleteGate(this.circuit);
-
+            
             this.selected = null; 
             this.justSpawned = false;
         }

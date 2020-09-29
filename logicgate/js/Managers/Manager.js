@@ -47,7 +47,6 @@ class Manager
         for(let i = 0, length = this.canvases.length; i < length; i++)
         {
             //Canvas.canvasDiv.answerSpan.Holder
-
             this.canvases[i].width = this.canvases[i].parentElement.parentElement.parentElement.clientWidth-40;
             this.canvases[i].height = (this.canvases[i].parentElement.parentElement.parentElement.clientWidth-40) * 3.0/4 //4/3 ratio;
 

@@ -11,22 +11,31 @@ class OutgoingNode extends LogicGate
         this.parent = parent;
 
         this.dragWire = new Wire(this.pos, this);
+        this.spawnedWire = false;
         this.circuit.push(this.dragWire);
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
-        //If we clicked on an outgoing node that is a spawners node, return it
-        if(this.parent.spawner)
-            return this.parent;
-            
         //Make sure the drag wire is deleted each round
+        this.spawnedWire = false;
         this.dragWire.mousePos = null;
+
+        if(gateDroppedOn && gateDroppedOn.parent && gateDroppedOn.parent.spawner)
+        {
+            //Hack, if we dropped on a spawner, there is technically still a wire, so set it to true and return so that selection manager handles this correctly
+            this.spawnedWire = true;
+            return;
+        }
+        //If we clicked on an outgoing node that is a spawners node, return it
+        else if(this.parent.spawner)
+            return this.parent;
 
         //Used for creating wire
         if(stillDragging)
         {
             //Create wire to mouse
+            this.spawnedWire = true;
             this.dragWire.mousePos = Input.GetMousePos();
         }
         else if(!stillDragging && gateDroppedOn != null)
@@ -62,7 +71,10 @@ class OutgoingNode extends LogicGate
     {
         //remove all outgoing connections
         for(let i = this.outgoingConnections.length-1; i >= 0; --i)
+        {
+            this.outgoingConnections[i].gate.incomingConnectionNode = null;
             this.circuit.splice(this.circuit.indexOf(this.outgoingConnections[i].wire),1);
+        }
 
         //Set back to Array()
         this.outgoingConnections = Array();;

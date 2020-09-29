@@ -51,18 +51,26 @@ class LogicGate
             this.outgoingNodes.RemoveAllOutgoingConnections();
         
             //Remove outgoing node
-            circuit.splice(circuit.indexOf(this.outgoingNodes),1);
+            this.SliceCircuit(circuit, this.outgoingNodes.dragWire)
+            this.SliceCircuit(circuit, this.outgoingNodes)
         }
 
         //Remove incoming nodes and their connections
         for(let i = 0; i < this.incomingNodes.length;i++)
         {
             this.incomingNodes[i].RemoveIncomingConnection();
-            circuit.splice(circuit.indexOf(this.incomingNodes[i]),1);
+            this.SliceCircuit(circuit, this.incomingNodes[i])
         }
 
         //Remove Gate
-        circuit.splice(circuit.indexOf(this),1);
+        this.SliceCircuit(circuit, this)
+    }
+
+    SliceCircuit(circuit,objToSlice)
+    {
+        let index = circuit.indexOf(objToSlice);
+        if(index>=0)
+            circuit.splice(index,1);
     }
 
     /**
