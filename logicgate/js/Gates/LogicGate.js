@@ -12,7 +12,7 @@ class LogicGate
         this.outgoingNodes = null;
 
         //The local position
-        this.pos = position;
+        this.pos = Object.assign({}, position);
         this.origin = origin;
 
         //The global position
@@ -90,7 +90,11 @@ class LogicGate
     {
         //Don't shift spawners, they have their own update method in SideBar
         if(this.spawner)
+        {
+            this.position.x = this.pos.x;
+            this.position.y = this.pos.y;
             return;
+        }
 
         //Update the global position for drawing
         this.position.x = this.pos.x + this.origin.x;

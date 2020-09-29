@@ -47,6 +47,12 @@ class OutgoingNode extends LogicGate
         }
     }
 
+    AddSpecificConnections(gate, nodeNumber)
+    {
+        let node = gate.incomingNodes[nodeNumber].AddIncomingConnection(this);
+        this.AddOutgoingConnection(node);
+    }
+
     AddOutgoingConnection(gate)
     {
         //Create a new wire and link it to whatever gate
@@ -82,8 +88,8 @@ class OutgoingNode extends LogicGate
 
     UpdatePos()
     {
-        this.pos.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
-        this.pos.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
+        this.position.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
+        this.position.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
     }
 
     Draw(graphics)
@@ -93,7 +99,7 @@ class OutgoingNode extends LogicGate
         graphics.fillStyle = "white";
 
         //Move to pos and scale
-        graphics.translate(this.pos.x,this.pos.y);
+        graphics.translate(this.position.x,this.position.y);
         graphics.scale(this.parent.scale,this.parent.scale);
 
         //Draw circle

@@ -47,7 +47,7 @@ class IncomingNode extends LogicGate
         graphics.fillStyle = "white";
         
         //Move to pos and scale
-        graphics.translate(this.pos.x,this.pos.y);
+        graphics.translate(this.position.x,this.position.y);
         graphics.scale(this.parent.scale,this.parent.scale);
 
         //Draw circle
@@ -61,8 +61,8 @@ class IncomingNode extends LogicGate
     //For updating the position of the node with an offset from the parent
     UpdatePos()
     {
-        this.pos.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
-        this.pos.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
+        this.position.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
+        this.position.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
     }
 
     SelectedUpdate()

@@ -24,6 +24,7 @@ class Main
 
         this.timer = Date.now();
         this.timerUpdate = 250;
+        this.LoadCircuit("44,BufferGate,2.47,1.35,[53:1]|48,BufferGate,-0.35,1.38,[53:0]|53,AndGate,0.25,-0.89,[44:0/54:0]|54,EndGate,3.36,-1.48,[]|59,StartGate,-1.75,2.49,[48:0]");
     }
 
     Render()
@@ -73,7 +74,10 @@ class Main
 
         //Update the selection manager
         if(this.canvasFocused)
+        {
             this.selectionManager.Update();
+            this.SaveCircuit();
+        }
 
         //restore
         this.graphics.restore();
@@ -143,6 +147,97 @@ class Main
         this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
         graphics.scale( width / (this.coords.xright-this.coords.xleft), height / (this.coords.ybottom-this.coords.ytop) );
         graphics.translate( -this.coords.xleft, -this.coords.ytop );
+    }
+
+    SaveCircuit()
+    {
+        let save = "";
+
+        for(let i = 0; i < this.circuit.length; i++)
+        {
+            //Skip Wires or nodes
+            if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
+                continue;
+
+            //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
+
+            //id,Gate,x,y,[outputConnections]|...
+            save += i + "," + this.circuit[i].constructor.name + "," + 
+                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + ",[";
+
+            //Check that this has a outgoing node (EndGate the exception)
+            if(this.circuit[i].outgoingNodes)
+            {
+                //Cache outgoing connections
+                let outgoing = this.circuit[i].outgoingNodes.outgoingConnections;
+
+                //loop over connections
+                for(let j = 0; j < outgoing.length; j++)
+                {
+                    //Get the gate it is connected to
+                    let gateID = this.circuit.indexOf(outgoing[j].gate.parent);
+                    
+                    if(this.circuit[gateID].incomingNodes[0] == outgoing[j].gate)
+                        save += gateID + ":0"
+                    else
+                        save += gateID + ":1" 
+
+                    //Add to the save
+                    if(j != outgoing.length -1) 
+                        save += "/";
+                }
+                save += "]";
+            }
+            else
+                save += "]"
+            
+            save += "|"
+        }
+
+        //Remove the last | 
+        return save.substring(0, save.length-1);
+    }
+
+    LoadCircuit(save)
+    {
+        let scale = 0.7;
+        let newIDs = Object();
+        save = save.split("|")
+
+        for(let i = 0; i < save.length; i++)
+        {
+            let data = save[i].split(",");
+            let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, ${scale}, this.circuit, this.origin)`;
+            let gate = eval(gateToSpawn);
+
+            this.circuit.push(gate);
+            newIDs[data[0]] = this.circuit.length-1;
+        }
+
+        for(let i = 0; i < save.length; i++)
+        {
+            let fullData = save[i].split(",");
+
+            if(fullData[1] == "EndGate")
+                continue;
+
+            let data = fullData[4];
+            data = data.substring(1,data.length-1);
+            data = data.split("/");
+
+            //The NewID from one save to the next of the current gate
+            let newID = newIDs[fullData[0]];
+
+            //Loop over outgoing connections and set them up
+            for(let j = 0; j < data.length; j++)
+            {
+                //The NewID of the gate we want to connect to
+                let keyValue = data[j].split(":");
+                let newConnectionID = newIDs[keyValue[0]];
+                this.circuit[newID].outgoingNodes.AddSpecificConnections(this.circuit[newConnectionID], parseInt(keyValue[1]));
+            }
+        }
     }
 
     //For unfocusing canvas
