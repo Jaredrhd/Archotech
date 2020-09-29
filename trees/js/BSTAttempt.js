@@ -9,9 +9,9 @@ class BSTAttempt {
     }
 
     configureHTML() {
-        if(this.main.databaseMisc.treestring !== "") {
-            this.main.buildTreeFromString(this.main.databaseMisc.treestring);
-        }
+        // if(this.main.databaseMisc.treestring !== "") {
+        //     this.main.buildTreeFromString(this.main.databaseMisc.treestring);
+        // }
 
         this.main.bstValueList.value = this.main.databaseMisc.bstvalues; // Set the bstValueList from the database value
         this.main.bstTools.style.display = "flex";

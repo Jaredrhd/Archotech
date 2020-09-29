@@ -117,7 +117,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
     public function grade_bst(array $response) {
         $result = 0;
         $combinedString = $response["answer"];
-        $splitString = explode("-", $combinedString);
+        $splitString = explode("/", $combinedString);
 
         $answer = $splitString[0];
         

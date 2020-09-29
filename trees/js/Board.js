@@ -2,8 +2,9 @@ class Board {
     constructor(main) {
         this.main = main;
 
-        this.cellWidth = this.main.canvasWidth / this.main.COLS;
-        this.cellHeight = this.main.canvasHeight / this.main.ROWS;
+        this.cellWidth = this.main.canvas.width / this.main.COLS;
+        this.cellHeight = this.main.canvas.height / this.main.ROWS;
+        this.halfCellDiagonalLength = Math.sqrt(Math.pow(this.cellWidth, 2) + Math.pow(this.cellWidth, 2)) / 2;
         this.mouseX;
         this.mouseY;
         this.cellX;
@@ -63,6 +64,13 @@ class Board {
         }
 
         return true;
+    }
+
+    getCellCornerBoardCoords(cellCentreBoardCoords) {
+        return {top_left: {x: cellCentreBoardCoords.x - this.cellWidth / 2, y: cellCentreBoardCoords.y - this.cellHeight / 2}, 
+                top_right: {x: cellCentreBoardCoords.x + this.cellWidth / 2, y: cellCentreBoardCoords.y - this.cellHeight / 2}, 
+                bottom_left: {x: cellCentreBoardCoords.x - this.cellWidth / 2, y: cellCentreBoardCoords.y + this.cellHeight / 2}, 
+                bottom_right: {x: cellCentreBoardCoords.x + this.cellWidth / 2, y: cellCentreBoardCoords.y + this.cellHeight / 2}};
     }
 
     cellToBoardCoords(cellX, cellY) {
