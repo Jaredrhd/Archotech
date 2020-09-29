@@ -33,6 +33,9 @@ class BSTAttempt {
         this.main.addRootButton.style.display = "inline-block";
         this.main.editNodeValueButton.style.display = "none";
         this.main.removeNodeButton.style.display = "none";
+
+        /** Configure help text */
+        this.main.helpIcon.innerHTML = this.main.helpText["bst"];
     }
 
     /**
