@@ -1,9 +1,11 @@
 class StartGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, circuit, charge = false)
+    constructor(pos = {x:0, y:0}, scale = 0.5, circuit, origin, charge = false)
     {
-        super(pos, circuit);
-        this.outgoingNode = new OutgoingNode(this.pos, circuit, this);
+        //Force this from spawner to be 0.5
+        scale = 0.5;
+        super(pos, scale, origin);
+        this.outgoingNodes = new OutgoingNode(this.pos, circuit, this);
 
         this.charge = charge;
         this.updated = true;
@@ -17,54 +19,40 @@ class StartGate extends LogicGate
 
         this.visited = true;
 
-        for(let i = 0; i < this.outgoingNode.outgoingConnections.length; i++)
-            this.outgoingNode.outgoingConnections[i].gate.parent.UpdateCharge();
+        for(let i = 0; i < this.outgoingNodes.outgoingConnections.length; i++)
+            this.outgoingNodes.outgoingConnections[i].gate.parent.UpdateCharge();
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn, justSpawned)
     {
+        //If double clicking change charge
         if(Input.GetMouseDoubleClick())
+        {
             this.charge = !this.charge;
+            this.outgoingNodes.dragWire.mousePos = null;
+        }
         //For dragging the start gate
         else if((stillDragging && Input.GetKey("control")) || justSpawned)
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
-            this.outgoingNode.dragWire.mousePos = null;
+            this.outgoingNodes.dragWire.mousePos = null;
         }
         else //Create a wire
-            this.outgoingNode.SelectedUpdate(stillDragging, gateDroppedOn);
+            this.outgoingNodes.SelectedUpdate(stillDragging, gateDroppedOn);
 
         //Since a startGate outgoingNode isn't drawn we need to make sure it's position is updated
-        this.outgoingNode.UpdatePos();
+        this.outgoingNodes.UpdatePos();
     }
 
     Correct()
     {
         //A Start Node is qualified as correct if it's outgoing node has more then 1 connection
-        return this.outgoingNode.outgoingConnections.length > 0;
-    }
-
-    Draw(graphics)
-    {
-        graphics.save();
-        graphics.lineWidth += 0.005;
-        graphics.translate(this.pos.x,this.pos.y);
-        graphics.scale(0.5,0.5);
-
-        if(this.charge)
-            graphics.fillStyle = "green";
-        else
-            graphics.fillStyle = "black";
-
-        if(this.Correct())
-            this.DrawCorrect(graphics);
-        else
-            this.DrawBroken(graphics);
-        graphics.restore();
+        return this.outgoingNodes.outgoingConnections.length > 0;
     }
 
     DrawBroken(graphics)
     {
+        graphics.fillStyle = "white";
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.5 * Math.PI,  1.5 * Math.PI);
         graphics.closePath();

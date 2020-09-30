@@ -48,6 +48,13 @@ class Manager
         {
             //Canvas.canvasDiv.answerSpan.Holder
             this.canvases[i].width = this.canvases[i].parentElement.parentElement.parentElement.clientWidth-40;
+            this.canvases[i].height = (this.canvases[i].parentElement.parentElement.parentElement.clientWidth-40) * 3.0/4 //4/3 ratio;
+
+            if(this.canvases[i].width > 800)
+            {
+                this.canvases[i].width = 800;
+                this.canvases[i].height = 600;
+            }
             //this.canvases[i].height = window.innerHeight < 600 ? window.innerHeight * 0.8: 600; //TODO get height working with scaling too
         }
 

@@ -4,6 +4,7 @@ class Main
     {
         //Canvas coordinates
         this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
+        this.origin = {x : 0, y : 0, offsetX : 0, offsetY : 0};
 
         //Set up canvas properties
         this.pixelSize = 1;
@@ -13,49 +14,24 @@ class Main
         this.canvas.onmousemove = Input.UpdateMousePos.bind(this);
         this.canvas.onmouseleave = this.OnCanvasLeave.bind(this);
         this.canvas.onmouseenter = this.OnCanvasEnter.bind(this);
-
+        
         //Circuit stuff
         this.circuit = Array();
-
-        let startGate = new StartGate({x:-3,y:2.5}, this.circuit, true);
-        this.circuit.push(startGate);
-
-        let endGate = new EndGate({x:2,y:0}, this.circuit);
-        this.circuit.push(endGate);
-
-        let bufferGate = new BufferGate({x:-3,y:1}, this.circuit);
-        this.circuit.push(bufferGate);
-        
-        let notGate = new NotGate({x:-3,y:0}, this.circuit);
-        this.circuit.push(notGate);
-
-        let andGate = new AndGate({x:-3,y:-1}, this.circuit);
-        this.circuit.push(andGate);
-
-        let nandGate = new NandGate({x:-3,y:-2.5}, this.circuit);
-        this.circuit.push(nandGate);
-
-        let orGate = new OrGate({x:-1,y:2.5}, this.circuit);
-        this.circuit.push(orGate);
-
-        let norGate = new NorGate({x:-1,y:1}, this.circuit);
-        this.circuit.push(norGate);
-
-        let xorGate = new XorGate({x:-1,y:0}, this.circuit);
-        this.circuit.push(xorGate);
-
-        let xnorGate = new XnorGate({x:-1,y:-1}, this.circuit);
-        this.circuit.push(xnorGate);
+        this.sidebar = new Sidebar(this.coords, this.circuit, this.origin);
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords);
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
 
         this.timer = Date.now();
         this.timerUpdate = 250;
+        this.LoadCircuit("44,BufferGate,0.00,1.64,false,[58:0]|48,NotGate,-0.15,0.43,true,[58:1]|50,StartGate,-1.48,1.99,true,[44:0/48:0]|53,EndGate,2.76,1.08,false,[]|58,AndGate,1.52,1.04,false,[53:0]");
     }
 
     Render()
     {
+        //Apply limits to canvas, graphics
+        this.ApplyLimits(this.graphics, true);
+
         //Save
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
@@ -63,9 +39,6 @@ class Main
         //Set color
         this.graphics.fillStyle = "white";  // background color
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
-
-        //Apply limits to canvas, graphics
-        this.ApplyLimits(this.graphics, true);
         
         let time = this.timer - Date.now();
         //First Update the the charges
@@ -76,12 +49,15 @@ class Main
             this.timer = Date.now() + this.timerUpdate;
         }
 
+        //Draw Sidebar and update the gates on it
+        this.sidebar.Draw(this.graphics);
+        this.sidebar.Update();
+
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
             //Only update gates if we are focused on canvas
-            if(this.canvasFocused)
-                this.circuit[i].Update();
+            this.circuit[i].Update();
             
             //Draw Wires
             if(this.circuit[i] instanceof Wire)
@@ -98,8 +74,11 @@ class Main
 
         //Update the selection manager
         if(this.canvasFocused)
+        {
             this.selectionManager.Update();
-        
+            this.SaveCircuit();
+        }
+
         //restore
         this.graphics.restore();
     }
@@ -144,22 +123,23 @@ class Main
 
         if (preserveAspect) 
         {
-            // Adjust the limits to match the aspect ratio of the drawing area.
-            var displayAspect = Math.abs(height / width);
-            var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
-            var excess;
-            excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
-            this.coords.ybottom += excess/2;
-            this.coords.ytop -= excess/2;
-
-            if(this.coords.ytop < 3)
-            {
-                this.coords.ytop = 3;
-                this.coords.ybottom = -3;
-                excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
-                this.coords.xright += excess/2;
-                this.coords.xleft -= excess/2;
-            }
+               // Adjust the limits to match the aspect ratio of the drawing area.
+            //    var displayAspect = Math.abs(height / width);
+            //    var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
+            //    var excess;
+               
+            //    excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
+            //    this.coords.ybottom += excess/2;
+            //    this.coords.ytop -= excess/2;
+   
+            //    if(this.coords.ytop < 3)
+            //    {
+            //        this.coords.ytop = 3;
+            //        this.coords.ybottom = -3;
+            //        excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
+            //        this.coords.xright += excess/2;
+            //        this.coords.xleft -= excess/2;
+            //    }
         }
         
         var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);
@@ -167,6 +147,97 @@ class Main
         this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
         graphics.scale( width / (this.coords.xright-this.coords.xleft), height / (this.coords.ybottom-this.coords.ytop) );
         graphics.translate( -this.coords.xleft, -this.coords.ytop );
+    }
+
+    SaveCircuit()
+    {
+        let save = "";
+
+        for(let i = 0; i < this.circuit.length; i++)
+        {
+            //Skip Wires or nodes
+            if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
+                continue;
+
+            //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
+
+            //id,Gate,x,y,charge,[outputConnections]|...
+            save += i + "," + this.circuit[i].constructor.name + "," + 
+                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + "," + this.circuit[i].charge + ",[";
+
+            //Check that this has a outgoing node (EndGate the exception)
+            if(this.circuit[i].outgoingNodes)
+            {
+                //Cache outgoing connections
+                let outgoing = this.circuit[i].outgoingNodes.outgoingConnections;
+
+                //loop over connections
+                for(let j = 0; j < outgoing.length; j++)
+                {
+                    //Get the gate it is connected to
+                    let gateID = this.circuit.indexOf(outgoing[j].gate.parent);
+                    
+                    if(this.circuit[gateID].incomingNodes[0] == outgoing[j].gate)
+                        save += gateID + ":0"
+                    else
+                        save += gateID + ":1" 
+
+                    //Add to the save
+                    if(j != outgoing.length -1) 
+                        save += "/";
+                }
+                save += "]";
+            }
+            else
+                save += "]"
+            
+            save += "|"
+        }
+
+        //Remove the last | 
+        return save.substring(0, save.length-1);
+    }
+
+    LoadCircuit(save)
+    {
+        let scale = 0.7;
+        let newIDs = Object();
+        save = save.split("|")
+
+        for(let i = 0; i < save.length; i++)
+        {
+            let data = save[i].split(",");
+            let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, ${scale}, this.circuit, this.origin)`;
+            let gate = eval(gateToSpawn);
+            gate.charge = data[4] == "true";
+            this.circuit.push(gate);
+            newIDs[data[0]] = this.circuit.length-1;
+        }
+
+        for(let i = 0; i < save.length; i++)
+        {
+            let fullData = save[i].split(",");
+
+            if(fullData[1] == "EndGate")
+                continue;
+
+            let data = fullData[5];
+            data = data.substring(1,data.length-1);
+            data = data.split("/");
+
+            //The NewID from one save to the next of the current gate
+            let newID = newIDs[fullData[0]];
+
+            //Loop over outgoing connections and set them up
+            for(let j = 0; j < data.length; j++)
+            {
+                //The NewID of the gate we want to connect to
+                let keyValue = data[j].split(":");
+                let newConnectionID = newIDs[keyValue[0]];
+                this.circuit[newID].outgoingNodes.AddSpecificConnections(this.circuit[newConnectionID], parseInt(keyValue[1]));
+            }
+        }
     }
 
     //For unfocusing canvas

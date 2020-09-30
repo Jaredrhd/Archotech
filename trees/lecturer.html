@@ -16,13 +16,13 @@
         <textarea id="canvas:bst-values" class="bst-values" autocomplete="off" readonly></textarea>
     </div>
     <!-- QUESTION SETUP ELEMENTS -->
-    <button type="button" id="insert-bst-value" style="display: none;">INSERT</button>
-    <button type="button" id="undo-insert-bst-value" style="display: none;">UNDO</button>
+    <button type="button" id="insert-bst-value" class="button button-primary no-select" style="display: none;">INSERT</button>
+    <button type="button" id="undo-insert-bst-value" class="button button-secondary no-select" style="display: none;">UNDO</button>
     <span id="invalid-bst-value" style="display: none;"></span>
-    <button type="button" id="copy-tree">COPY</button>
+    <button type="button" id="copy-tree" class="button button-primary no-select">COPY</button>
     <span id="copied" style="display: block; opacity: 0;">COPIED</span>
     <!--  -->
-    <canvas id="canvas" width="700" height="700" style="display:block; float:left; border: 2px solid black;"></canvas>
+    <canvas id="canvas" width="700" height="700"></canvas>
     <!-- DATABASE MISC -->
     <div lecturer='true' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders=''
         disablecanvas='false' displaytools='true'></div>
@@ -35,10 +35,10 @@
                 <label for="canvas:random-node-value" style="margin-bottom: 5px;">RANDOM VALUE</label>
                 <input id="canvas:random-node-value" type="checkbox" class="input" autocomplete="off">
             </div>
-            <button type="button" id="canvas:add-root" class="modify-tree-tools add-root">ADD ROOT</button>
-            <button type="button" id="canvas:remove-node" style="display: none;" class="modify-tree-tools remove-node">REMOVE</button>
-            <button type="button" id="canvas:edit-node" style="display: none;" class="modify-tree-tools edit-node">EDIT VALUE</button>
-            <button type="button" id="canvas:bst-undo" style="display: none;" class="modify-tree-tools bst-undo">UNDO</button>
+            <button type="button" id="canvas:add-root" class="modify-tree-tools add-root button button-primary no-select">ADD ROOT</button>
+            <button type="button" id="canvas:remove-node" style="display: none;" class="modify-tree-tools remove-node button button-primary no-select">REMOVE</button>
+            <button type="button" id="canvas:edit-node" style="display: none;" class="modify-tree-tools edit-node button button-secondary no-select">EDIT VALUE</button>
+            <button type="button" id="canvas:bst-undo" style="display: none;" class="modify-tree-tools bst-undo button button-secondary no-select">UNDO</button>
         </div>
         <div id="canvas:answer-question-tools" style="display: none;">
             <label for='ANSWER_ID'></label>

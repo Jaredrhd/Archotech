@@ -1,8 +1,8 @@
 class XnorGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, circuit)
+    constructor(pos = {x:0, y:0}, scale = 0.8, circuit, origin, charge = false)
     {
-        super(pos);
+        super(pos, scale, origin);
 
         this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-0.85,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-0.85,y:-0.25})];
         this.outgoingNodes = new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0});
@@ -16,8 +16,8 @@ class XnorGate extends LogicGate
             return;
         
         //Calculate the new charge and pass forward
-        let charge1 = this.incomingNodes[0].incomingConnection.parent.charge;
-        let charge2 = this.incomingNodes[1].incomingConnection.parent.charge;
+        let charge1 = this.incomingNodes[0].incomingConnectionNode.parent.charge;
+        let charge2 = this.incomingNodes[1].incomingConnectionNode.parent.charge;
 
         this.charge = !(!(charge1 && charge2) && (charge1 || charge2));
         this.updated = true;
@@ -28,20 +28,7 @@ class XnorGate extends LogicGate
 
     Draw(graphics)
     {
-        graphics.save();
-        graphics.translate(this.pos.x,this.pos.y);
-
-        if(this.charge)
-            graphics.fillStyle = "green";
-        else
-            graphics.fillStyle = "black";
-
-        if(this.Correct())
-            this.DrawCorrect(graphics);
-        else
-            this.DrawBroken(graphics);
-
-        graphics.restore();
+        super.Draw(graphics);
         super.DrawNodes(graphics);
     }
 

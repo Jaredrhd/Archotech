@@ -8,6 +8,8 @@ class TraversalQuestion {
         this.postOrderRadio = document.querySelector('[traversal_type="postorder"]');
         this.traversalOptions = [this.preOrderRadio, this.inOrderRadio, this.postOrderRadio];
 
+        // this.availableValues = [...Array(this.main.MAX_NODE_VALUE).keys()].map(i => i + 1);
+
         /** Values stored in the DB */
         this.preOrder = document.getElementById("preorder");
         this.inOrder = document.getElementById("inorder");
@@ -32,9 +34,10 @@ class TraversalQuestion {
         if(this.main.setup.currQuestion.BST) {
             this.main.bstTools.style.display = "none";
         }
-        if(this.main.setup.currQuestion.PROPERTIES){
+        else if(this.main.setup.currQuestion.PROPERTIES){
             this.main.propertyTools.style.display = "none";
         }
+        
         this.main.setup.updateCurrentQuestion("TRAVERSAL");
     }
 

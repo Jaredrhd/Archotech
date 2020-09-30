@@ -2,14 +2,23 @@ class LogicGate
 {
     /**
      * @param {pos} Object {x,y} position
+     * @param {scale} int scale of the logic gate
+     * 
      */
-    constructor(pos= {x:0, y:0})
+    constructor(position = {x:0, y:0}, scale = 1, origin = {x : 0, y : 0, offsetX : 0, offsetY : 0})
     {
         this.charge = false;
         this.incomingNodes = Array();
-        this.outgoingNodes = Object();
+        this.outgoingNodes = null;
 
-        this.pos = pos;
+        //The local position
+        this.pos = Object.assign({}, position);
+        this.origin = origin;
+
+        //The global position
+        this.position = position;
+        
+        this.scale = scale;
 
         this.radius = 0.55;
         this.selectable = true;
@@ -33,17 +42,63 @@ class LogicGate
             circuit.push(this.incomingNodes[i]);
     }
 
+    DeleteGate(circuit)
+    {
+        //If we have an outgoing node
+        if(this.outgoingNodes)
+        {
+            //Remove outgoing node connections
+            this.outgoingNodes.RemoveAllOutgoingConnections();
+        
+            //Remove outgoing node
+            this.SliceCircuit(circuit, this.outgoingNodes.dragWire)
+            this.SliceCircuit(circuit, this.outgoingNodes)
+        }
+
+        //Remove incoming nodes and their connections
+        for(let i = 0; i < this.incomingNodes.length;i++)
+        {
+            this.incomingNodes[i].RemoveIncomingConnection();
+            this.SliceCircuit(circuit, this.incomingNodes[i])
+        }
+
+        //Remove Gate
+        this.SliceCircuit(circuit, this)
+    }
+
+    SliceCircuit(circuit,objToSlice)
+    {
+        let index = circuit.indexOf(objToSlice);
+        if(index>=0)
+            circuit.splice(index,1);
+    }
+
     /**
      * This method is called when the gate/node has been selected
      */
     SelectedUpdate()
     {
         let mousePos = Object.assign({}, Input.GetMousePos());
-        mousePos.x -= this.offset.x;
-        mousePos.y -= this.offset.y;
+        mousePos.x -= (this.offset.x);
+        mousePos.y -= (this.offset.y);
 
         //Set position
         this.pos = mousePos;
+    }
+
+    UpdatePosition()
+    {
+        //Don't shift spawners, they have their own update method in SideBar
+        if(this.spawner)
+        {
+            this.position.x = this.pos.x;
+            this.position.y = this.pos.y;
+            return;
+        }
+
+        //Update the global position for drawing
+        this.position.x = this.pos.x + this.origin.x;
+        this.position.y = this.pos.y + this.origin.y;
     }
 
     /**
@@ -61,9 +116,10 @@ class LogicGate
 
         this.visited = true;
 
+        //Check that we have all incoming connections
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null )
+            if(this.incomingNodes[i].incomingConnectionNode == null )
             {
                 this.charge = false;
                 return false;
@@ -73,8 +129,8 @@ class LogicGate
         //Make sure both incoming connections are update
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(!this.incomingNodes[i].incomingConnection.parent.updated)
-                this.incomingNodes[i].incomingConnection.parent.UpdateCharge();
+            if(!this.incomingNodes[i].incomingConnectionNode.parent.updated)
+                this.incomingNodes[i].incomingConnectionNode.parent.UpdateCharge();
         }
 
         return true;
@@ -108,7 +164,7 @@ class LogicGate
         let correctlyConnected = true;
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null)
+            if(this.incomingNodes[i].incomingConnectionNode == null)
                 correctlyConnected = false;
         }
 
@@ -120,7 +176,7 @@ class LogicGate
      */
     GetDistanceToPoint(point)
     {
-        return Math.sqrt(Math.pow(this.pos.x - point.x,2) + Math.pow(this.pos.y - point.y,2));
+        return Math.sqrt(Math.pow(this.position.x - point.x,2) + Math.pow(this.position.y - point.y,2));
     }
 
     /**
@@ -128,7 +184,7 @@ class LogicGate
      */
     GetXYDistanceToPoint(point)
     {
-        return {x:  point.x - this.pos.x, y: point.y - this.pos.y};
+        return {x:  point.x - this.position.x, y: point.y - this.position.y};
     }
 
      /**
@@ -138,7 +194,7 @@ class LogicGate
     {
         for (let i = 0; i < this.incomingNodes.length; i++) 
         {
-            if(this.incomingNodes[i].incomingConnection == null)
+            if(this.incomingNodes[i].incomingConnectionNode == null)
             {
                 return this.incomingNodes[i].AddIncomingConnection(gate);
             }
@@ -150,7 +206,32 @@ class LogicGate
      */
     Draw(graphics)
     {
-        //Draw an incorrect node to force the use of a proper gate rather then the LogicGate
+        graphics.save();
+        this.UpdatePosition();
+        graphics.translate(this.position.x,this.position.y);
+        graphics.scale(this.scale,this.scale);
+
+        if(this.charge)
+            graphics.fillStyle = "green";
+        else
+            graphics.fillStyle = "black";
+
+        if(this.Correct())
+            this.DrawCorrect(graphics);
+        else
+            this.DrawBroken(graphics);
+
+        graphics.restore();
+    }
+
+    DrawCorrect()
+    {
+        //Draw an incorrect node to force the use of a proper draw gate function rather then the LogicGate Draw Correct
+        DrawBroken();
+    }
+
+    DrawBroken()
+    {
         graphics.beginPath();
         graphics.arc(0,0,0.5, 0.8 * Math.PI,  1.8 * Math.PI);
         graphics.stroke();
@@ -161,9 +242,11 @@ class LogicGate
      */
     DrawNodes(graphics)
     {
+        graphics.save();
         this.outgoingNodes.Draw(graphics);
 
         for(let i = 0; i < this.incomingNodes.length;i++)
             this.incomingNodes[i].Draw(graphics);
+        graphics.restore();
     }
 }

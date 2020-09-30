@@ -1,6 +1,5 @@
 .toolbar {
     width: 200px;
-    height: 600px !important; 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -8,6 +7,12 @@
     align-content: space-around;
     text-align: center;
     float: left;
+}
+
+.toolbar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .input {
@@ -27,6 +32,7 @@
     display: block;
     margin: 5px auto;
     width: 160px;
+    font-size: 25px;
 }
 
 .property-input {
@@ -44,20 +50,94 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: center;
+    /* align-items: center; */
     font-weight: bold;
     float: left;
 }
 
+#layout {
+    display: inline-flex;
+    flex-direction: row;
+    max-width: 100%;
+}
+
+.heading-text-alignment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .ANSWER_ID {
-    display: block;
-    width: 705px !important;
+    width: 100% !important;
     height: 50px;
     resize: none;
     margin-bottom: 5px;
     font-size: large;
-    font-weight: bold;
+    font-weight: 700;
     text-align: center;
+}
+
+.invalid-answer-div {
+    display: flex;
+    flex-direction: row;
+    color: #d43f3a;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+}
+
+.invalid-answer-value {
+    font: inherit;
+    font-weight: 400;
+    color: inherit;
+    margin: inherit;
+}
+
+.answer-box-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.help .tooltiptext {
+    visibility: hidden;
+    max-width: 20%;
+    background-color: #ced4da;
+    color: #212529;
+    text-align: center;
+    padding: 5px 10px;
+    margin-left: 10px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial;
+    font-weight: 600;
+    position: absolute;
+    z-index: 1;
+}
+
+.help:hover .tooltiptext {
+    visibility: visible;
+}
+
+.help .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 15px;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #ced4da transparent transparent;
+  }
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
 }
 
 .bst-tools {
@@ -70,102 +150,116 @@
 }
 
 .bst-values {
-    width: 705px !important;
-    height: 50px;
     resize: none;
     margin-bottom: 5px;
     font-size: large;
     font-weight: bold;
     text-align: center;
+    width: 700px;
 }
 
 canvas {
-    background-color: white;
+    background-color: white;    
+    display: block;
+    max-width: 700px;
+    max-height: 700px;
+    width: 100%;
+    height: auto;
+    float: left; 
 }
 
-button {
+.help {
+    display: flex;
+    height: 20px;
+    width: auto;
+    color: #1177d1;
+    padding-left: 20px;
+    margin-bottom: 75px;
+    margin-top: 30px;
+    font-size: 30px;
+}
+
+.help:hover {
+    color: #0E63AE;
+}
+
+.canvas-answer-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.button {
     width: 150px;
-	border-radius: 4px;
 	cursor: pointer;
-	color: #ffffff;
 	font-family: Arial;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: .9375rem;
+    border: 1px solid transparent;
+    border-radius: 0;
+    line-height: 1.5;
+    font-weight: 400;
     margin: 0 auto;
+    padding: 6px 12px;
     text-decoration: none;
+    box-shadow: none;
+    /* border: none !important; */
+}
+
+.button-primary {
+	color: #ffffff;
+    background-color: #1177d1;
+}
+
+.button-primary:hover {
+    background-color: #0E63AE;
+}
+
+.button-secondary {
+    color: #212529;
+    background-color: #ced4da;
+    border-color: #ced4da;
+}
+
+.button-secondary:hover {
+    background-color: #b8c1ca;
 }
 
 .add-root {
-    background-color:hsl(136, 63%, 47%);
     margin: 5px;
-}
-
-.add-root:hover {
-	background-color:#0fda2a;
 }
 
 .remove-node {
-    background-color:hsl(12, 71%, 57%);
     margin: 5px;
-}
-
-.remove-node:hover {
-	background-color:#f14805;
 }
 
 .bst-undo {
-    background-color:hsl(12, 71%, 57%);
     margin: 5px;
-}
-
-.bst-undo:hover {
-	background-color:#f14805;
 }
 
 .edit-node {
-    background-color:hsl(216, 82%, 57%);
     margin: 5px;
 }
 
-.edit-node:hover {
-	background-color:#1c6cff;
-}
-
 #insert-bst-value {
-    background-color:hsl(136, 63%, 47%);
     margin-left: 10px;
     margin-right: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-#insert-bst-value:hover {
-	background-color:#0fda2a;
-}
-
 #undo-insert-bst-value {
-    background-color:hsl(12, 71%, 57%);
     margin: 5px;
-}
-
-#undo-insert-bst-value:hover {
-	background-color:#f14805;
 }
 
 #invalid-bst-value {
     color: red;
-}
+} 
 
 #copy-tree {
-    background-color:hsl(137, 3%, 44%);
     margin-left: 10px;
     margin-right: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
-}
-
-#copy-tree:hover {
-	background-color:hsl(135, 2%, 53%);
 }
 
 #copied {
@@ -293,4 +387,58 @@ input[type=number] {
     100% {
       opacity:0;
     }
+}
+
+@media screen and (max-width: 1600px) {
+    /* .heading-text-alignment {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .answer-box-wrapper {
+        display: flex;
+        flex-direction: row;
+        width: 76%;
+        margin-left: 0%;
+    }
+
+    canvas {
+        background-color: white;    
+        display: block !important;
+        max-width: 700px;
+        max-height: 700px;
+        width: 70%;
+        height: auto;
+        float: left; 
+        border: 2px solid black;
+    } */
+    
+    .help .tooltiptext {
+        max-width: 20%;
+        padding: 5px 10px;
+        margin-left: 10px;
+        font-size: 15px;
+    }
+
+    /* .help .tooltiptext::after {
+        content: " ";
+        position: absolute;
+        top: 10%;
+        right: 100%; 
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent black transparent transparent;
+    } */
+
+    /* .bst-tools {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-weight: 700;
+        float: left;
+        width: 70%;
+    } */
 }

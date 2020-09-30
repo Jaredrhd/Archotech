@@ -18,15 +18,15 @@ class Wire extends LogicGate
 
     Draw(graphics)
     {
-        //If we don't have a gate or a mouse pos don't draw
+        //If we don't have a gate or a mouse position don't draw
         if(this.connectionTo == null && this.mousePos == null)
             return;
 
         //Make sure the wire has a parent to track
         if(this.parent != null && this.parentOffset != null)
         {
-            this.pos.x = this.parentOffset.x + this.parent.pos.x;
-            this.pos.y = this.parentOffset.y + this.parent.pos.y;
+            this.position.x = this.parentOffset.x + this.parent.position.x;
+            this.position.y = this.parentOffset.y + this.parent.position.y;
         }
 
         //Save
@@ -34,7 +34,7 @@ class Wire extends LogicGate
 
         //Begin Draw
         graphics.beginPath();
-        graphics.moveTo(this.pos.x, this.pos.y);
+        graphics.moveTo(this.position.x, this.position.y);
 
         //Initialize
         let bends = 2;
@@ -42,12 +42,11 @@ class Wire extends LogicGate
         let horizontalDecrease = 0, horizontalDecreaseAmount = 0.5;
 
         let horizontalDistance = 0, verticalDistance = 0;
-        let startPos = Object.assign({},this.pos);
-        let endPos = Object.assign({},(this.connectionTo == null) ? this.mousePos : this.connectionTo.pos);
+        let startPos = Object.assign({},this.position);
+        let endPos = Object.assign({},(this.connectionTo == null) ? this.mousePos : this.connectionTo.position);
 
         //calculate distances to mouse or node
-        let distances = (this.connectionTo == null) ? super.GetXYDistanceToPoint(this.mousePos) : super.GetXYDistanceToPoint(this.connectionTo.pos);
-
+        let distances = (this.connectionTo == null) ? super.GetXYDistanceToPoint(this.mousePos) : super.GetXYDistanceToPoint(this.connectionTo.position);
 
         //COMMENT OUT THIS SECTION FOR FIXED AMOUNT OF BENDS
         //START BENDS---------------------------------------------------------------------------------------------------------------------------------
@@ -57,15 +56,11 @@ class Wire extends LogicGate
         //Uncomment if we should use distances based on gate rather than node since it 1 node can have 2 bends, and the other 3.
         if(this.connectionTo)
         {
-            manhattanDistance = super.GetXYDistanceToPoint(this.connectionTo.parent.pos);
+            manhattanDistance = super.GetXYDistanceToPoint(this.connectionTo.parent.position);
             manhattanDistance = Math.abs(manhattanDistance.x) + Math.abs(manhattanDistance.y);
         }
 
-        if(Math.abs(distances.x) < 1 || Math.abs(distances.y) < 1)
-            bends = 2
-        if(manhattanDistance > 12)
-            bends = 4;
-        else if(manhattanDistance > 5 || (startPos.x+0.1) > endPos.x) //Force to be at least three if we have to go backwards
+        if(startPos.x > endPos.x) //Force to be at least three if we have to go backwards
             bends = 3;
 
         //END BENDS---------------------------------------------------------------------------------------------------------------------------------
@@ -79,7 +74,7 @@ class Wire extends LogicGate
             let decreaseHorizontalDistance = this.connectionTo != null && this.connectionTo.parent.incomingNodes.length > 1;
 
             //Determine whether to decrease a line based on it's connection to either incoming node 0 or 1 if above or below
-            if(this.connectionTo != null && startPos.y < this.connectionTo.pos.y)
+            if(this.connectionTo != null && startPos.y < this.connectionTo.position.y)
                 decreaseHorizontalDistance = decreaseHorizontalDistance && this.connectionTo.parent.incomingNodes[0] == this.connectionTo;
             else if(this.connectionTo != null)
                 decreaseHorizontalDistance = decreaseHorizontalDistance && this.connectionTo.parent.incomingNodes[1] == this.connectionTo;
@@ -93,19 +88,19 @@ class Wire extends LogicGate
             //If we are decreasing this vertical distance
             if(decreaseVerticalDistance && this.connectionTo)
             {
-                //If start pos it to left
-                if(startPos.x < this.connectionTo.pos.x)
+                //If start position it to left
+                if(startPos.x < this.connectionTo.position.x)
                 {
                     //If it is above
-                    if(startPos.y > this.connectionTo.pos.y)
+                    if(startPos.y > this.connectionTo.position.y)
                         verticalDecrease = verticalDecreaseAmount;
                     else
                         verticalDecrease = -verticalDecreaseAmount;
                 }
-                else //Start pos to right
+                else //Start position to right
                 {
                     //if it is above
-                    if(startPos.y > this.connectionTo.pos.y)
+                    if(startPos.y > this.connectionTo.position.y)
                         verticalDecrease = -verticalDecreaseAmount;
                     else
                         verticalDecrease = verticalDecreaseAmount;
@@ -115,7 +110,7 @@ class Wire extends LogicGate
             else if(this.connectionTo)
             {
                 //Move the horizontally increased by a fixed amount
-                if(startPos.y > this.connectionTo.pos.y)
+                if(startPos.y > this.connectionTo.position.y)
                     verticalDecrease = 0.3;
                 else
                     verticalDecrease = -0.3;
@@ -159,6 +154,6 @@ class Wire extends LogicGate
 
 // let extend = 1;
 // if(this.connectionTo != null)
-//     graphics.bezierCurveTo(this.pos.x + extend,this.pos.y, this.connectionTo.pos.x - extend, this.connectionTo.pos.y, this.connectionTo.pos.x, this.connectionTo.pos.y);
+//     graphics.bezierCurveTo(this.position.x + extend,this.position.y, this.connectionTo.position.x - extend, this.connectionTo.position.y, this.connectionTo.position.x, this.connectionTo.position.y);
 // else
-//     graphics.bezierCurveTo(this.pos.x + extend,this.pos.y, this.mousePos.x - extend, this.mousePos.y, this.mousePos.x, this.mousePos.y);
+//     graphics.bezierCurveTo(this.position.x + extend,this.position.y, this.mousePos.x - extend, this.mousePos.y, this.mousePos.x, this.mousePos.y);

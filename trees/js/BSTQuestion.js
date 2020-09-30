@@ -23,6 +23,7 @@ class BSTQuestion {
         this.insertedBSTValues = [];
 
         /** Values saved in DB */
+        /** Holds the generated answer string to be compared to the student's answer */
         this.bstString = document.getElementById("bst_string");
         /** Holds the BST values that are displayed to the student in bstValueList */
         this.bstValues = document.getElementById("bstvalues");
@@ -136,41 +137,46 @@ class BSTQuestion {
     }
 
     createBSTFromValues() {
-        let array = this.main.bstValueList.value.split(",").map(value => parseInt(value));
-        let rootValue = array[0];
-
-        for(let i = 0; i < array.length; i++) {
-            if(i === 0) {
-                if(!this.main.tree) {
-                    this.main.tree = new Tree(this.main, rootValue, false);
-                }
-                else {
-                    this.main.tree.setNewRoot(rootValue, false);
-                }
-            }
-            else {
-                let parent = this.main.tree.root;
-                let currNode = parent;
-                let childType = "";
-
-                while(currNode !== null) {
-                    parent = currNode;
-
-                    if(array[i] < parent.value) {
-                        currNode = currNode.children.leftChild;
-                        childType = "L";
-                    }
-                    else {
-                        currNode = currNode.children.rightChild;
-                        childType = "R";
-                    }
-                }
-
-                this.main.tree.addChildNoDraw(parent, childType, array[i]);
-            }
+        if(this.main.bstValueList.value === "") {
+            this.bstString.value = "";
+            return;
         }
 
-        this.main.tree.convertToStringForBST(this.main.tree.root);
+        let array = this.main.bstValueList.value.split(",").map(value => parseInt(value));
+        let bstStack = []; // Needed to construct BST answer string
+
+        let rootValue = array[0];
+        if(this.main.tree) {
+            this.main.tree = null;
+        }
+        this.main.tree = new Tree(this.main, rootValue, false);
+        bstStack.push(this.main.tree.root);
+
+        let newNode;
+
+        for(let i = 1; i < array.length; i++) {
+            let parent = this.main.tree.root;
+            let currNode = parent;
+            let childType = "";
+
+            while(currNode !== null) {
+                parent = currNode;
+
+                if(array[i] < parent.value) {
+                    currNode = currNode.children.leftChild;
+                    childType = "L";
+                }
+                else {
+                    currNode = currNode.children.rightChild;
+                    childType = "R";
+                }
+            }
+
+            newNode = this.main.tree.addChildNoDraw(parent, childType, array[i]);
+            bstStack.push(newNode);
+        }
+
+        this.main.tree.convertToStringForBST(bstStack);
         this.bstString.value = this.main.tree.string;
         this.main.tree.string = "";
     }

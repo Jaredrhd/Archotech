@@ -11,18 +11,31 @@ class OutgoingNode extends LogicGate
         this.parent = parent;
 
         this.dragWire = new Wire(this.pos, this);
+        this.spawnedWire = false;
         this.circuit.push(this.dragWire);
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)
     {
         //Make sure the drag wire is deleted each round
+        this.spawnedWire = false;
         this.dragWire.mousePos = null;
+
+        if(gateDroppedOn && gateDroppedOn.parent && gateDroppedOn.parent.spawner)
+        {
+            //Hack, if we dropped on a spawner, there is technically still a wire, so set it to true and return so that selection manager handles this correctly
+            this.spawnedWire = true;
+            return;
+        }
+        //If we clicked on an outgoing node that is a spawners node, return it
+        else if(this.parent.spawner)
+            return this.parent;
 
         //Used for creating wire
         if(stillDragging)
         {
             //Create wire to mouse
+            this.spawnedWire = true;
             this.dragWire.mousePos = Input.GetMousePos();
         }
         else if(!stillDragging && gateDroppedOn != null)
@@ -32,6 +45,12 @@ class OutgoingNode extends LogicGate
             if(attached != null)
                 this.AddOutgoingConnection(attached);
         }
+    }
+
+    AddSpecificConnections(gate, nodeNumber)
+    {
+        let node = gate.incomingNodes[nodeNumber].AddIncomingConnection(this);
+        this.AddOutgoingConnection(node);
     }
 
     AddOutgoingConnection(gate)
@@ -47,17 +66,30 @@ class OutgoingNode extends LogicGate
         this.circuit.push(wire);
     }
 
-    //Handles removing of the connection
+    //Handles removing of a single connection
     RemoveOutgoingConnection(gateWire)
     {
         this.outgoingConnections.splice(this.outgoingConnections.indexOf(gateWire),1);
         this.circuit.splice(this.circuit.indexOf(gateWire.wire),1);
     }
 
+    RemoveAllOutgoingConnections()
+    {
+        //remove all outgoing connections
+        for(let i = this.outgoingConnections.length-1; i >= 0; --i)
+        {
+            this.outgoingConnections[i].gate.incomingConnectionNode = null;
+            this.circuit.splice(this.circuit.indexOf(this.outgoingConnections[i].wire),1);
+        }
+
+        //Set back to Array()
+        this.outgoingConnections = Array();;
+    }
+
     UpdatePos()
     {
-        this.pos.x = this.parentOffset.x + this.parent.pos.x;
-        this.pos.y = this.parentOffset.y + this.parent.pos.y;
+        this.position.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
+        this.position.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
     }
 
     Draw(graphics)
@@ -67,7 +99,8 @@ class OutgoingNode extends LogicGate
         graphics.fillStyle = "white";
 
         //Move to pos and scale
-        graphics.translate(this.pos.x,this.pos.y);
+        graphics.translate(this.position.x,this.position.y);
+        graphics.scale(this.parent.scale,this.parent.scale);
 
         //Draw circle
         graphics.beginPath();
