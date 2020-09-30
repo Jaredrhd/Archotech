@@ -46,7 +46,7 @@ class qtype_logicgate extends question_type {
         'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
          'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount',
          'nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount',
-         'curated_data','questiontype');
+         'answer_id','questiontype');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);

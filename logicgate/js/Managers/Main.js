@@ -59,10 +59,10 @@ class Main
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
         {
-            //Only update gates if we are focused on canvas
+            //Update the gate
             this.circuit[i].Update();
             
-            //Draw Wires
+            //Draw Wires first so they are under
             if(this.circuit[i] instanceof Wire)
                 this.circuit[i].Draw(this.graphics);
         }
@@ -207,30 +207,46 @@ class Main
         if(save=="")
             return;
 
+        //Set Scale
         let scale = 0.7;
         let newIDs = Object();
         save = save.split("|")
 
+        //Spawn Gates
         for(let i = 0; i < save.length; i++)
         {
+            //Split
             let data = save[i].split(",");
+            
+            //Spawn gate
             let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, ${scale}, this.circuit, this.origin)`;
             let gate = eval(gateToSpawn);
+
+            //Set charge and push to circuit
             gate.charge = data[4] == "true";
             this.circuit.push(gate);
+
+            //For mapping previous saves ID to the new Save ID
             newIDs[data[0]] = this.circuit.length-1;
         }
 
+        //Set up connections
         for(let i = 0; i < save.length; i++)
         {
             let fullData = save[i].split(",");
 
+            //Skip end gate since this is for setting up outgoing connections
             if(fullData[1] == "EndGate")
                 continue;
-
+            
+            //Get the outgoing connections
             let data = fullData[5];
             data = data.substring(1,data.length-1);
             data = data.split("/");
+
+            //Make sure we have an actual connection
+            if(data.length == 1 && data[0] == "")
+                continue;
 
             //The NewID from one save to the next of the current gate
             let newID = newIDs[fullData[0]];

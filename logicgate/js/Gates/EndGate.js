@@ -5,7 +5,7 @@ class EndGate extends LogicGate
         //Force this from spawner to be 0.5
         scale = 0.5;
         super(pos, scale, origin);
-        this.incomingNodes = [new IncomingNode(this.pos, circuit, this)];
+        this.incomingNodes = [new IncomingNode(this.position, circuit, this)];
     }
 
     SelectedUpdate(stillDragging, gateDroppedOn)

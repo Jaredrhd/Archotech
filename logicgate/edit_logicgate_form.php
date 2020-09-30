@@ -39,47 +39,56 @@ class qtype_logicgate_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
 
-        $mform->addElement('header', 'Gates', "Setup Question");
+        $mform->addElement('header', 'Gates', 'Setup Question');
 
-        //Set question mode 0-n
-        $mform->addElement('radio', 'questiontype', '', "Question Mode", 0, array());
-        $mform->addElement('radio', 'questiontype', '', "Sandbox Mode", 1, array());
+        //Set question mode
+        $mform->addElement('radio', 'questiontype', '', 'Question Mode', 0, array());
+        $mform->addElement('radio', 'questiontype', '', 'Sandbox Mode', 1, array());
 
+        //Add break to separate boxes
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');
 
         //Adds checkboxes for logic gates
-        $mform->addElement('advcheckbox', 'buffergate', "", "Buffer Gate", array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'notgate', "", "Not Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'andgate', "", "And Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'nandgate', "", "Nand Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'orgate', "", "Or Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'norgate', "", "Nor Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'xorgate', "", "Xor Gate",  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'xnorgate', "", "Xnor Gate",  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'nandgate', 'Include Nand Gates', 'Nand Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'orgate', 'Include Or Gates', 'Or Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'norgate', 'Include Nor Gates', 'Nor Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xorgate', 'Include Xor Gates', 'Xor Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(0, 1));
 
         //Hide checkboxes if not question mode
-        $mform->hideIf('buffergate','questiontype', "eq", 1);
-        $mform->hideIf('notgate','questiontype', "eq", 1);
-        $mform->hideIf('andgate','questiontype', "eq", 1);
-        $mform->hideIf('nandgate','questiontype', "eq", 1);
-        $mform->hideIf('orgate','questiontype', "eq", 1);
-        $mform->hideIf('norgate','questiontype', "eq", 1);
-        $mform->hideIf('xorgate','questiontype', "eq", 1);
-        $mform->hideIf('xnorgate','questiontype', "eq", 1);
+        $mform->hideIf('startgate','questiontype', 'eq', 1);
+        $mform->hideIf('endgate','questiontype', 'eq', 1);
+        $mform->hideIf('buffergate','questiontype', 'eq', 1);
+        $mform->hideIf('notgate','questiontype', 'eq', 1);
+        $mform->hideIf('andgate','questiontype', 'eq', 1);
+        $mform->hideIf('nandgate','questiontype', 'eq', 1);
+        $mform->hideIf('orgate','questiontype', 'eq', 1);
+        $mform->hideIf('norgate','questiontype', 'eq', 1);
+        $mform->hideIf('xorgate','questiontype', 'eq', 1);
+        $mform->hideIf('xnorgate','questiontype', 'eq', 1);
         //$this->add_checkbox_controller(1, NULL, NULL, 0);
 
         #The Numerical limits
         $mform->addElement('html', '<h2> Set Numerical Limits </h2> <br /> <p> Set to 0 for unlimited amount. Note this only affects the student.</p>');
-        $mform->addElement('float', 'buffergateamount', "Buffer Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'notgateamount', "Not Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'andgateamount', "And Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'nandgateamount', "Nand Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'orgateamount', "Or Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'norgateamount', "Nor Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'xorgateamount', "Xor Gate Limit", array('value'=>0));
-        $mform->addElement('float', 'xnorgateamount', "Xnor Gate Limit", array('value'=>0));
+        $mform->addElement('text', 'startgateamount', 'Start Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'endgateamount', 'End Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'buffergateamount', 'Buffer Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'notgateamount', 'Not Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'andgateamount', 'And Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'nandgateamount', 'Nand Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'orgateamount', 'Or Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'norgateamount', 'Nor Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'xorgateamount', 'Xor Gate Limit', array('value'=>0));
+        $mform->addElement('text', 'xnorgateamount', 'Xnor Gate Limit', array('value'=>0));
 
         //Hide numerical values if not selected
+        $mform->hideIf('startgateamount', 'startgate');
+        $mform->hideIf('endgateamount', 'endgate');
         $mform->hideIf('buffergateamount', 'buffergate');
         $mform->hideIf('notgateamount', 'notgate');
         $mform->hideIf('andgateamount', 'andgate');
@@ -90,17 +99,19 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->hideIf('xnorgateamount', 'xnorgate');
 
         //Hide numerical values if sandbox mode
-        $mform->hideIf('buffergateamount','questiontype', "eq", 1);
-        $mform->hideIf('notgateamount','questiontype', "eq", 1);
-        $mform->hideIf('andgateamount','questiontype', "eq", 1);
-        $mform->hideIf('nandgateamount','questiontype', "eq", 1);
-        $mform->hideIf('orgateamount','questiontype', "eq", 1);
-        $mform->hideIf('norgateamount','questiontype', "eq", 1);
-        $mform->hideIf('xorgateamount','questiontype', "eq", 1);
-        $mform->hideIf('xnorgateamount','questiontype', "eq", 1);
+        $mform->hideIf('startgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('endgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('buffergateamount','questiontype', 'eq', 1);
+        $mform->hideIf('notgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('andgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('nandgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('orgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('norgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('xorgateamount','questiontype', 'eq', 1);
+        $mform->hideIf('xnorgateamount','questiontype', 'eq', 1);
 
         //Add hidden field with circuit stuff
-        $mform->addElement('header', 'Answer', "Create Answer");
+        $mform->addElement('header', 'Answer', 'Create Answer');
         
         //Add canvas
         $group[] =& $mform->createElement('static', 'text', '', file_get_contents(new moodle_url('/question/type/logicgate/js/SceneGraph.html')));
@@ -114,13 +125,7 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addGroup($newGroup, 'ShowHelpTextGroup', '', ' ', false);
         $mform->hideIf('ShowHelpTextGroup', 'questiontype', 'eq', 0);
 
-        //Add curated data
-        $mform->addElement('hidden', 'curated_data','',array('id'=>'curated_data'));
-
-        $this->add_interactive_settings(true, true);
-
-        //Hide the answer field is done in lecturer code (HACK) (NOTE this is forcibly hidden in the SceneGraph by getting th id. It is a hack but can't figure out how to hide this)
-        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_logicgate', '{no}'), array(100,0),1,0);
+        $mform->addElement('hidden', 'answer_id','',array('id'=>'answer_id'));
     }
 
     //Perform a preprocessing needed on the data passed to set_data() before it is used to initialise the form. 

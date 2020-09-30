@@ -86,7 +86,7 @@ class OutgoingNode extends LogicGate
         this.outgoingConnections = Array();;
     }
 
-    UpdatePos()
+    UpdatePosition()
     {
         this.position.x = this.parentOffset.x * this.parent.scale + this.parent.position.x;
         this.position.y = this.parentOffset.y * this.parent.scale + this.parent.position.y;
@@ -94,7 +94,7 @@ class OutgoingNode extends LogicGate
 
     Draw(graphics)
     {
-        this.UpdatePos();
+        this.UpdatePosition();
         graphics.save();
         graphics.fillStyle = "white";
 

@@ -13,10 +13,13 @@
 </noscript>
 
 <!-- Question Properties -->
-<div spawners = "StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate" save = "44,BufferGate,0.00,1.64,false,[58:0]|48,NotGate,-0.15,0.43,true,[58:1]|50,StartGate,-1.48,1.99,true,[44:0/48:0]|53,EndGate,2.76,1.08,false,[]|58,AndGate,1.52,1.04,false,[53:0]"></div>
+<div 
+    spawners = "StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate" 
+    save = "">
+</div>
 
 <!-- Save Field -->
-<input type="text" name="ANSWER_ID">
+<input type="hidden" name="ANSWER_ID">
 
 <!-- Canvas Holder -->
 <div id = "canvasDiv_QUESTIONID" style="float:left; border: 2px solid black"></div>
@@ -25,7 +28,7 @@
     function init()
     {
         let manager;
-        let moodle = false;
+        let moodle = true;
         let moodleLink = moodle ? "/question/type/logicgate/js/" : "";
 
         addScript(moodleLink + "Gates/LogicGate.js");

@@ -16,6 +16,15 @@ class Manager
             let saveField = canvasDiv.previousElementSibling;
             let properties = saveField.previousElementSibling;
 
+            let saveFieldLecturer = document.getElementById("answer_id");
+
+            //If we have a lecturer "saveField", use that instead
+            if(saveFieldLecturer)
+            {
+                saveField = saveFieldLecturer;
+                properties.setAttribute("save", saveField.value);
+            }
+
             //Create canvas
             let canvas = document.createElement("canvas");
             canvas.width = "800";
