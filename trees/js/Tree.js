@@ -1,4 +1,3 @@
-
 class Tree {
     constructor(main, rootValue, draw=true) {
         this.main = main;
@@ -11,12 +10,12 @@ class Tree {
 
         this.root = new Node(this.main, rootValue);
         this.root.parent = null;
+        this.numNodes = 1;
         this.nodeArray = [];
         if(draw) {
             this.root.draw(null, (this.main.COLS - 1) * 0.5, 0); // parent, cellX, cellY
             this.nodes[this.root.cellCoords.y][this.root.cellCoords.x] = this.root;
             this.nodeArray.push(this.root);
-            this.numNodes = 1;
             this.root.orderPlaced = this.numNodes;
         }
 
@@ -60,6 +59,9 @@ class Tree {
             parentNode.children.rightChild.parent = parentNode;
             newChild = parentNode.children.rightChild;
         }
+
+        this.numNodes++;
+        newChild.orderPlaced = this.numNodes;
         
         return newChild;
     }
@@ -79,14 +81,6 @@ class Tree {
             else {
                 break; // Nothing specified - return null
             }
-        }
-
-        return null;
-    }
-
-    getNodeByOrder(order) {
-        for(const node of this.nodeArray) {
-            if(node.orderPlaced === order) return node;
         }
 
         return null;
@@ -226,6 +220,8 @@ class Tree {
 
         childPos = childPos.split("").reverse().join(""); // Get child position from root to child instead of from child to root e.g. LLR not RLL
 
+        if(childPos === "") childPos = "ROOT";
+
         return childPos;
     }
 
@@ -233,6 +229,40 @@ class Tree {
         for(const node of this.nodeArray) {
             if(nodeValue === node.value) return true;
         }
+
+        return false;
+    }
+
+    allowedValueForAVL(newNodeValue, childType) {
+        let attemptedPlacement = "";
+        let correctPlacement = "";
+        let currNode = this.root;
+        
+        /** The new node's position in the tree */
+        if(this.main.selectedNode === this.root) {
+            attemptedPlacement = childType;
+        }
+        else {
+            attemptedPlacement = this.generateChildPosition(this.main.selectedNode) + "." + childType;
+        }
+
+        /** Where the node should be placed */
+        let leftOrRight = "";
+        while(currNode) {
+            if(newNodeValue < currNode.value) {
+                leftOrRight = "L";
+                currNode = currNode.children.leftChild;
+            }
+            else {
+                leftOrRight = "R";
+                currNode = currNode.children.rightChild;
+            }
+
+            if(correctPlacement === "") correctPlacement += leftOrRight;
+            else correctPlacement += "." + leftOrRight;
+        }
+
+        if(attemptedPlacement === correctPlacement) return true; // If they are equal, the BST property is maintained and so this is a valid new node
 
         return false;
     }

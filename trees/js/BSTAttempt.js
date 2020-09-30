@@ -9,9 +9,9 @@ class BSTAttempt {
     }
 
     configureHTML() {
-        if(this.main.databaseMisc.treestring !== "") {
-            this.main.buildTreeFromString(this.main.databaseMisc.treestring);
-        }
+        // if(this.main.databaseMisc.treestring !== "") {
+        //     this.main.buildTreeFromString(this.main.databaseMisc.treestring);
+        // }
 
         this.main.bstValueList.value = this.main.databaseMisc.bstvalues; // Set the bstValueList from the database value
         this.main.bstTools.style.display = "flex";
@@ -33,6 +33,9 @@ class BSTAttempt {
         this.main.addRootButton.style.display = "inline-block";
         this.main.editNodeValueButton.style.display = "none";
         this.main.removeNodeButton.style.display = "none";
+
+        /** Configure help text */
+        this.main.helpIcon.innerHTML = this.main.helpText["bst"];
     }
 
     /**
