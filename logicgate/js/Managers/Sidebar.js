@@ -1,6 +1,6 @@
 class Sidebar
 {
-    constructor(coords, circuit, origin)
+    constructor(coords, circuit, origin, enabledSpawners)
     {
         this.circuit = circuit;
         this.coords = coords;
@@ -9,7 +9,7 @@ class Sidebar
 
         //Start,end, buffer, not and nand or nor xor xnor
         //this.enabledSpawners = [StartGate, EndGate, BufferGate, NotGate, AndGate, NandGate, OrGate, NorGate, XorGate, XnorGate];
-        this.enabledSpawners = [StartGate, EndGate, BufferGate, NotGate, AndGate, NandGate, OrGate, NorGate, XorGate, XnorGate];
+        this.enabledSpawners = enabledSpawners.split(",");
         //this.enabledSpawners = [null, null, null, null, null, null, null, null, XorGate, XnorGate];
 
         this.DrawLeft = true;
@@ -21,9 +21,9 @@ class Sidebar
         for (let i = 0; i < this.enabledSpawners.length; i++) 
         {
             let scale = (i == 0 || i == 1) ? 0.5 : 0.6;
-            if(this.enabledSpawners[i])
+            if(this.enabledSpawners[i] != "null")
             {
-                let gate = new this.enabledSpawners[i](undefined, scale, this.circuit, this.origin);
+                let gate = eval(`new ${this.enabledSpawners[i]}(undefined, ${scale}, this.circuit, this.origin)`);
                 gate.spawner = true;
                 this.spawners.push(gate);
                 this.circuit.push(gate);
@@ -89,7 +89,7 @@ class Sidebar
         //Get spawners length
         let spawnersLength = this.spawners.length;
         //Start Gate and End Gate count as 1 gate when spacing
-        if(this.enabledSpawners[0] && this.enabledSpawners[1])
+        if(this.enabledSpawners[0] != "null" && this.enabledSpawners[1] != "null")
         {
             //If both gates enabled, no forced offset
             forceOffset = 0;
@@ -140,7 +140,7 @@ class Sidebar
         //Get spawners length
         let spawnersLength = this.spawners.length;
         //Start Gate and End Gate count as 1 gate when spacing
-        if(this.enabledSpawners[0] && this.enabledSpawners[1])
+        if(this.enabledSpawners[0] != "null" && this.enabledSpawners[1] != "null")
         {
             //If both gates enabled, no forced offset
             forceOffset = 0;

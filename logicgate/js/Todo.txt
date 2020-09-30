@@ -1,4 +1,2 @@
-Add a way to swap from left sidebar to bottom sidebar.
-Save and load the circuit.
 Mark circuit.
 Restriction on the amount of gates they can spawn.

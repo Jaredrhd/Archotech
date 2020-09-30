@@ -1,7 +1,8 @@
 class Main
 {
-    constructor(canvas)
+    constructor(canvas, saveField, properties)
     {
+        this.saveField = saveField;
         //Canvas coordinates
         this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
         this.origin = {x : 0, y : 0, offsetX : 0, offsetY : 0};
@@ -17,14 +18,16 @@ class Main
         
         //Circuit stuff
         this.circuit = Array();
-        this.sidebar = new Sidebar(this.coords, this.circuit, this.origin);
+        this.sidebar = new Sidebar(this.coords, this.circuit, this.origin, properties.getAttribute("spawners"));
 
         //Selection manager for clicking and dragging
         this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
 
         this.timer = Date.now();
         this.timerUpdate = 250;
-        this.LoadCircuit("44,BufferGate,0.00,1.64,false,[58:0]|48,NotGate,-0.15,0.43,true,[58:1]|50,StartGate,-1.48,1.99,true,[44:0/48:0]|53,EndGate,2.76,1.08,false,[]|58,AndGate,1.52,1.04,false,[53:0]");
+
+        //Set up the previous save
+        this.LoadCircuit(properties.getAttribute("save"));
     }
 
     Render()
@@ -196,11 +199,14 @@ class Main
         }
 
         //Remove the last | 
-        return save.substring(0, save.length-1);
+        this.saveField.value = save.substring(0, save.length-1);
     }
 
     LoadCircuit(save)
     {
+        if(save=="")
+            return;
+
         let scale = 0.7;
         let newIDs = Object();
         save = save.split("|")
