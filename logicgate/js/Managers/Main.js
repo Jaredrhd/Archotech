@@ -24,7 +24,7 @@ class Main
 
         this.timer = Date.now();
         this.timerUpdate = 250;
-        this.LoadCircuit("44,BufferGate,2.47,1.35,[53:1]|48,BufferGate,-0.35,1.38,[53:0]|53,AndGate,0.25,-0.89,[44:0/54:0]|54,EndGate,3.36,-1.48,[]|59,StartGate,-1.75,2.49,[48:0]");
+        this.LoadCircuit("44,BufferGate,0.00,1.64,false,[58:0]|48,NotGate,-0.15,0.43,true,[58:1]|50,StartGate,-1.48,1.99,true,[44:0/48:0]|53,EndGate,2.76,1.08,false,[]|58,AndGate,1.52,1.04,false,[53:0]");
     }
 
     Render()
@@ -162,9 +162,9 @@ class Main
 
             //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
 
-            //id,Gate,x,y,[outputConnections]|...
+            //id,Gate,x,y,charge,[outputConnections]|...
             save += i + "," + this.circuit[i].constructor.name + "," + 
-                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + ",[";
+                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + "," + this.circuit[i].charge + ",[";
 
             //Check that this has a outgoing node (EndGate the exception)
             if(this.circuit[i].outgoingNodes)
@@ -210,7 +210,7 @@ class Main
             let data = save[i].split(",");
             let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, ${scale}, this.circuit, this.origin)`;
             let gate = eval(gateToSpawn);
-
+            gate.charge = data[4] == "true";
             this.circuit.push(gate);
             newIDs[data[0]] = this.circuit.length-1;
         }
@@ -222,7 +222,7 @@ class Main
             if(fullData[1] == "EndGate")
                 continue;
 
-            let data = fullData[4];
+            let data = fullData[5];
             data = data.substring(1,data.length-1);
             data = data.split("/");
 
