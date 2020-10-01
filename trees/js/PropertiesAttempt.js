@@ -403,17 +403,19 @@ class PropertiesAttempt {
             }
         }
 
-        let hit = 0;
-        /** Find each node in the tree and determine whether all requested node properties for it have been specified */
-        for(const node of this.requiredNodes) {
-            if(this.selectedNodeHasAllProperties(node)) {
-                hit++;
-                node.properties.hasAllProperties = true;
+        if(this.requiredNodes) {
+            let hit = 0;
+            /** Find each node in the tree and determine whether all requested node properties for it have been specified */
+            for(const node of this.requiredNodes) {
+                if(this.selectedNodeHasAllProperties(node)) {
+                    hit++;
+                    node.properties.hasAllProperties = true;
+                }
             }
-        }
 
-        if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
-            this.main.redrawCanvas();
-        }   
+            if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
+                this.main.redrawCanvas();
+            }   
+        }
     }
 }
