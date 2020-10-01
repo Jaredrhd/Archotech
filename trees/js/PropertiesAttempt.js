@@ -96,6 +96,9 @@ class PropertiesAttempt {
             this.colourTreePropertyInputBoxes(); // Colour the tree property input boxes immediately. Colouring of node property input boxes handled when a node is actually selected
             this.colourNodes(); // Fill the actual nodes with the student's results
         }
+
+        /** Configure help text */
+        this.main.helpIcon.innerHTML = this.main.helpText.properties;
     }
 
     /** Fills requiredNodes array with the nodes that the lecturer selected */
