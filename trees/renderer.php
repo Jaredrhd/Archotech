@@ -107,6 +107,7 @@ class qtype_trees_renderer extends qtype_renderer {
             //Get the answer
             if($question->q_type == "traversal") {
                 $html = str_replace("<input id='$canvasID:ANSWER_ID' type='text' name='ANSWER_NAME_ID' value=''>", "<input id='$canvasID:ANSWER_ID' type='text' name='ANSWER_NAME_ID' value='$answer' style='cursor: default;' readonly>", $html);
+                $html = str_replace("disabletraversalinput='false'", "disabletraversalinput='true'", $html);
             }
             else if($question->q_type == "bst") {
                 $splitString = explode("-", $answer);

@@ -69,8 +69,11 @@ class Main {
         //#endregion
 
         this.helpText = {
-            traversal:  '<p>Build up the traversal by clicking the nodes in the correct order.</p>' +
-                        '<p>Alternatively, you can type the solution directly in the box.</p>',
+            traversal:  '<p>Perform the required traversal by selecting the nodes in the correct order and/or typing the solution directly in the answer box.' +
+                        '<br>Deselecting a node will remove it from the traversal.</p>' +
+                        '<p>The format of your answer must be node values separated by a comma followed by a space.' + 
+                        '<br>i.e. [node_value][comma][space][node_value] etc.' +
+                        '<br>This format is automatically enforced when selecting nodes.</p>',
             bst:        '<p>This question requires you to build a binary search tree using the values displayed in the "BST Values" box. ' +
                         '<br>The value that you need to add at each step will be displayed in the "NODE VALUE" box.</p>' +
                         '<p>To begin, click on the "ADD ROOT" button. This will display the root of the tree on the canvas. ' +
@@ -80,7 +83,10 @@ class Main {
                         '<br>Note that you cannot add a child node directly below its parent node.</p>' +
                         '<p>If you would like to move a node, select the node and drag it to the desired cell. ' +
                         '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
-                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>'
+                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>',
+            properties: '<p>This question requires you to fill in the specified tree and/or node properties.</p>' +
+                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.' + 
+                        '<br>Once all the properties for a node have been entered, the node will turn blue.</p>'
         };
 
         if(this.databaseMisc.disablecanvas) {

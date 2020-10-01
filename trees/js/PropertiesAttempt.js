@@ -96,6 +96,9 @@ class PropertiesAttempt {
             this.colourTreePropertyInputBoxes(); // Colour the tree property input boxes immediately. Colouring of node property input boxes handled when a node is actually selected
             this.colourNodes(); // Fill the actual nodes with the student's results
         }
+
+        /** Configure help text */
+        this.main.helpIcon.innerHTML = this.main.helpText.properties;
     }
 
     /** Fills requiredNodes array with the nodes that the lecturer selected */
@@ -400,17 +403,19 @@ class PropertiesAttempt {
             }
         }
 
-        let hit = 0;
-        /** Find each node in the tree and determine whether all requested node properties for it have been specified */
-        for(const node of this.requiredNodes) {
-            if(this.selectedNodeHasAllProperties(node)) {
-                hit++;
-                node.properties.hasAllProperties = true;
+        if(this.requiredNodes) {
+            let hit = 0;
+            /** Find each node in the tree and determine whether all requested node properties for it have been specified */
+            for(const node of this.requiredNodes) {
+                if(this.selectedNodeHasAllProperties(node)) {
+                    hit++;
+                    node.properties.hasAllProperties = true;
+                }
             }
-        }
 
-        if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
-            this.main.redrawCanvas();
-        }   
+            if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
+                this.main.redrawCanvas();
+            }   
+        }
     }
 }
