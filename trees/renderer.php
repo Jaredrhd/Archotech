@@ -48,7 +48,6 @@ class qtype_trees_renderer extends qtype_renderer {
         $html = str_replace("id='layout'", "id='$canvasID':layout", $html);
 
         $answer = $qa->get_last_qt_var('answer');
-        $node_order_clicked = $qa->get_last_qt_var('order');
 
         if($question->q_type == "traversal") {
             $html = str_replace("qtype='' treestring='' bstvalues=''", "qtype='$question->q_type' treestring='$question->lecturer_tree' bstvalues=''", $html);
@@ -65,9 +64,6 @@ class qtype_trees_renderer extends qtype_renderer {
 
         if($answer != "") {
             $html = str_replace("lastanswer=''", "lastanswer='$answer'", $html);
-            if($question->q_type == "traversal") {
-                $html = str_replace("lastanswernodeorders=''", "lastanswernodeorders='$node_order_clicked'", $html);
-            }
         }
 
         // echo "<script>console.log('$node_order_clicked');</script>";
@@ -143,10 +139,6 @@ class qtype_trees_renderer extends qtype_renderer {
         }
 
         $result = str_replace("ANSWER_NAME_ID", $inputname, $result);
-        if($question->q_type == "traversal") {
-            $node_order_clicked = $qa->get_qt_field_name('order');
-            $result = str_replace("TRAVERSAL_ORDER_NAME", $node_order_clicked, $result);
-        }
         
         /* if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
@@ -201,10 +193,15 @@ class qtype_trees_renderer extends qtype_renderer {
         $studentAnswer = $this->generateResultFromAnswerString($answer);
 
         // echo "<script>console.log('$answer');</script>";
-        // echo "<script>console.log('$question->properties_string');</script>";
+        // echo "<script>console.log('$question->propertiesFraction');</script>";
 
         if($question->propertiesFraction == 1) {
-            $string .= nl2br("Your answer is correct.\n\n" . "<u>Your answer:</u>\n\n" . $studentAnswer);
+            if($question->properties_string == "") {
+                $string .= nl2br("Your answer is correct.");
+            }
+            else {
+                $string .= nl2br("Your answer is correct.\n\n" . "<u>Your answer:</u>\n\n" . $studentAnswer);
+            }
         }
         else if($question->propertiesFraction == 0) {
             $string .= nl2br("Your answer is incorrect.\n\n" . "<u>Correct answer:</u>\n\n" . $correctAnswer);
@@ -267,6 +264,7 @@ class qtype_trees_renderer extends qtype_renderer {
             case "num_leaves": $name = "Number of Leaves"; break;
             case "num_edges": $name = "Number of Edges"; break;
             case "num_internal_nodes": $name = "Number of Internal Nodes"; break;
+            case "num_children": $name = "Number of Children"; break;
             default: $name = ucfirst($propertyName); break;
         }
 
