@@ -19,9 +19,11 @@ class TraversalAttempt {
         
         this.answerBox.style.width = document.getElementsByTagName("canvas").width;
         
-        // this.answerBox.readOnly = true;
-        this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
-        this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
+        if(this.main.databaseMisc.disabletraversalinput) this.answerBox.readOnly = true;
+        else {
+            this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
+            this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
+        }
         
         this.main.modifyTreeTools.style.display = "none";
         this.main.answerQuestionTools.style.display = "flex";
