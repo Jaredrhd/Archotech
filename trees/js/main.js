@@ -21,6 +21,7 @@ class Main {
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
         this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
+        this.helpIcon = document.getElementById(canvas.id+":tooltip-text");
 
         //#region BOARD MISC
         this.canvas = canvas;
@@ -66,6 +67,21 @@ class Main {
         this.MAX_NODE_VALUE = 99;
         this.MIN_NODE_VALUE = 1;
         //#endregion
+
+        this.helpText = {
+            traversal:  '<p>Build up the traversal by clicking the nodes in the correct order.</p>' +
+                        '<p>Alternatively, you can type the solution directly in the box.</p>',
+            bst:        '<p>This question requires you to build a binary search tree using the values displayed in the "BST Values" box. ' +
+                        '<br>The value that you need to add at each step will be displayed in the "NODE VALUE" box.</p>' +
+                        '<p>To begin, click on the "ADD ROOT" button. This will display the root of the tree on the canvas. ' +
+                        '<br>Next, click on the root to select it (this will highlight the node in red). ' +
+                        'To add a child to the selected node, click on a cell that is below the selected node, and to the left or right of it. ' +
+                        'This will add a left child or right child, respectively. ' +
+                        '<br>Note that you cannot add a child node directly below its parent node.</p>' +
+                        '<p>If you would like to move a node, select the node and drag it to the desired cell. ' +
+                        '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
+                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>'
+        };
 
         if(this.databaseMisc.disablecanvas) {
             this.canvas.style.pointerEvents = "none"; // Disable all canvas interaction when student is reviewing
