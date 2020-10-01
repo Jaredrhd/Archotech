@@ -19,12 +19,17 @@ class TraversalAttempt {
         
         this.answerBox.style.width = document.getElementsByTagName("canvas").width;
         
-        // this.answerBox.readOnly = true;
-        this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
-        this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
+        if(this.main.databaseMisc.disabletraversalinput) this.answerBox.readOnly = true;
+        else {
+            this.answerBox.addEventListener("input", this.validateInput.bind(this, this.answerBox));
+            this.answerBox.addEventListener("change", this.clearInvalidInput.bind(this));
+        }
         
         this.main.modifyTreeTools.style.display = "none";
         this.main.answerQuestionTools.style.display = "flex";
+
+        /** Configure help text */
+        this.main.helpIcon.innerHTML = this.main.helpText.traversal;
     }
 
     validateInput(answerBox) {
@@ -125,19 +130,15 @@ class TraversalAttempt {
     /** Reselects the nodes in a perform traversal question that the student had selected but not yet submitted */
     reconstructLastAnswer() {
         this.answerBox.value = this.main.databaseMisc.lastanswer;
-        this.traversalOrder.value = this.main.databaseMisc.lastanswernodeorders;
 
-        let nodes = this.main.databaseMisc.lastanswernodeorders.split(", "); // The node values and the order they were added to the tree to uniquely identify them in case there are nodes with the same value
+        let nodes = this.main.databaseMisc.lastanswer.split(", "); // The node values and the order they were added to the tree to uniquely identify them in case there are nodes with the same value
         let node;
         let nodeValue;
-        let nodeOrderPlaced;
 
         for(let i = 0; i < nodes.length; i++) {
-            node = nodes[i].split(":");
-            nodeValue = Number(node[0]);
-            nodeOrderPlaced = Number(node[1]);
+            nodeValue = Number(nodes[i]);
 
-            node = this.main.tree.getNode(nodeValue, nodeOrderPlaced);
+            node = this.main.tree.getNode(nodeValue);
             node.selected = true;
             this.answerArray.push(node);
 

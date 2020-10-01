@@ -7,10 +7,13 @@ class PropertiesAttempt {
         this.treePropertyResults = [];
         this.nodePropertyResults = [];
 
+        /** Array of all required nodes to enter node properties for */
+        this.requiredNodes = [];
+
         /** String arrays storing the requested tree and node property names */
         this.requestedTreeProperties = [];
         this.requestedNodeProperties = [];
-        this.requestedProperties = []; // All names of all requested properties
+        this.requestedProperties = []; // Names of all requested properties
 
         this.numRequestedTreeProperties = 0;
         this.numRequestedNodeProperties = 0;
@@ -21,8 +24,7 @@ class PropertiesAttempt {
             num_internal_nodes: "",
             height: "",
             depth: "",
-            degree: "",
-            level: ""
+            num_children: ""
         }
 
         this.propertyTools = document.getElementById(this.main.canvas.id+":property-tools");
@@ -39,9 +41,8 @@ class PropertiesAttempt {
         this.nodePropertiesDiv = document.getElementById(this.main.canvas.id+":node-properties"); // Parent div
         this.nodeHeightInput = document.getElementById(this.main.canvas.id+":height");
         this.nodeDepthInput = document.getElementById(this.main.canvas.id+":depth");
-        this.nodeDegreeInput = document.getElementById(this.main.canvas.id+":degree");
-        this.nodeLevelInput = document.getElementById(this.main.canvas.id+":level");
-        this.nodePropertyInputs = {height: this.nodeHeightInput, depth: this.nodeDepthInput, degree: this.nodeDegreeInput, level: this.nodeLevelInput};
+        this.numChildrenInput = document.getElementById(this.main.canvas.id+":num_children");
+        this.nodePropertyInputs = {height: this.nodeHeightInput, depth: this.nodeDepthInput, num_children: this.numChildrenInput};
     }
 
     configureHTML() {
@@ -50,10 +51,13 @@ class PropertiesAttempt {
 
         this.main.helpIcon.style.marginTop = "-50px";
         this.main.helpIcon.style.marginBottom = "20px";
-   
+        
+        let requestedPropertiesAndRequiredNodes = this.main.databaseMisc.properties.split("/");
+        let requestedProperties = requestedPropertiesAndRequiredNodes[0];
+
         let propertyInfo;
 
-        for(const property of this.main.databaseMisc.properties.split(",")) { // For every property the lecturer has requested
+        for(const property of requestedProperties.split(",")) { // For every property the lecturer has requested
             propertyInfo = property.split(":"); // propertyInfo[0] is either tree or node, propertyInfo[1] is the actual property name
 
             if(propertyInfo[0] === "tree") { // Display any tree property input boxes immediately
@@ -70,12 +74,14 @@ class PropertiesAttempt {
             this.requestedProperties.push(propertyInfo[1]);
         }
 
+        this.fillRequiredNodesArray(requestedPropertiesAndRequiredNodes[1]);
+
         this.fillIntialNodePropertyAnswers();
         this.serializePropertyAnswers();
 
         /** Add event listeners to input boxes */
         for(const item in this.treePropertyInputs) {
-            this.treePropertyInputs[item].addEventListener("input", this.treePropertyInputChanged.bind(this, this.treePropertyInputs[item], this.treePropertyInputs[item].id.split(":")[2]));
+            this.treePropertyInputs[item].addEventListener("change", this.treePropertyInputChanged.bind(this, this.treePropertyInputs[item], this.treePropertyInputs[item].id.split(":")[2]));
         }
 
         for(const item in this.nodePropertyInputs) {
@@ -96,6 +102,41 @@ class PropertiesAttempt {
             this.populateResults();
             this.colourTreePropertyInputBoxes(); // Colour the tree property input boxes immediately. Colouring of node property input boxes handled when a node is actually selected
             this.colourNodes(); // Fill the actual nodes with the student's results
+        }
+
+        /** Configure help text */
+        this.main.helpText.innerHTML = this.main.helpText.properties;
+    }
+
+    /** Fills requiredNodes array with the nodes that the lecturer selected */
+    fillRequiredNodesArray(requiredNodesString) {
+        if(this.numRequestedNodeProperties > 0) { // There were actually node properties requested
+            if(requiredNodesString) { // Only those nodes specified in requiredNodesString are required nodes
+                let nodeInfo;
+                let nodeValue;
+                let nodeOrder;
+
+                for(const node of requiredNodesString.split("#")) {
+                    nodeInfo = node.split(":");
+                    nodeValue = Number(nodeInfo[0]);
+                    nodeOrder = Number(nodeInfo[1]);
+
+                    this.requiredNodes.push(this.main.tree.getNode(nodeValue, nodeOrder));
+                }
+
+            }
+            else { // All nodes are required nodes
+                this.requiredNodes = this.main.tree.nodeArray;
+            }
+
+            for(const requiredNode of this.requiredNodes) {
+                requiredNode.properties.required = true;
+            }
+
+            this.main.redrawCanvas();
+        }
+        else {
+            this.requiredNodes = null;
         }
     }
 
@@ -157,7 +198,7 @@ class PropertiesAttempt {
 
         let index;
 
-        for(const node of this.main.tree.nodeArray) {
+        for(const node of this.requiredNodes) {
             key = node.value + "-" + node.orderPlaced;
 
             for(const nodeProperty of this.nodePropertyResults) {
@@ -167,7 +208,7 @@ class PropertiesAttempt {
                 nodePropertyNodeList = nodePropertyInfo[1].split("#");
                 index = nodePropertyNodeList.findIndex(nodeEntry => nodeEntry.split(":")[0] === key); // Find node in nodePropertyNodeList
                 
-                if(nodePropertyNodeList[index].split(":")[1] === "0") node.properties.correct = false; // The student input an incorrect property value for this node
+                if(nodePropertyNodeList[index].split(":")[1] === "0") node.properties.correct = false; // The student input an incorrect property value for this node (defaults to true)
             }
         }
 
@@ -304,7 +345,7 @@ class PropertiesAttempt {
         let string = "";
 
         for(const nodeProperty of this.requestedNodeProperties) {
-            for(const node of this.main.tree.nodeArray) { // Nodes in nodeArray are arranged according to their order placed
+            for(const node of this.requiredNodes) {
                 string = node.value + "-" + node.orderPlaced + ":";
                 
                 if(this.propertyAnswers[nodeProperty] === "") {
@@ -322,15 +363,11 @@ class PropertiesAttempt {
         let string = "";
 
         for(const requestedProperty of this.requestedProperties) {
-            for(const propertyName in this.propertyAnswers) {
-                if(propertyName === requestedProperty) {
-                    if(requestedProperty !== this.requestedProperties[this.requestedProperties.length - 1]) {
-                        string += propertyName + "." + this.propertyAnswers[propertyName] + "|";
-                    }
-                    else {
-                        string += propertyName + "." + this.propertyAnswers[propertyName];
-                    }
-                }
+            if(requestedProperty !== this.requestedProperties[this.requestedProperties.length - 1]) {
+                string += requestedProperty + "." + this.propertyAnswers[requestedProperty] + "|";
+            }
+            else {
+                string += requestedProperty + "." + this.propertyAnswers[requestedProperty];
             }
         }
 
@@ -339,7 +376,7 @@ class PropertiesAttempt {
 
     /** Called when a node property input box is updated. Checks whether the provided node has values for all requested node properties */
     selectedNodeHasAllProperties(node) {
-        let nodeString = node.value + "-" + node.orderPlaced; // String used to check if the selected node has an entry in the respective node property answer arrays
+        let nodeString = node.value + "-" + node.orderPlaced; // String used to identify node in node property arrays
 
         let nodeEntry;
         let numPropertiesSpecified = 0;
@@ -375,17 +412,19 @@ class PropertiesAttempt {
             }
         }
 
-        let hit = 0;
-        /** Find each node in the tree and determine whether all requested node properties for it have been specified */
-        for(const node of this.main.tree.nodeArray) {
-            if(this.selectedNodeHasAllProperties(node)) {
-                hit++;
-                node.properties.hasAllProperties = true;
+        if(this.requiredNodes) {
+            let hit = 0;
+            /** Find each node in the tree and determine whether all requested node properties for it have been specified */
+            for(const node of this.requiredNodes) {
+                if(this.selectedNodeHasAllProperties(node)) {
+                    hit++;
+                    node.properties.hasAllProperties = true;
+                }
             }
-        }
 
-        if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
-            this.main.redrawCanvas();
-        }   
+            if(hit > 0) { // Only redraw the canvas if at least one node has all the requested properties specified
+                this.main.redrawCanvas();
+            }   
+        }
     }
 }

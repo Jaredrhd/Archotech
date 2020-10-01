@@ -39,8 +39,8 @@
         
         <canvas id='' width="700" height="700"></canvas>
         <!-- DATABASE MISC -->
-        <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders='' properties=''
-        disablecanvas='false' displaytools='true' disablepropertytools='false' propertiescorrectness=''></div>
+        <div lecturer='false' qtype='' treestring='' bstvalues='' lastanswer='' properties='' disablecanvas='false' 
+            displaytools='true' disablepropertytools='false' propertiescorrectness='' disabletraversalinput='false'></div>
         <!--  -->
     </div>
     <div updateid id='toolbar-wrapper' class="toolbar-wrapper">
@@ -91,15 +91,10 @@
                         <label updateid for='depth' class="no-margin no-select">Depth of Node</label>
                         <input updateid id='depth' class="property-input input" type="number" autocomplete="off">
                     </div>
-                    <div updateid id="degree_parent" style="display: none;">
-                        <!-- NODE DEGREE -->
-                        <label updateid for='degree' class="no-margin no-select">Degree of Node</label>
-                        <input updateid id='degree' class="property-input input" type="number" autocomplete="off">
-                    </div>
-                    <div updateid id="level_parent" style="display: none;">
-                        <!-- NODE LEVEL -->
-                        <label updateid for='level' class="no-margin no-select">Level of Node</label>
-                        <input updateid id='level' class="property-input input" type="number" autocomplete="off">
+                    <div updateid id="num_children_parent" style="display: none;">
+                        <!-- NUM CHILDREN -->
+                        <label updateid for='num_children' class="no-margin no-select">No. of Children</label>
+                        <input updateid id='num_children' class="property-input input" type="number" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -122,6 +117,7 @@
         loadScript("/question/type/trees/js/TraversalAttempt.js");
         loadScript("/question/type/trees/js/BSTAttempt.js");
         loadScript("/question/type/trees/js/PropertiesAttempt.js");
+        // loadScript("/question/type/trees/js/AVLAttempt.js");
         loadScript("/question/type/trees/js/QuestionAttempt.js");
         loadScript("/question/type/trees/js/Main.js");
 

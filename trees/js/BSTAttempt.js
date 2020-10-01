@@ -35,7 +35,7 @@ class BSTAttempt {
         this.main.removeNodeButton.style.display = "none";
 
         /** Configure help text */
-        this.main.helpText.innerHTML = this.main.helpText["bst"];
+        this.main.helpText.innerHTML = this.main.helpText.bst;
     }
 
     /**

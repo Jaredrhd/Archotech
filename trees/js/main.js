@@ -7,7 +7,9 @@ class Main {
         this.modifyTreeTools = document.getElementById(canvas.id+":modify-tree-tools");
         this.answerQuestionTools = document.getElementById(canvas.id+":answer-question-tools");
         this.nodeValueInput = document.getElementById(canvas.id+":node-value");
+        this.qTypeHeader = document.querySelector('[aria-controls="id_q_type_header"]');
         this.navbar = document.querySelector('[aria-controls="nav-drawer"]');
+        this.createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
         // this.nodeValueInputTool = document.getElementById("node-value-tool");
         this.randNodeValueCheckbox = document.getElementById(canvas.id+":random-node-value");
         this.randNodeValueTools = document.getElementById(canvas.id+":random-node-value-tools");
@@ -70,8 +72,11 @@ class Main {
         //#endregion
 
         this.helpText = {
-            traversal:  '<p>Build up the traversal by clicking the nodes in the correct order.</p>' +
-                        '<p>Alternatively, you can type the solution directly in the box.</p>',
+            traversal:  '<p>Perform the required traversal by selecting the nodes in the correct order and/or typing the solution directly in the answer box.' +
+                        '<br>Deselecting a node will remove it from the traversal.</p>' +
+                        '<p>The format of your answer must be node values separated by a comma followed by a space.' + 
+                        '<br>i.e. [node_value][comma][space][node_value] etc.' +
+                        '<br>This format is automatically enforced when selecting nodes.</p>',
             bst:        '<p>This question requires you to build a binary search tree using the values displayed in the "BST Values" box. ' +
                         '<br>The value that you need to add at each step will be displayed in the "NODE VALUE" box.</p>' +
                         '<p>To begin, click on the "ADD ROOT" button. This will display the root of the tree on the canvas. ' +
@@ -81,7 +86,10 @@ class Main {
                         '<br>Note that you cannot add a child node directly below its parent node.</p>' +
                         '<p>If you would like to move a node, select the node and drag it to the desired cell. ' +
                         '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
-                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>'
+                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>',
+            properties: '<p>This question requires you to fill in the specified tree and/or node properties.</p>' +
+                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.' + 
+                        '<br>Once all the properties for a node have been entered, the node will turn blue.</p>'
         };
 
         if(this.databaseMisc.disablecanvas) {
@@ -95,8 +103,6 @@ class Main {
         this.board = new Board(this);
         this.board.drawGrid();
 
-        this.expandCanvas();
-
         this.initListeners();
 
         if(this.databaseMisc.lecturer) {
@@ -107,6 +113,7 @@ class Main {
             if(this.databaseMisc.lastanswer !== "") {
                 this.attempt.reconstructLastAnswer();
             }
+            this.expandCanvas();
         }
     }
 
@@ -129,6 +136,7 @@ class Main {
     }
 
     initListeners() {
+        
         window.addEventListener("resize", this.expandCanvas.bind(this));
         this.navbar.addEventListener("click", this.navbarClicked.bind(this));
         this.canvas.addEventListener("click", this.onBoardClick.bind(this));
@@ -146,6 +154,13 @@ class Main {
         this.addRootButton.addEventListener("click", this.addRoot.bind(this));
         this.removeNodeButton.addEventListener("click", this.removeNodeAndChildren.bind(this));
         this.editNodeValueButton.addEventListener("click", this.editNodeValue.bind(this));
+
+        if(this.databaseMisc.lecturer) {
+            this.qTypeHeader.click();
+            this.createQuestionHeader.click();
+
+            this.expandCanvas();
+        }
     }
 
     expandCanvas() {
@@ -256,19 +271,19 @@ class Main {
         }
     }
 
-    editNodeValue(){
-        let newNodeValue = this.getNewNodeValue();
+    editNodeValue() {
+        if(!this.selectedNode) return; // There is no node selected
+        
+        let newNodeValue = this.getNewNodeValue(this.selectedNode.isRoot, true);
 
         if(!newNodeValue) return; // newNodeValue is null
-        
-        if(!this.selectedNode) return; // There is no node selected
             
         this.selectedNode.value = newNodeValue;
 
         this.redrawCanvas();
     }
 
-    beginDrag(event){
+    beginDrag(event) {
         this.board.boardCoordsFromMouse(event);
         
         this.dragging = true;
@@ -276,7 +291,7 @@ class Main {
         this.prevY = this.board.cellY;
     }
 
-    onArrowClick(e){ // When using arrow keys
+    onArrowClick(e) { // When using arrow keys
         if(e.keyCode == 39){ // If right arrow
             if(this.selectedNode.children.rightChild != null){
                 this.selectedNode.selected = false;
@@ -323,7 +338,15 @@ class Main {
 
         this.board.boardCoordsFromMouse(event); 
 
+        this.nodeValueInput.focus();
+
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node at the selected cell
+            if(this.databaseMisc.lecturer && this.setup.currQuestion.PROPERTIES && this.setup.propertiesQuestion.selectingRequiredNodes) {
+                this.setup.propertiesQuestion.selectRequiredNode(this.tree.nodes[this.board.cellY][this.board.cellX]);
+                return;
+            }
+            else if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return; // Cannot select nodes that are not required in a properties question
+
             if(this.tree.nodes[this.board.cellY][this.board.cellX].selected) { // If the current selected node is selected again
                 if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
                     removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
@@ -471,6 +494,7 @@ class Main {
         this.board.boardCoordsFromMouse(event);
 
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node in the hovered cell
+            if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return;
             document.body.style.cursor = "pointer";
         }
         else if(!this.databaseMisc.lecturer && (this.databaseMisc.qtype === this.qTypes.TRAVERSAL || this.databaseMisc.qtype === this.qTypes.PROPERTIES)) {
@@ -513,7 +537,7 @@ class Main {
         document.body.style.cursor = "default";
     }
 
-    getNewNodeValue(isRoot = false) {
+    getNewNodeValue(root = false, edit = false) {
         let newNodeValue = null;
 
         if(!this.randNodeValue && !this.randBSTValue) { // Set the node's value to the user specified input
@@ -526,17 +550,19 @@ class Main {
             if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
                 return;
             }
+
+            this.nodeValueInput.value = "";
+            this.nodeValueInput.focus();
         }
         else if(this.randNodeValue) { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
-            if(this.tree) {
-                if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
-                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
+            /** Check if duplicate */
+            if(this.tree && this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
 
-                    while(this.tree.isDuplicateValue(newNodeValue)) {
-                        newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
-                    }
+                while(this.tree.isDuplicateValue(newNodeValue)) {
+                    newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
                 }
             }
         }
@@ -544,7 +570,7 @@ class Main {
             let lowerBound = this.MIN_NODE_VALUE;
             let upperBound = this.MAX_NODE_VALUE;
 
-            if(isRoot) newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+            if(root) newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
             if(this.tree && this.selectedNode) {
                 if(this.databaseMisc.lecturer) {
@@ -683,5 +709,4 @@ class Main {
 
         this.redrawCanvas();
     }
-
 }

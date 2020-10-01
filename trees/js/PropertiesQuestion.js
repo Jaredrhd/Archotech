@@ -2,6 +2,9 @@ class PropertiesQuestion {
     constructor(main) {
         this.main = main;
 
+        this.selectRequiredNodesPropertiesButton = document.getElementById("select-required-nodes-for-properties");
+        this.selectingRequiredNodes = false;
+        this.requiredNodes = [];
         this.radio = document.querySelector('[qtype_name="properties"]');
         this.updatePropertiesButton = document.getElementById("update-properties");
 
@@ -27,18 +30,17 @@ class PropertiesQuestion {
         
         this.heightCheckbox = document.querySelector('[property_name="node:height"]');
         this.depthCheckbox = document.querySelector('[property_name="node:depth"]');
-        this.degreeCheckbox = document.querySelector('[property_name="node:degree"]');
-        this.levelCheckbox = document.querySelector('[property_name="node:level"]');
+        this.numChildrenCheckbox = document.querySelector('[property_name="node:num_children"]');
 
         this.nodePropertyFunctions = {
             height: this.getNodeHeight.bind(this),
             depth: this.getNodeDepth.bind(this),
-            degree: this.getNodeDegree.bind(this)
+            num_children: this.getNumChildren.bind(this)
         }
 
         this.propertyOptions = [this.treePropertiesCheckbox, this.nodePropertiesCheckbox];
         this.propertyList = [this.numLeavesCheckbox, this.numEdgesCheckbox, this.numInternalNodesCheckbox, 
-                                this.heightCheckbox, this.depthCheckbox, this.degreeCheckbox, this.levelCheckbox];
+                                this.heightCheckbox, this.depthCheckbox, this.numChildrenCheckbox];
         this.checkedProperties = [];
         
         this.propertyAnswers = {
@@ -47,10 +49,10 @@ class PropertiesQuestion {
             num_internal_nodes: "",
             height: "",
             depth: "",
-            degree: "",
-            level: ""
+            num_children: ""
         }
 
+        this.selectRequiredNodesPropertiesButton.addEventListener("click", this.selectRequiredNodesClicked.bind(this));
         this.radio.addEventListener("change", this.updateQuestionType.bind(this));
 
         for(const option of this.propertyOptions) {
@@ -63,6 +65,71 @@ class PropertiesQuestion {
         }
     }
 
+    /** Called when 'Select Required Nodes' button is clicked */
+    selectRequiredNodesClicked() {
+        this.selectingRequiredNodes = !this.selectingRequiredNodes;
+
+        if(this.selectingRequiredNodes) {
+            this.selectRequiredNodesPropertiesButton.style.backgroundColor = "#fcdb73";
+            this.selectRequiredNodesPropertiesButton.style.borderColor = "#fcdb73";
+
+            this.main.nodeValueInput.disabled = true;
+            this.main.randNodeValueCheckbox.disabled = true;
+            this.main.removeNodeButton.style.display = "none";
+            this.main.editNodeValueButton.style.display = "none";
+
+            if(this.main.selectedNode) {
+                this.main.selectedNode.selected = false;
+                this.main.selectedNode = null;
+            }
+            this.main.redrawCanvas();
+        }
+        else {
+            this.selectRequiredNodesPropertiesButton.style.backgroundColor = "#ced4da";
+            this.selectRequiredNodesPropertiesButton.style.borderColor = "#ced4da";
+
+            if(!this.main.randNodeValueCheckbox.checked) {
+                this.main.nodeValueInput.disabled = false;
+            }
+            this.main.randNodeValueCheckbox.disabled = false;
+            if(this.main.selectedNode) {
+                this.main.removeNodeButton.style.display = "inline-block";
+                this.main.editNodeValueButton.style.display = "inline-block";
+            }
+        }
+    }
+
+    /** Called when a node is selected / deselected after the 'Select Required Nodes' button is clicked */
+    selectRequiredNode(node) {
+        if(node.properties.required) {
+            node.properties.required = false;
+            this.requiredNodes.splice(this.requiredNodes.findIndex(prevSelectedNode => (prevSelectedNode.value === node.value && prevSelectedNode.orderPlaced === node.orderPlaced)), 1);
+        }
+        else {
+            node.properties.required = true;
+            this.requiredNodes.push(node);
+        }
+
+        this.updateRequestedPropertiesString();
+        this.updatePropertyAnswers();
+        this.main.redrawCanvas();
+    }
+
+    /** Returns a string of all the required nodes and their orders */
+    serializeRequiredNodes() {
+        let string = "";
+
+        let nodeArray = this.requiredNodes.length === 0 ? this.main.tree.nodeArray : this.requiredNodes; // If there is at least one node property checked: if requiredNodes is empty, just use the tree.nodeArray (i.e. all nodes), otherwise requiredNodes
+
+        for(const node of nodeArray) {
+            string += node.value + ":" + node.orderPlaced;
+
+            if(node !== nodeArray[nodeArray.length - 1]) string += "#";
+        }
+
+        return string;
+    }
+
     /** Called when 'Tree Properties' radio button is checked */
     updateQuestionType() {
         if(this.main.setup.currQuestion.BST) {
@@ -70,9 +137,9 @@ class PropertiesQuestion {
         }
 
         this.main.setup.updateCurrentQuestion("PROPERTIES");
-        // this.main.propertyTools.style.display = "inline-block";
-        // this.updatePropertiesButton.style.display = "inline-block";
-        // this.updatePropertiesButton.addEventListener("click", this.updatePropertyAnswers.bind(this));
+        if(this.main.tree && this.main.tree.numNodes > 0) {
+            this.selectRequiredNodesPropertiesButton.style.display = "inline-block";
+        }
         this.updatePropertyAnswers();
     }
 
@@ -105,60 +172,20 @@ class PropertiesQuestion {
             this.checkedProperties.splice(index, 1);
         }
 
-        this.sortCheckedProperties();
-        this.requestedProperties.value = this.checkedProperties.toString();
+        this.updateRequestedPropertiesString();
         this.updatePropertyAnswers();
     }
 
+    updateRequestedPropertiesString() {
+        this.sortCheckedProperties();
+        this.requestedProperties.value = this.checkedProperties.toString() + "/";
+        if(/node:height|node:depth|node:num_children/.test(this.requestedProperties.value)) { // At least one node property is checked
+            this.requestedProperties.value += this.serializeRequiredNodes();
+        }
+        if(this.requestedProperties.value === "/") this.requestedProperties.value = ""; // No tree or node properties checked
+    }
+
     updatePropertyAnswers() {
-        //#region 
-        // var addLeafNumberLabel = document.getElementById("leaf-num-label");
-        // var addLeafNumberBox = document.getElementById("leaf-num-count");
-        // var addEdgeNumberLabel = document.getElementById("edge-num-label");
-        // var addEdgeNumberBox = document.getElementById("edge-num-count");
-        // var addInternalNodeNumberLabel = document.getElementById("internal-node-num-label");
-        // var addInternalNodeNumberBox = document.getElementById("internal-node-num-count");
-        // var addNodeDegreeNumberLabel = document.getElementById("node-degree-num-label");
-        // var addNodeDegreeNumberBox = document.getElementById("node-degree-num-count");
-
-        // if(this.numLeavesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
-        //     addLeafNumberLabel.style.display = "inline-block";
-        //     addLeafNumberBox.style.display = "inline-block";
-        //     this.calculateLeafNumber(addLeafNumberBox);
-        // }
-        // else{
-        //         addLeafNumberLabel.style.display = "none";
-        //         addLeafNumberBox.style.display = "none";
-        // } 
-        // if(this.numEdgesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
-        //         addEdgeNumberLabel.style.display = "inline-block";
-        //         addEdgeNumberBox.style.display = "inline-block";
-        //         this.calculateEdgeNumber(addEdgeNumberBox);
-        // }
-        // else{
-        //         addEdgeNumberLabel.style.display = "none";
-        //         addEdgeNumberBox.style.display = "none";
-        // }
-        // if(this.numInternalNodesCheckbox.checked && this.treePropertiesCheckbox.checked && this.radio.checked){
-        //         addInternalNodeNumberLabel.style.display = "inline-block";
-        //         addInternalNodeNumberBox.style.display = "inline-block";
-        //         this.calculateInternalNodeNumber(addInternalNodeNumberBox);
-        // }
-        // else{
-        //         addInternalNodeNumberLabel.style.display = "none";
-        //         addInternalNodeNumberBox.style.display = "none";
-        // }
-        // if(this.degreeCheckbox.checked && this.nodePropertiesCheckbox.checked && this.radio.checked && this.main.selectedNode){
-        //         addNodeDegreeNumberLabel.style.display = "inline-block";
-        //         addNodeDegreeNumberBox.style.display = "inline-block";
-        //         this.calculateNodeDegreeNumber(addNodeDegreeNumberBox);
-        // }
-        // else{
-        //     addNodeDegreeNumberLabel.style.display = "none";
-        //     addNodeDegreeNumberBox.style.display = "none";
-        // }
-        //#endregion
-
         if(!this.main.tree) return;
 
         let propertyInfo;
@@ -191,8 +218,10 @@ class PropertiesQuestion {
         let string = "";
         let nodeEntry = "";
 
-        /** Loop through all nodes in the tree and generate the answer string for the given node property (nodePropertyName) */
-        for(const node of this.main.tree.nodeArray) { // The node property string for the given node property is arranged by the order that the nodes were added to the tree
+        let nodeArray = this.requiredNodes.length === 0 ? this.main.tree.nodeArray : this.requiredNodes; // If there is at least one node property checked: if requiredNodes is empty, just use the tree.nodeArray (i.e. all nodes), otherwise requiredNodes
+
+        /** Loop through all required nodes in the tree and generate the answer string for the given node property (nodePropertyName) */
+        for(const node of nodeArray) { // The node property string for the given node property is arranged by the order that the required nodes were clicked by the lecturer
             nodeEntry = node.value + "-" + node.orderPlaced + ":" + this.nodePropertyFunctions[nodePropertyName](node);
             
             if(string === "") {
@@ -217,15 +246,11 @@ class PropertiesQuestion {
             checkedPropertyInfo = checkedProperty.split(":");
             checkedPropertyName = checkedPropertyInfo[1];
 
-            for(const propertyName in this.propertyAnswers) {
-                if(propertyName === checkedPropertyName) {
-                    if(checkedProperty !== this.checkedProperties[this.checkedProperties.length - 1]) { // If the current checked property in the list of checked properties is not the last one in the list, add a delimeter
-                        string += propertyName + "." + this.propertyAnswers[propertyName] + "|";
-                    }
-                    else {
-                        string += propertyName + "." + this.propertyAnswers[propertyName];
-                    }
-                }
+            if(checkedProperty !== this.checkedProperties[this.checkedProperties.length - 1]) { // If the current checked property in the list of checked properties is not the last one in the list, add a delimeter
+                string += checkedPropertyName + "." + this.propertyAnswers[checkedPropertyName] + "|";
+            }
+            else {
+                string += checkedPropertyName + "." + this.propertyAnswers[checkedPropertyName];
             }
         }
 
@@ -287,16 +312,16 @@ class PropertiesQuestion {
         return depth;
     }
 
-    getNodeDegree(node) {
-        let nodeDegree = 0;
+    getNumChildren(node) {
+        let numChildren = 0;
 
         if(node.hasLeftChild() && node.hasRightChild()) {
-            nodeDegree = 2;
+            numChildren = 2;
         }
         else if(node.hasLeftChild() || node.hasRightChild()) {
-            nodeDegree = 1;
+            numChildren = 1;
         }
 
-        return nodeDegree;
+        return numChildren;
     }
 }

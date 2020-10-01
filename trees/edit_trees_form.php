@@ -97,8 +97,8 @@ class qtype_trees_edit_form extends question_edit_form {
         /** Hide BST radio buttons unless "Construct BST" is selected */
         $mform->hideIf('bst_value_type', 'question_type', 'neq', 1);
 
-        $mform->addElement('float', 'node_amount', "Number of Nodes", array('value'=>10));
-        $mform->addElement('float', 'input_value', "Input Node Value");
+        $mform->addElement('text', 'node_amount', "Number of Nodes", array('value'=>10));
+        $mform->addElement('text', 'input_value', "Input Node Value");
 
         /** Hide node value boxes unless unless "Construct BST" is selected */
         $mform->hideIf('node_amount', 'question_type', 'neq', 1);
@@ -117,12 +117,11 @@ class qtype_trees_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'tree_properties', '', "Number of Edges", array('property_name' => 'tree:num_edges'), array(0, 1));
         $mform->addElement('advcheckbox', 'tree_properties', '', "Number of Internal Nodes", array('property_name' => 'tree:num_internal_nodes'), array(0, 1));
  
-        $mform->addElement('advcheckbox', 'node_option', '', "Properties of Nodes", array('option_name' => 'node_properties_check'), array(0, 1));
+        $mform->addElement('advcheckbox', 'node_option', '', "Properties of Nodes (Select Required Nodes Below)", array('option_name' => 'node_properties_check'), array(0, 1));
         /** NODE PROPERTIES */
         $mform->addElement('advcheckbox', 'node_properties', '', "Height", array('property_name' => 'node:height'), array(0, 1));
         $mform->addElement('advcheckbox', 'node_properties', '', "Depth", array('property_name' => 'node:depth'), array(0, 1));
-        $mform->addElement('advcheckbox', 'node_properties', '', "Degree", array('property_name' => 'node:degree'), array(0, 1));
-        $mform->addElement('advcheckbox', 'node_properties', '', "Level", array('property_name' => 'node:level'), array(0, 1));
+        $mform->addElement('advcheckbox', 'node_properties', '', "Number of Children", array('property_name' => 'node:num_children'), array(0, 1));
         
         /** Hide option checkboxes unless "Tree Properties" is selected */
         $mform->hideIf('tree_option', 'question_type', 'neq', 2);
