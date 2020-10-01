@@ -45,10 +45,7 @@
     </div>
     <div updateid id='toolbar-wrapper' class="toolbar-wrapper">
         <i updateid id='help' class="fas fa-question-circle help">
-            <span updateid id='tooltip-text' class="tooltiptext">
-                <p>Build up the traversal by clicking the nodes in the correct order.</p>
-                <p>Alternatively, you can type the solution directly in the box.</p>
-            </span>
+            <span updateid id='tooltip-text' class="tooltiptext"></span>
         </i>
         <div updateid id='toolbar' class="toolbar">           
             <div updateid id='modify-tree-tools' class="bold" style="display: none;">
@@ -64,7 +61,8 @@
                 <button updateid type="button" id='bst-undo' style="display: none;" class="modify-tree-tools bst-undo button button-secondary no-select">UNDO</button>
             </div>
             <div updateid id="property-tools" class="bold" style="display: none;">
-                <div updateid id="tree-properties" class="property-section">
+                <div updateid id="tree-properties" class="property-section" style="margin-bottom: 35px;">
+                    <span updateid id="tree-properties-label" class="no-select tree-properties-label">TREE PROPERTIES</span>
                     <!-- NUM LEAVES -->
                     <div updateid id="num_leaves_parent" style="display: none;">
                         <label updateid for='num_leaves' class="no-margin no-select">No. of Leaves</label>
@@ -82,6 +80,7 @@
                     <!-- NUM INTERNAL NODES -->
                 </div>
                 <div updateid id="node-properties" class="property-section">
+                    <span updateid id="node-properties-label" class="no-select tree-properties-label" style="display: none;">NODE PROPERTIES</span>
                     <!-- NODE HEIGHT -->
                     <div updateid id="height_parent" style="display: none;">
                         <label updateid for='height' class="no-margin no-select">Height of Node</label>

@@ -35,6 +35,7 @@ class PropertiesAttempt {
         this.treePropertyInputs = {num_leaves: this.numLeavesInput, num_edges: this.numEdgesInput, num_internal_nodes: this.numIntNodesInput};
         
         /** NODE PROPERTIES */
+        this.nodePropertiesHeading = document.getElementById(this.main.canvas.id+":node-properties-label");
         this.nodePropertiesDiv = document.getElementById(this.main.canvas.id+":node-properties"); // Parent div
         this.nodeHeightInput = document.getElementById(this.main.canvas.id+":height");
         this.nodeDepthInput = document.getElementById(this.main.canvas.id+":depth");
@@ -46,6 +47,9 @@ class PropertiesAttempt {
     configureHTML() {
         if(this.main.databaseMisc.treestring === "") return;
         this.main.buildTreeFromString(this.main.databaseMisc.treestring);
+
+        this.main.helpIcon.style.marginTop = "-50px";
+        this.main.helpIcon.style.marginBottom = "20px";
    
         let propertyInfo;
 
@@ -79,7 +83,10 @@ class PropertiesAttempt {
         }
 
         this.main.modifyTreeTools.style.display = "none";
-        this.propertyTools.style.display = "block";
+        this.propertyTools.style.display = "block";            
+        if(this.numRequestedTreeProperties === 0) {
+            this.treePropertiesDiv.style.display = "none";        
+        }
 
         if(this.main.databaseMisc.disablepropertytools) {
             this.disableInputs();
@@ -241,9 +248,11 @@ class PropertiesAttempt {
                 }
 
                 nodePropertyInput.parentElement.style.display = "inline-block"; // Show the input box and its label
+                this.nodePropertiesHeading.style.display = "inline-block";
             }
             else {
                 nodePropertyInput.parentElement.style.display = "none"; // Hide the input box and its label
+                this.nodePropertiesHeading.style.display = "none";
             }
         }
 
