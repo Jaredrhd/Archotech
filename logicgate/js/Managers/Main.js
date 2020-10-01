@@ -3,6 +3,7 @@ class Main
     constructor(canvas, saveField, properties)
     {
         this.saveField = saveField;
+        this.properties = properties;
         //Canvas coordinates
         this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
         this.origin = {x : 0, y : 0, offsetX : 0, offsetY : 0};
@@ -27,14 +28,11 @@ class Main
         this.timerUpdate = 250;
 
         //Set up the previous save
-        this.LoadCircuit(properties.getAttribute("save"));
+        this.LoadCircuit(properties.getAttribute("save").split(";")[0]);
     }
 
     Render()
     {
-        //Apply limits to canvas, graphics
-        this.ApplyLimits(this.graphics, true);
-
         //Save
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
@@ -42,6 +40,9 @@ class Main
         //Set color
         this.graphics.fillStyle = "white";  // background color
         this.graphics.fillRect(0,0,this.canvas.width,this.canvas.height);
+
+        //Apply limits to canvas, graphics
+        this.ApplyLimits(this.graphics);
         
         let time = this.timer - Date.now();
         //First Update the the charges
@@ -86,20 +87,58 @@ class Main
         this.graphics.restore();
     }
 
-    UpdateCircuitCharge()
+    UpdateCircuitCharge(startNodes)
     {
-        let startNodes = Array();
-        //Find all start nodes
-        for(let i = 0; i < this.circuit.length; ++i)
+        let save = "";
+        //If we don't have the start nodes, calculate them and update the circuit once (For drawing looks)
+        if(startNodes == null)
         {
-            if(this.circuit[i] instanceof StartGate)
-                startNodes.push(this.circuit[i]);
+            startNodes = Array();
+            //Find all start nodes
+            for(let i = 0; i < this.circuit.length; ++i)
+            {
+                if(!this.circuit[i].spawner && this.circuit[i] instanceof StartGate)
+                    startNodes.push(this.circuit[i]);
+            }
+
+            for(let i = 0; i < startNodes.length; ++i)
+                startNodes[i].UpdateCharge();
+        }
+        else
+        {
+            let old = Array();
+
+            //Set to start behaviour
+            for(let j = 0; j < startNodes.length; ++j)
+                old.push(startNodes[j].charge);
+
+            //In this case we provided the startNodes, so we are gonna calculate the circuit charge foreach combination of start gates being on and off
+            for(let i = 0, length = Math.pow(2,startNodes.length); i < length; ++i)
+            {
+                //Get binary number
+                let bin = (i >>> 0).toString(2).padStart(startNodes.length,"0");
+
+                for(let j = 0; j < startNodes.length; j++)
+                    startNodes[j].charge = bin[j] == "1";
+
+                for(let j = 0; j < startNodes.length; ++j)
+                    startNodes[j].UpdateCharge();
+                
+                //Save the updated circuit
+                save += this.BuildCircuit() + ";";
+                this.ResetCircuit();
+
+            }
+
+            //Copy back to previous values
+            for(let j = 0; j < startNodes.length; ++j)
+                startNodes[j].charge = old[j];
+
+            //Update to recalculate charge
+            this.UpdateCircuitCharge();
         }
 
-        for(let i = 0; i < startNodes.length; ++i)
-        {
-            startNodes[i].UpdateCharge();
-        }
+        return save;
     }
 
     ResetCircuit()
@@ -119,32 +158,11 @@ class Main
         }
     }
 
-    ApplyLimits(graphics, preserveAspect) 
+    ApplyLimits(graphics) 
     {
         var width = this.canvas.width;   // The width of this drawing area, in pixels.
         var height = this.canvas.height; // The height of this drawing area, in pixels.
 
-        if (preserveAspect) 
-        {
-               // Adjust the limits to match the aspect ratio of the drawing area.
-            //    var displayAspect = Math.abs(height / width);
-            //    var requestedAspect = Math.abs(( this.coords.ybottom-this.coords.ytop ) / ( this.coords.xright-this.coords.xleft ));
-            //    var excess;
-               
-            //    excess = (this.coords.ybottom-this.coords.ytop) * (displayAspect/requestedAspect - 1);
-            //    this.coords.ybottom += excess/2;
-            //    this.coords.ytop -= excess/2;
-   
-            //    if(this.coords.ytop < 3)
-            //    {
-            //        this.coords.ytop = 3;
-            //        this.coords.ybottom = -3;
-            //        excess = (this.coords.xright-this.coords.xleft) * (requestedAspect/displayAspect - 1);
-            //        this.coords.xright += excess/2;
-            //        this.coords.xleft -= excess/2;
-            //    }
-        }
-        
         var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);
         var pixelHeight = Math.abs(( this.coords.ybottom - this.coords.ytop ) / height);
         this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
@@ -153,6 +171,25 @@ class Main
     }
 
     SaveCircuit()
+    {
+        //Save the current circuit
+        this.saveField.value = this.BuildCircuit();
+
+        //Get start nodes for calculating all charges in the circuit
+        let startNodes = Array();
+        //Find all start nodes
+        for(let i = 0; i < this.circuit.length; ++i)
+        {
+            if(!this.circuit[i].spawner && this.circuit[i] instanceof StartGate)
+                startNodes.push(this.circuit[i]);
+        }
+
+        //Update all
+        if(startNodes.length > 0)
+            this.saveField.value += ";" + this.UpdateCircuitCharge(startNodes);
+    }
+
+    BuildCircuit()
     {
         let save = "";
 
@@ -199,12 +236,12 @@ class Main
         }
 
         //Remove the last | 
-        this.saveField.value = save.substring(0, save.length-1);
+        return save.substring(0, save.length-1);
     }
 
     LoadCircuit(save)
     {
-        if(save=="")
+        if(save=="SAVED_DATA" || save=="")
             return;
 
         //Set Scale

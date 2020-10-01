@@ -14,7 +14,7 @@ class EndGate extends LogicGate
         if(stillDragging && (Input.GetKey("control") || this.incomingNodes[0].incomingConnectionNode == null))
         {
             super.SelectedUpdate(stillDragging, gateDroppedOn);
-            this.incomingNodes[0].UpdatePos();
+            this.incomingNodes[0].UpdatePosition();
         }
         else if(!Input.GetKey("control")) //Make sure we arent pressing control
             return this.incomingNodes[0].SelectedUpdate();
