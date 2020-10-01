@@ -10,8 +10,6 @@ class QuestionSetup {
         this.qType = document.getElementById("q_type");
         this.qType.value = "traversal"; // qType has intial value of traversal
 
-        this.createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
-
         this.copyPasteTreeInput = document.getElementById("id_copy_paste_tree");
         this.copyButton = document.getElementById("copy-tree");
         this.copiedSpan = document.getElementById("copied");
@@ -28,32 +26,51 @@ class QuestionSetup {
         this.currQuestion = {
             TRAVERSAL: true,
             BST: false,
-            PROPERTIES: false
+            PROPERTIES: false,
         };
+
+        this.prevQuestion = null;
 
         this.configureHTML();
     }
 
     /** Configure respective html on lecturer's side */
     configureHTML() {
+        if(this.lecturerTree.value !== "" && (this.currQuestion.TRAVERSAL || this.currQuestion.PROPERTIES ||
+            this.currQuestion.AVL)) { // Rebuild a previously constructed tree
+                this.main.buildTreeFromString(this.lecturerTree.value);
+                this.main.addRootButton.style.display = "none";
+                this.copyPasteTreeInput.value = this.lecturerTree.value;
+        }
+
+        /** Deselect any selected node TODO: POSSIBLY KEEP SELECTION */
+        if(this.main.selectedNode) {
+            this.main.selectedNode = null;
+        }
+        this.main.removeNodeButton.style.display = "none";
+        this.main.editNodeValueButton.style.display = "none";
+
+        if(!this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.selectRequiredNodesPropertiesButton.style.display = "none";
+        }
+
         switch(this.qType.value) {
             case this.main.qTypes.TRAVERSAL: this.configureTraversalHTML(); break;
             case this.main.qTypes.BST: this.configureBstHTML(); break;
-            case this.main.qTypes.PROPERTIES: this.configurePropertyHTML(); break;        
+            case this.main.qTypes.PROPERTIES: this.configurePropertyHTML(); break;
         }
     }
 
     configureTraversalHTML() {
-        if(this.lecturerTree.value !== "") { // Rebuild a previously constructed tree
-            this.main.buildTreeFromString(this.lecturerTree.value);
-            this.main.addRootButton.style.display = "none";
+        if(this.lecturerTree.value !== "") {
             this.traversalQuestion.performTraversal();
-            this.copyPasteTreeInput.value = this.lecturerTree.value;
         }
 
-        this.createQuestionHeader.innerHTML = "Build Tree";
+        this.main.createQuestionHeader.innerHTML = "Build Tree";
 
-        this.main.nodeValueInput.disabled = false;
+        if(!this.main.randNodeValueCheckbox.checked) {
+            this.main.nodeValueInput.disabled = false;
+        }
         this.main.nodeValueInput.value = "";
         this.main.nodeValueInput.style.color = "#000000";
 
@@ -68,7 +85,7 @@ class QuestionSetup {
     }
 
     configureBstHTML() {
-        this.createQuestionHeader.innerHTML = "BST Values";
+        this.main.createQuestionHeader.innerHTML = "BST Values";
 
         this.main.canvas.style.display = "none";
 
@@ -79,9 +96,42 @@ class QuestionSetup {
     }
 
     configurePropertyHTML() {
-        this.createQuestionHeader.innerHTML = "Build Tree";
+        this.main.createQuestionHeader.innerHTML = "Build Tree";
 
-        this.main.nodeValueInput.disabled = false;
+        if(!this.main.randNodeValueCheckbox.checked) {
+            this.main.nodeValueInput.disabled = false;
+        }
+        this.main.nodeValueInput.value = "";
+        this.main.nodeValueInput.style.color = "#000000";
+
+        if(this.propertiesQuestion.selectingRequiredNodes) {
+            this.main.nodeValueInput.disabled = true;
+            this.main.randNodeValueCheckbox.disabled = true;
+        }
+
+        this.main.canvas.style.display = "block";
+
+        this.main.toolbar.style.display = "flex";
+        this.main.modifyTreeTools.style.display = "block";
+        
+        this.main.answerQuestionTools.style.display = "none";
+
+        /** Select previously selected required nodes */
+        if(this.propertiesQuestion.requiredNodes.length > 0) {
+            for(const requiredNode of this.propertiesQuestion.requiredNodes) {
+                this.main.tree.getNode(requiredNode.value, requiredNode.orderPlaced).properties.required = true;
+            }
+
+            this.main.redrawCanvas();
+        }
+    }
+
+    configureAVLHTML() {
+        this.main.createQuestionHeader.innerHTML = "Build AVL Tree";
+
+        if(!this.main.randNodeValueCheckbox.checked) {
+            this.main.nodeValueInput.disabled = false;
+        }
         this.main.nodeValueInput.value = "";
         this.main.nodeValueInput.style.color = "#000000";
 
@@ -101,6 +151,7 @@ class QuestionSetup {
         for(const question in this.currQuestion) {
             if(this.currQuestion[question]) {
                 this.currQuestion[question] = false;
+                this.prevQuestion = question.toLowerCase();
             }
             else if(question == newQuestion) {
                 this.currQuestion[question] = true;
@@ -154,7 +205,7 @@ class QuestionSetup {
             this.lecturerTree.value = this.copyPasteTreeInput.value;
         }, 1);
     }
-
+    
     handleEvent(event) {
         switch(event) {
             case this.main.events.ADDROOT: this.addRootEvent(); break;
@@ -169,6 +220,7 @@ class QuestionSetup {
             this.traversalQuestion.performTraversal();
         }
         else if(this.currQuestion.PROPERTIES) {
+            this.propertiesQuestion.selectRequiredNodesPropertiesButton.style.display = "inline-block";
             this.propertiesQuestion.updatePropertyAnswers();
         }
 
@@ -191,6 +243,7 @@ class QuestionSetup {
             this.traversalQuestion.performTraversal();
         }
         else if(this.currQuestion.PROPERTIES) {
+            if(this.main.tree && this.main.tree.numNodes === 0) this.propertiesQuestion.selectRequiredNodesPropertiesButton.style.display = "none";
             this.propertiesQuestion.updatePropertyAnswers();
         }
 

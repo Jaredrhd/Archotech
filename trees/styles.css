@@ -232,6 +232,11 @@ canvas {
     margin: 5px;
 }
 
+.select-required-nodes-for-properties {
+    font-size: .85rem;
+    margin: 5px;
+}
+
 .bst-undo {
     margin: 5px;
 }

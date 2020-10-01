@@ -7,7 +7,9 @@ class Main {
         this.modifyTreeTools = document.getElementById(canvas.id+":modify-tree-tools");
         this.answerQuestionTools = document.getElementById(canvas.id+":answer-question-tools");
         this.nodeValueInput = document.getElementById(canvas.id+":node-value");
+        this.qTypeHeader = document.querySelector('[aria-controls="id_q_type_header"]');
         this.navbar = document.querySelector('[aria-controls="nav-drawer"]');
+        this.createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
         // this.nodeValueInputTool = document.getElementById("node-value-tool");
         this.randNodeValueCheckbox = document.getElementById(canvas.id+":random-node-value");
         this.randNodeValueTools = document.getElementById(canvas.id+":random-node-value-tools");
@@ -92,8 +94,6 @@ class Main {
         this.board = new Board(this);
         this.board.drawGrid();
 
-        this.expandCanvas();
-
         this.initListeners();
 
         if(this.databaseMisc.lecturer) {
@@ -104,6 +104,7 @@ class Main {
             if(this.databaseMisc.lastanswer !== "") {
                 this.attempt.reconstructLastAnswer();
             }
+            this.expandCanvas();
         }
     }
 
@@ -126,6 +127,7 @@ class Main {
     }
 
     initListeners() {
+        
         window.addEventListener("resize", this.expandCanvas.bind(this));
         this.navbar.addEventListener("click", this.navbarClicked.bind(this));
         this.canvas.addEventListener("click", this.onBoardClick.bind(this));
@@ -142,6 +144,13 @@ class Main {
         this.addRootButton.addEventListener("click", this.addRoot.bind(this));
         this.removeNodeButton.addEventListener("click", this.removeNodeAndChildren.bind(this));
         this.editNodeValueButton.addEventListener("click", this.editNodeValue.bind(this));
+
+        if(this.databaseMisc.lecturer) {
+            this.qTypeHeader.click();
+            this.createQuestionHeader.click();
+
+            this.expandCanvas();
+        }
     }
 
     expandCanvas() {
@@ -189,7 +198,7 @@ class Main {
             this.attempt.bstAttempt.bst.undoButton.style.display = "inline-block";
         }
         else {
-            newNodeValue = this.getNewNodeValue();
+            newNodeValue = this.getNewNodeValue(true);
         }
 
         if(!newNodeValue) return; // newNodeValue is null
@@ -235,19 +244,19 @@ class Main {
         }
     }
 
-    editNodeValue(){
-        let newNodeValue = this.getNewNodeValue();
+    editNodeValue() {
+        if(!this.selectedNode) return; // There is no node selected
+        
+        let newNodeValue = this.getNewNodeValue(this.selectedNode.isRoot, true);
 
         if(!newNodeValue) return; // newNodeValue is null
-        
-        if(!this.selectedNode) return; // There is no node selected
             
         this.selectedNode.value = newNodeValue;
 
         this.redrawCanvas();
     }
 
-    beginDrag(event){
+    beginDrag(event) {
         this.board.boardCoordsFromMouse(event);
         
         this.dragging = true;
@@ -255,7 +264,7 @@ class Main {
         this.prevY = this.board.cellY;
     }
 
-    onArrowClick(e){ // When using arrow keys
+    onArrowClick(e) { // When using arrow keys
         if(e.keyCode == 39){ // If right arrow
             if(this.selectedNode.children.rightChild != null){
                 this.selectedNode.selected = false;
@@ -302,7 +311,15 @@ class Main {
 
         this.board.boardCoordsFromMouse(event); 
 
+        this.nodeValueInput.focus();
+
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node at the selected cell
+            if(this.databaseMisc.lecturer && this.setup.currQuestion.PROPERTIES && this.setup.propertiesQuestion.selectingRequiredNodes) {
+                this.setup.propertiesQuestion.selectRequiredNode(this.tree.nodes[this.board.cellY][this.board.cellX]);
+                return;
+            }
+            else if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return; // Cannot select nodes that are not required in a properties question
+
             if(this.tree.nodes[this.board.cellY][this.board.cellX].selected) { // If the current selected node is selected again
                 if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
                     removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
@@ -448,6 +465,7 @@ class Main {
         this.board.boardCoordsFromMouse(event);
 
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node in the hovered cell
+            if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return;
             document.body.style.cursor = "pointer";
         }
         else if(!this.databaseMisc.lecturer && (this.databaseMisc.qtype === this.qTypes.TRAVERSAL || this.databaseMisc.qtype === this.qTypes.PROPERTIES)) {
@@ -490,7 +508,7 @@ class Main {
         document.body.style.cursor = "default";
     }
 
-    getNewNodeValue() {
+    getNewNodeValue(root = false, edit = false) {
         let newNodeValue = null;
 
         if(!this.randNodeValue) { // Set the node's value to the user specified input
@@ -503,17 +521,19 @@ class Main {
             if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
                 return;
             }
+
+            this.nodeValueInput.value = "";
+            this.nodeValueInput.focus();
         }
         else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
-            if(this.tree) {
-                if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
-                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
+            /** Check if duplicate */
+            if(this.tree && this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
 
-                    while(this.tree.isDuplicateValue(newNodeValue)) {
-                        newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
-                    }
+                while(this.tree.isDuplicateValue(newNodeValue)) {
+                    newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
                 }
             }
         }
@@ -612,5 +632,4 @@ class Main {
 
         this.redrawCanvas();
     }
-
 }
