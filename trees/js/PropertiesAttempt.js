@@ -105,7 +105,7 @@ class PropertiesAttempt {
         }
 
         /** Configure help text */
-        this.main.helpText.innerHTML = this.main.helpText.properties;
+        this.main.tooltipText.innerHTML = this.main.helpText.properties;
     }
 
     /** Fills requiredNodes array with the nodes that the lecturer selected */

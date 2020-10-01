@@ -22,7 +22,7 @@ class Main {
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
         this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
-        this.helpText = document.getElementById(canvas.id+":tooltip-text");
+        this.tooltipText = document.getElementById(canvas.id+":tooltip-text");
         this.helpIcon = document.getElementById(canvas.id+":help");
 
         //#region BOARD MISC
@@ -88,8 +88,8 @@ class Main {
                         '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
                         '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>',
             properties: '<p>This question requires you to fill in the specified tree and/or node properties.</p>' +
-                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.' + 
-                        '<br>Once all the properties for a node have been entered, the node will turn blue.</p>'
+                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.</p>' + 
+                        '<p>Once all the properties for a node have been entered, the node will turn blue.</p>'
         };
 
         if(this.databaseMisc.disablecanvas) {
@@ -519,7 +519,7 @@ class Main {
                 if (this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
                     (this.board.cellX < this.selectedNode.cellCoords.x && this.selectedNode.hasLeftChild()) ||
                     (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
-                    (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length) || !this.getNewNodeValue()) { // Invalid cell to place new child
+                    (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length) || (this.databaseMisc.lecturer && !this.getNewNodeValue())) { // Invalid cell to place new child
                     
                         document.body.style.cursor = "not-allowed";
                 }
