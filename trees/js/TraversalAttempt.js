@@ -29,7 +29,7 @@ class TraversalAttempt {
         this.main.answerQuestionTools.style.display = "flex";
 
         /** Configure help text */
-        this.main.helpIcon.innerHTML = this.main.helpText.traversal;
+        this.main.tooltipText.innerHTML = this.main.helpText.traversal;
     }
 
     validateInput(answerBox) {

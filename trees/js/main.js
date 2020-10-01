@@ -13,6 +13,7 @@ class Main {
         // this.nodeValueInputTool = document.getElementById("node-value-tool");
         this.randNodeValueCheckbox = document.getElementById(canvas.id+":random-node-value");
         this.randNodeValueTools = document.getElementById(canvas.id+":random-node-value-tools");
+        this.randBSTValueCheckbox = document.getElementById(canvas.id+":random-bst-value");
         this.addRootButton = document.getElementById(canvas.id+":add-root");
         this.removeNodeButton = document.getElementById(canvas.id+":remove-node");
         this.editNodeValueButton = document.getElementById(canvas.id+":edit-node");
@@ -21,7 +22,8 @@ class Main {
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
         this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
-        this.helpIcon = document.getElementById(canvas.id+":tooltip-text");
+        this.tooltipText = document.getElementById(canvas.id+":tooltip-text");
+        this.helpIcon = document.getElementById(canvas.id+":help");
 
         //#region BOARD MISC
         this.canvas = canvas;
@@ -64,6 +66,7 @@ class Main {
         this.selectedNode = null;
         /** Boolean indicating whether a new node's value should be taken from user input or randomised */
         this.randNodeValue = false;
+        this.randBSTValue = false;
         this.MAX_NODE_VALUE = 99;
         this.MIN_NODE_VALUE = 1;
         //#endregion
@@ -85,8 +88,8 @@ class Main {
                         '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
                         '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>',
             properties: '<p>This question requires you to fill in the specified tree and/or node properties.</p>' +
-                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.' + 
-                        '<br>Once all the properties for a node have been entered, the node will turn blue.</p>'
+                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.</p>' + 
+                        '<p>Once all the properties for a node have been entered, the node will turn blue.</p>'
         };
 
         if(this.databaseMisc.disablecanvas) {
@@ -147,6 +150,7 @@ class Main {
         document.addEventListener("mouseup", this.exitDrag.bind(this));
 
         this.randNodeValueCheckbox.addEventListener("change", this.randNodeValueChecked.bind(this, this.randNodeValueCheckbox)); // Bind Main class and actual checkbox element
+        this.randBSTValueCheckbox.addEventListener("change", this.randBSTValueChecked.bind(this, this.randBSTValueCheckbox)); // Bind Main class and actual checkbox element
         this.addRootButton.addEventListener("click", this.addRoot.bind(this));
         this.removeNodeButton.addEventListener("click", this.removeNodeAndChildren.bind(this));
         this.editNodeValueButton.addEventListener("click", this.editNodeValue.bind(this));
@@ -184,12 +188,29 @@ class Main {
 
     randNodeValueChecked(checkbox) {
         this.randNodeValue = checkbox.checked;
+        this.randBSTValueCheckbox.checked = false; // Uncheck random bst if random input is checked
+        this.randBSTValue = false;
 
         if(this.randNodeValue) { // If the random value checkbox is checked, disable user specified node values
             this.nodeValueInput.disabled = true;
         }
         else {
             this.nodeValueInput.disabled = false;
+        }
+    }
+
+    randBSTValueChecked(checkbox) {
+        this.randBSTValue = checkbox.checked;
+        this.randNodeValueCheckbox.checked = false; // Uncheck random input if random bst is checked
+        this.randNodeValue = false;
+
+        if(this.randBSTValue) { // If the random value checkbox is checked, disable user specified node values
+            this.nodeValueInput.disabled = true;
+            this.editNodeValueButton.style.display = "none";
+        }
+        else {
+            this.nodeValueInput.disabled = false;
+            this.editNodeValueButton.style.display = "inline-block";
         }
     }
 
@@ -364,7 +385,9 @@ class Main {
 
             if(this.databaseMisc.lecturer) {
                 this.removeNodeButton.style.display = "inline-block";
-                this.editNodeValueButton.style.display = "inline-block";
+                if(!this.randBSTValue) {
+                    this.editNodeValueButton.style.display = "inline-block";
+                }
             }
             else {
                 if(this.databaseMisc.qtype !== this.qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
@@ -493,12 +516,12 @@ class Main {
                 }
             }
             else{
-                if(this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
+                if (this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
                     (this.board.cellX < this.selectedNode.cellCoords.x && this.selectedNode.hasLeftChild()) ||
-                        (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
-                        (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length)) { // Invalid cell to place new child
-
-                            document.body.style.cursor = "not-allowed";
+                    (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
+                    (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length) || (this.databaseMisc.lecturer && !this.getNewNodeValue())) { // Invalid cell to place new child
+                    
+                        document.body.style.cursor = "not-allowed";
                 }
                 else {
                     document.body.style.cursor = "crosshair";
@@ -517,7 +540,7 @@ class Main {
     getNewNodeValue(root = false, edit = false) {
         let newNodeValue = null;
 
-        if(!this.randNodeValue) { // Set the node's value to the user specified input
+        if(!this.randNodeValue && !this.randBSTValue) { // Set the node's value to the user specified input
             newNodeValue = this.nodeValueInput.value;
 
             if(newNodeValue === "" || Number(newNodeValue) < this.MIN_NODE_VALUE || Number(newNodeValue) > this.MAX_NODE_VALUE || !Number.isInteger(Number(newNodeValue))) {
@@ -531,7 +554,7 @@ class Main {
             this.nodeValueInput.value = "";
             this.nodeValueInput.focus();
         }
-        else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
+        else if(this.randNodeValue) { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
             /** Check if duplicate */
@@ -540,6 +563,54 @@ class Main {
 
                 while(this.tree.isDuplicateValue(newNodeValue)) {
                     newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                }
+            }
+        }
+        else if(this.randBSTValue) { // Generate a random value for the node that enforces the BST property of the tree
+            let lowerBound = this.MIN_NODE_VALUE;
+            let upperBound = this.MAX_NODE_VALUE;
+
+            if(root) newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+
+            if(this.tree && this.selectedNode) {
+                if(this.databaseMisc.lecturer) {
+                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return; 
+
+                    if(this.board.cellX < this.selectedNode.cellCoords.x) { // Adding a left child
+                        if(this.selectedNode.isRoot) {
+                            upperBound = this.selectedNode.value - 1;
+                        }
+                        else {
+                            let currNode = this.selectedNode;
+                            while(currNode.childType() === "L" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                currNode = currNode.parent;
+                            }
+                            if(!(currNode.parent.isRoot && currNode.childType() === "L")) {
+                                lowerBound = currNode.parent.value + 1;
+                            }
+                            upperBound = this.selectedNode.value - 1;
+                        }
+                        if(this.selectedNode.value === 1) return;
+                    }
+                    else { // Adding a right child
+                        if(this.selectedNode.isRoot) {
+                            lowerBound = this.selectedNode.value + 1;
+                        }
+                        else {
+                            let currNode = this.selectedNode;
+                            while(currNode.childType() === "R" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                currNode = currNode.parent;
+                            }
+                            if(!(currNode.parent.isRoot && currNode.childType() === "R")) {
+                                upperBound = currNode.parent.value - 1;
+                            }
+                            lowerBound = this.selectedNode.value + 1;
+                        }
+                        if(this.selectedNode.value === 99) return;
+                    }
+
+                    if(upperBound < lowerBound) return;
+                    newNodeValue = Math.floor(Math.random() * (upperBound - lowerBound) + lowerBound);
                 }
             }
         }
