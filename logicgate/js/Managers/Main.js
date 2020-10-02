@@ -87,19 +87,14 @@ class Main
         this.graphics.restore();
     }
 
-    UpdateCircuitCharge(startNodes)
+    UpdateCircuitCharge(startNodes, endNodes)
     {
         let save = "";
         //If we don't have the start nodes, calculate them and update the circuit once (For drawing looks)
         if(startNodes == null)
         {
-            startNodes = Array();
-            //Find all start nodes
-            for(let i = 0; i < this.circuit.length; ++i)
-            {
-                if(!this.circuit[i].spawner && this.circuit[i] instanceof StartGate)
-                    startNodes.push(this.circuit[i]);
-            }
+            //Get StartGates
+            let startNodes = this.GetStartNodes();
 
             for(let i = 0; i < startNodes.length; ++i)
                 startNodes[i].UpdateCharge();
@@ -125,7 +120,7 @@ class Main
                     startNodes[j].UpdateCharge();
                 
                 //Save the updated circuit
-                save += this.BuildCircuit() + ";";
+                save += this.ExtractEndGatesData(endNodes) + ";";
                 this.ResetCircuit();
 
             }
@@ -158,23 +153,22 @@ class Main
         }
     }
 
-    ApplyLimits(graphics) 
-    {
-        var width = this.canvas.width;   // The width of this drawing area, in pixels.
-        var height = this.canvas.height; // The height of this drawing area, in pixels.
-
-        var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);
-        var pixelHeight = Math.abs(( this.coords.ybottom - this.coords.ytop ) / height);
-        this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
-        graphics.scale( width / (this.coords.xright-this.coords.xleft), height / (this.coords.ybottom-this.coords.ytop) );
-        graphics.translate( -this.coords.xleft, -this.coords.ytop );
-    }
-
     SaveCircuit()
     {
         //Save the current circuit
         this.saveField.value = this.BuildCircuit();
 
+        //Get Nodes
+        let startNodes = this.GetStartNodes();
+        let endNodes = this.GetEndNodes();
+
+        //Update all
+        if(startNodes.length > 0)
+            this.saveField.value += ";" + startNodes.length + "," + endNodes.length + ";" + this.UpdateCircuitCharge(startNodes, endNodes);
+    }
+
+    GetStartNodes()
+    {
         //Get start nodes for calculating all charges in the circuit
         let startNodes = Array();
         //Find all start nodes
@@ -183,60 +177,25 @@ class Main
             if(!this.circuit[i].spawner && this.circuit[i] instanceof StartGate)
                 startNodes.push(this.circuit[i]);
         }
+        //Sort by y position
+        startNodes.sort(function(a,b){return b.position.y - a.position.y});
 
-        //Update all
-        if(startNodes.length > 0)
-            this.saveField.value += ";" + this.UpdateCircuitCharge(startNodes);
+        return startNodes;
     }
 
-    BuildCircuit()
+    GetEndNodes()
     {
-        let save = "";
-
-        for(let i = 0; i < this.circuit.length; i++)
+        let endNodes = Array();
+        //Find all start nodes
+        for(let i = 0; i < this.circuit.length; ++i)
         {
-            //Skip Wires or nodes
-            if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
-                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
-                continue;
-
-            //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
-
-            //id,Gate,x,y,charge,[outputConnections]|...
-            save += i + "," + this.circuit[i].constructor.name + "," + 
-                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + "," + this.circuit[i].charge + ",[";
-
-            //Check that this has a outgoing node (EndGate the exception)
-            if(this.circuit[i].outgoingNodes)
-            {
-                //Cache outgoing connections
-                let outgoing = this.circuit[i].outgoingNodes.outgoingConnections;
-
-                //loop over connections
-                for(let j = 0; j < outgoing.length; j++)
-                {
-                    //Get the gate it is connected to
-                    let gateID = this.circuit.indexOf(outgoing[j].gate.parent);
-                    
-                    if(this.circuit[gateID].incomingNodes[0] == outgoing[j].gate)
-                        save += gateID + ":0"
-                    else
-                        save += gateID + ":1" 
-
-                    //Add to the save
-                    if(j != outgoing.length -1) 
-                        save += "/";
-                }
-                save += "]";
-            }
-            else
-                save += "]"
-            
-            save += "|"
+            if(!this.circuit[i].spawner && this.circuit[i] instanceof EndGate)
+            endNodes.push(this.circuit[i]);
         }
+        //Sort by y position
+        endNodes.sort(function(a,b){return b.position.y - a.position.y});
 
-        //Remove the last | 
-        return save.substring(0, save.length-1);
+        return endNodes;
     }
 
     LoadCircuit(save)
@@ -297,6 +256,81 @@ class Main
                 this.circuit[newID].outgoingNodes.AddSpecificConnections(this.circuit[newConnectionID], parseInt(keyValue[1]));
             }
         }
+    }
+
+    BuildCircuit()
+    {
+        let save = "";
+
+        for(let i = 0; i < this.circuit.length; i++)
+        {
+            //Skip Wires or nodes
+            if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
+                continue;
+
+            //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
+            //id,Gate,x,y,charge,[outputConnections]|...
+            save += i + "," + this.circuit[i].constructor.name + "," + 
+                this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + "," + this.circuit[i].charge + ",[";
+
+            //Check that this has a outgoing node (EndGate the exception)
+            if(this.circuit[i].outgoingNodes)
+            {
+                //Cache outgoing connections
+                let outgoing = this.circuit[i].outgoingNodes.outgoingConnections;
+
+                //loop over connections
+                for(let j = 0; j < outgoing.length; j++)
+                {
+                    //Get the gate it is connected to
+                    let gateID = this.circuit.indexOf(outgoing[j].gate.parent);
+                    
+                    if(this.circuit[gateID].incomingNodes[0] == outgoing[j].gate)
+                        save += gateID + ":0"
+                    else
+                        save += gateID + ":1" 
+
+                    //Add to the save
+                    if(j != outgoing.length -1) 
+                        save += "/";
+                }
+                save += "]";
+            }
+            else
+                save += "]"
+            
+            save += "|"
+        }
+
+        //Remove the last | 
+        return save.substring(0, save.length-1);
+    }
+
+    ExtractEndGatesData(endNodes)
+    {
+        let save = "";
+
+        for(let i = 0; i < endNodes.length;i++)
+        {
+            save += endNodes[i].charge;
+            if(i != endNodes.length-1)
+                save += ","
+        }
+
+        return save;
+    }
+
+    ApplyLimits(graphics) 
+    {
+        var width = this.canvas.width;   // The width of this drawing area, in pixels.
+        var height = this.canvas.height; // The height of this drawing area, in pixels.
+
+        var pixelWidth = Math.abs(( this.coords.xright - this.coords.xleft ) / width);
+        var pixelHeight = Math.abs(( this.coords.ybottom - this.coords.ytop ) / height);
+        this.pixelSize = Math.min(pixelWidth,pixelHeight) + 0.01;
+        graphics.scale( width / (this.coords.xright-this.coords.xleft), height / (this.coords.ybottom-this.coords.ytop) );
+        graphics.translate( -this.coords.xleft, -this.coords.ytop );
     }
 
     //For unfocusing canvas
