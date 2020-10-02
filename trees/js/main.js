@@ -209,11 +209,9 @@ class Main {
 
         if(this.randBSTValue) { // If the random value checkbox is checked, disable user specified node values
             this.nodeValueInput.disabled = true;
-            this.editNodeValueButton.style.display = "none";
         }
         else {
             this.nodeValueInput.disabled = false;
-            this.editNodeValueButton.style.display = "inline-block";
         }
     }
 
@@ -534,10 +532,7 @@ class Main {
 
             if(this.databaseMisc.lecturer) {
                 this.removeNodeButton.style.display = "inline-block";
-                addEventListener("keydown", this.onArrowClick.bind(this));
-                if(!this.randBSTValue) {
-                    this.editNodeValueButton.style.display = "inline-block";
-                }
+                this.editNodeValueButton.style.display = "inline-block";
             }
             else {
                 removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
@@ -703,6 +698,7 @@ class Main {
         else if(this.randBSTValue) { // Generate a random value for the node that enforces the BST property of the tree
             let lowerBound = this.MIN_NODE_VALUE;
             let upperBound = this.MAX_NODE_VALUE;
+            let currNode = this.selectedNode;
 
             if(root) newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
@@ -710,12 +706,54 @@ class Main {
                 if(this.databaseMisc.lecturer) {
                     if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return; 
 
-                    if(this.board.cellX < this.selectedNode.cellCoords.x) { // Adding a left child
+                    // Editing a node
+                    if(edit) {
+                        currNode = this.selectedNode;
+                        if(currNode.children.leftChild) { // Lower bound calculation
+                            currNode = currNode.children.leftChild;
+                            while(currNode.children.rightChild) {
+                                currNode = currNode.children.rightChild;
+                            }
+                            lowerBound = currNode.value + 1;
+                        }
+                        currNode = this.selectedNode;
+                        if(currNode.children.rightChild) { // Upper bound calculation
+                            currNode = currNode.children.rightChild;
+                            while(currNode.children.leftChild) {
+                                currNode = currNode.children.leftChild;
+                            }
+                            upperBound = currNode.value - 1;
+                        }
+                        if(!this.selectedNode.children.leftChild || !this.selectedNode.children.rightChild) { // Editing a leaf node
+                            if(this.selectedNode.childType() === "L") { // The selected node is a left child
+                                currNode = this.selectedNode;
+                                while(currNode.childType() === "L" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                    currNode = currNode.parent;
+                                }
+                                if(!(currNode.parent.isRoot && currNode.childType() === "L")) {
+                                    lowerBound = currNode.parent.value + 1;
+                                }
+                                upperBound = this.selectedNode.parent.value - 1;
+                            }
+                            else { // The selected node is a right child
+                                currNode = this.selectedNode;
+                                while(currNode.childType() === "R" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                    currNode = currNode.parent;
+                                }
+                                if(!(currNode.parent.isRoot && currNode.childType() === "R")) {
+                                    upperBound = currNode.parent.value - 1;
+                                }
+                                lowerBound = this.selectedNode.parent.value + 1;
+                            }
+                            if(this.selectedNode.value === 1 || this.selectedNode.value === 99) return;
+                        }
+                    }
+                    else if(this.board.cellX < this.selectedNode.cellCoords.x) { // Adding a left child
                         if(this.selectedNode.isRoot) {
                             upperBound = this.selectedNode.value - 1;
                         }
                         else {
-                            let currNode = this.selectedNode;
+                            currNode = this.selectedNode;
                             while(currNode.childType() === "L" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
                                 currNode = currNode.parent;
                             }
@@ -726,12 +764,12 @@ class Main {
                         }
                         if(this.selectedNode.value === 1) return;
                     }
-                    else { // Adding a right child
+                    else if(this.board.cellX > this.selectedNode.cellCoords.x){ // Adding a right child
                         if(this.selectedNode.isRoot) {
                             lowerBound = this.selectedNode.value + 1;
                         }
                         else {
-                            let currNode = this.selectedNode;
+                            currNode = this.selectedNode;
                             while(currNode.childType() === "R" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
                                 currNode = currNode.parent;
                             }
