@@ -41,7 +41,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
 
     public function get_expected_data() {
         // TODO.
-        return array('answer' => PARAM_RAW, 'order' => PARAM_RAW);
+        return array('answer' => PARAM_RAW);
     }
 
     public function summarise_response(array $response) {
@@ -117,7 +117,7 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
     public function grade_bst(array $response) {
         $result = 0;
         $combinedString = $response["answer"];
-        $splitString = explode("-", $combinedString);
+        $splitString = explode("/", $combinedString);
 
         $answer = $splitString[0];
         
@@ -127,7 +127,10 @@ class qtype_trees_question extends question_graded_automatically_with_countback 
     }
 
     public function grade_properties(array $response) {
-        if($this->properties_string === "") return 1; // If the lecturer didn't select any properties or the tree has no nodes (accounted for in js on lecturer's side) there is nothing to answer
+        if($this->properties_string == "") { // If the lecturer didn't select any properties or the tree has no nodes (accounted for in js on lecturer's side) there is nothing to answer
+            $this->propertiesFraction = 1; 
+            return 1;
+        }
         
         $result = 0;
         $num_items = 0; // Total number of property values student had to enter
