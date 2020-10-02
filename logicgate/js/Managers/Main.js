@@ -287,9 +287,9 @@ class Main
                     let gateID = this.circuit.indexOf(outgoing[j].gate.parent);
                     
                     if(this.circuit[gateID].incomingNodes[0] == outgoing[j].gate)
-                        save += gateID + ":0"
+                        save += gateID + ":0:" + this.circuit[gateID].constructor.name;
                     else
-                        save += gateID + ":1" 
+                        save += gateID + ":1:" + this.circuit[gateID].constructor.name;
 
                     //Add to the save
                     if(j != outgoing.length -1) 

@@ -106,7 +106,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         if($this->questiontype == "1")
             return array(1, question_state::graded_state_for_fraction(1));
 
-        $fraction = $this->compute_grade($studentAnswer,$lecturerAnswer, true, false);
+        $fraction = $this->compute_grade($studentAnswer,$lecturerAnswer, true, true);
 
         //return answer
         return array($fraction, question_state::graded_state_for_fraction($fraction));
@@ -159,9 +159,105 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return 1;
     }
 
-    public function compare_circuit()
+    public function compare_circuit($studentAnswer, $lecturerAnswer)
     {
-        
+        $studentMatrix = $this->create_matrix(10);
+        $lecturerMatrix = $this->create_matrix(10);
+
+        $studentAnswer = explode("|", $studentAnswer[0]);
+        $lecturerAnswer = explode("|", $lecturerAnswer[0]);
+
+        $studentMatrix = $this->make_matrix($studentMatrix, $studentAnswer);
+        $lecturerMatrix = $this->make_matrix($lecturerMatrix, $lecturerAnswer);
+
+        for ($i=0; $i < count($lecturerMatrix); $i++) 
+        { 
+            for ($j=0; $j < count($lecturerMatrix); $j++) 
+            {
+                if($lecturerMatrix[$i][$j] != $studentAnswer[$i][$j])
+                    return 0;
+            }
+        }
+ 
         return 1;
+    }
+
+    public function make_matrix($matrix, $fullData)
+    {
+        for ($i=0; $i < count($fullData); $i++) 
+        { 
+            $data = explode(",", $fullData[$i]);
+
+            //Extract the gate
+            $rowIndex = $this->get_gate_index($data[1]);
+
+            //Get the outgoing connections
+            $outgoingConnection = $data[5];
+            $outgoingConnection = substr($outgoingConnection, 1, strlen($outgoingConnection)-2);
+            $outgoingConnection = explode("/", $outgoingConnection);
+
+            if(count($outgoingConnection) == 1 && $outgoingConnection[0] == "")
+                continue;
+            
+            for ($k=0; $k < count($outgoingConnection); $k++) 
+            { 
+                $colIndex = explode(":",$outgoingConnection[$k])[2];
+                $colIndex = $this->get_gate_index($colIndex);
+                $matrix[$rowIndex][$colIndex] += 1;
+            }
+        }
+
+        return $matrix;
+    }
+
+    public function get_gate_index($gate)
+    {
+        $index = -1;
+        switch ($gate) 
+        {
+            case 'StartGate':
+                $index = 0;
+                break;
+            case 'EndGate':
+                $index = 1;
+                break;
+            case 'BufferGate':
+                $index = 2;
+                break;
+            case 'NotGate':
+                $index = 3;
+                break;
+            case 'AndGate':
+                $index = 4;
+                break;
+            case 'NandGate':
+                $index = 5;
+                break;
+            case 'OrGate':
+                $index = 6;
+                break;
+            case 'NorGate':
+                $index = 7;
+                break;
+            case 'XorGate':
+                $index = 8;
+                break;
+            case 'XnorGate':
+                $index = 9;
+                break;
+        }
+
+        return $index;
+    }
+
+    public function create_matrix($n)
+    {
+        $matrix = array();
+        for ($i=0; $i < $n; $i++) 
+        {
+            for ($j=0; $j < $n; $j++)
+                $matrix[$i][$j] = 0;
+        } 
+        return $matrix;
     }
 }
