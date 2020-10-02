@@ -39,6 +39,9 @@ class Main {
         /** DRAGGING */
         this.prevX = null;
         this.prevY = null;
+        this.xDirection = null;
+        this.yDirection = null;
+        this.hasTwoChildren = null;
         this.lastValidCellCoords = null;
         this.dragging = false;
         //#endregion
@@ -289,7 +292,153 @@ class Main {
         this.prevY = this.board.cellY;
     }
 
-    onArrowClick(e) { // When using arrow keys
+    rightDragging(node, xDirection, yDirection){
+        if(!node){
+            return;
+        }
+        if ((node.children.leftChild == null && node.children.rightChild == null)){
+            while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){ //if there will be a collision, either shorten the distance of translation or stay in place.
+                    if(this.xDirection>0) this.xDirection--;
+                    else if(this.xDirection<0) this.xDirection++;
+                    else if(this.yDirection<0) this.yDirection++;
+                    else if(this.yDirection>0) this.yDirection--;
+                    else break;
+            }
+            //for leaves
+            if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+                node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+                node.cellCoords.y = node.cellCoords.y + this.yDirection;
+                this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+                this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+                if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+                    if(this.board.canGrow()) {
+                        this.resizeBoard("grow");
+                    }
+                    else {
+                        this.redrawCanvas();
+                    }
+                }
+                else if(this.board.canShrink()) {
+                    while(this.board.canShrink()) {
+                        this.resizeBoard("shrink");
+                    }
+                }
+                else {
+                    this.redrawCanvas();
+                }
+            }
+            return;
+        }
+        this.rightDragging(node.children.rightChild, this.xDirection, this.yDirection);
+        while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){
+            if(this.xDirection>0) this.xDirection--;
+            else if(this.xDirection<0) this.xDirection++;
+            else if(this.yDirection<0) this.yDirection++;
+            else if(this.yDirection>0) this.yDirection--;
+            else break;
+        }
+        //for inner-nodes
+        if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+            node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+            node.cellCoords.y = node.cellCoords.y + this.yDirection;
+            this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+            this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+        }
+        if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+            if(this.board.canGrow()) {
+                this.resizeBoard("grow");
+            }
+            else {
+                this.redrawCanvas();
+            }
+        }
+        else if(this.board.canShrink()) {
+            while(this.board.canShrink()) {
+                this.resizeBoard("shrink");
+            }
+        }
+        else {
+            this.redrawCanvas();
+        }
+        this.rightDragging(node.children.leftChild, this.xDirection, this.yDirection);
+        this.redrawCanvas();
+        return;
+    }
+
+    leftDragging(node, xDirection, yDirection){
+        if(!node){
+            return;
+        }
+        if (node.children.leftChild == null && node.children.rightChild == null){
+            while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){ //if there will be a collision, either shorten the distance of translation or stay in place.
+                    if(this.xDirection>0) this.xDirection--;
+                    else if(this.xDirection<0) this.xDirection++;
+                    else if(this.yDirection<0) this.yDirection++;
+                    else if(this.yDirection>0) this.yDirection--;
+                    else break;
+            }
+            //for leaves
+            if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+                node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+                node.cellCoords.y = node.cellCoords.y + this.yDirection;
+                this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+                this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+                if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+                    if(this.board.canGrow()) {
+                        this.resizeBoard("grow");
+                    }
+                    else {
+                        this.redrawCanvas();
+                    }
+                }
+                else if(this.board.canShrink()) {
+                    while(this.board.canShrink()) {
+                        this.resizeBoard("shrink");
+                    }
+                }
+                else {
+                    this.redrawCanvas();
+                }
+            }
+            return;
+        }
+        this.leftDragging(node.children.leftChild, this.xDirection, this.yDirection);
+        while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0)|| (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){
+            if(this.xDirection>0) this.xDirection--;                
+            else if(this.xDirection<0) this.xDirection++;
+            else if(this.yDirection<0) this.yDirection++;
+            else if(this.yDirection>0) this.yDirection--;
+            else break;
+        }
+        //for inner-nodes
+        if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+            node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+            node.cellCoords.y = node.cellCoords.y + this.yDirection;
+            this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+            this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+        }
+        if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+            if(this.board.canGrow()) {
+                this.resizeBoard("grow");
+            }
+            else {
+                this.redrawCanvas();
+            }
+        }
+        else if(this.board.canShrink()) {
+            while(this.board.canShrink()) {
+                this.resizeBoard("shrink");
+            }
+        }
+        else {
+            this.redrawCanvas();
+        }
+        this.leftDragging(node.children.rightChild, this.xDirection, this.yDirection);
+        this.redrawCanvas();
+        return;
+    }
+
+    onArrowClick(e){ // When using arrow keys
         if(e.keyCode == 39){ // If right arrow
             if(this.selectedNode.children.rightChild != null){
                 this.selectedNode.selected = false;
@@ -386,6 +535,7 @@ class Main {
                 this.editNodeValueButton.style.display = "inline-block";
             }
             else {
+                removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
                 if(this.databaseMisc.qtype !== this.qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
                     this.removeNodeButton.style.display = "inline-block";
                     this.editNodeValueButton.style.display = "inline-block";
@@ -403,33 +553,16 @@ class Main {
             }
         }
         else if(this.board.cellX != this.prevX || this.board.cellY != this.prevY){ // If dragging
-            if(this.canDrag()) {
-                this.selectedNode.cellCoords.x = this.board.cellX; // Set new coordinates after dragging
-                this.selectedNode.cellCoords.y = this.board.cellY;
-                this.tree.nodes[this.board.cellY][this.board.cellX] = this.selectedNode; // Make the new transformed node selectable
-                this.tree.nodes[this.prevY][this.prevX] = undefined; // Set previous spot to say there is no node at that spot
-
-                if(this.board.cellX === 0 || this.board.cellX === this.COLS - 1 || this.board.cellY === this.ROWS - 1) {
-                    if(this.board.canGrow()) {
-                        this.resizeBoard("grow");
-                    }
-                    else {
-                        this.redrawCanvas();
-                    }
+            this.xDirection = this.board.cellX - this.prevX;
+            this.yDirection = this.board.cellY - this.prevY;
+            if (this.canDrag()){
+                if(this.xDirection>0){ //moving right
+                    this.rightDragging(this.selectedNode, this.xDirection, this.yDirection);
                 }
-                else if(this.board.canShrink()) {
-                    while(this.board.canShrink()) {
-                        this.resizeBoard("shrink");
-                    }
-                }
-                else {
-                    this.redrawCanvas();
+                else{
+                    this.leftDragging(this.selectedNode, this.xDirection, this.yDirection);
                 }
             }
-            else {
-                return;
-            }
-
             if(this.databaseMisc.lecturer) {
                 this.setup.handleEvent(this.events.DRAG);
             }
@@ -666,8 +799,8 @@ class Main {
         if(this.board.cellY <= this.selectedNode.parent.cellCoords.y || // Cannot be dragged in line or above parent
             (this.prevX < this.selectedNode.parent.cellCoords.x && this.board.cellX >= this.selectedNode.parent.cellCoords.x) || // Cannot be dragged across parent to become the opposing child
             (this.prevX > this.selectedNode.parent.cellCoords.x && this.board.cellX <= this.selectedNode.parent.cellCoords.x) ||
-            (this.selectedNode.children.leftChild != null && (this.selectedNode.children.leftChild.cellCoords.x >= this.board.cellX || this.selectedNode.children.leftChild.cellCoords.y <= this.board.cellY)) || // Keep its children to the left or right and below
-            (this.selectedNode.children.rightChild != null && (this.selectedNode.children.rightChild.cellCoords.x <= this.board.cellX || this.selectedNode.children.rightChild.cellCoords.y <= this.board.cellY)) ||
+            //(this.selectedNode.children.leftChild != null && (this.selectedNode.children.leftChild.cellCoords.x >= this.board.cellX || this.selectedNode.children.leftChild.cellCoords.y <= this.board.cellY)) || // Keep its children to the left or right and below
+            //(this.selectedNode.children.rightChild != null && (this.selectedNode.children.rightChild.cellCoords.x <= this.board.cellX || this.selectedNode.children.rightChild.cellCoords.y <= this.board.cellY)) ||
             (this.prevX != this.selectedNode.cellCoords.x || this.prevY != this.selectedNode.cellCoords.y)) return false; // If dragging doesn't start at a node
         
         return true;
