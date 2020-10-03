@@ -28,21 +28,38 @@ class qtype_logicgate_question_test extends advanced_testcase
     //Test the compute grade function with no lecturer answer
     public function test_grade_response()
     {
+        //Lecturer no solution
         $question = test_question_maker::make_question('logicgate');
+        $question->questiontype == "0"; //Question mode
         $question->answer_id = "";
         list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
         $this->assertEquals(0, $fraction, false);
 
-        //Make new question
+        //Student no solution
         $question = test_question_maker::make_question('logicgate');
-
-        //Set student and lecturer answers
-        $studentResponse = array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;");
+        $question->questiontype == "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
+        list($fraction, $state)  = $question->grade_response(array("answer" => ""));
+        $this->assertEquals(0, $fraction, false);
 
-        //Grade and assert
-        list($fraction, $state)  = $question->grade_response($studentResponse);
-        $this->assertEquals(1, $fraction, "Fraction was expected to be the same since the circuits are exact");
+        //Student no solution 2
+        $question = test_question_maker::make_question('logicgate');
+        $question->questiontype == "0";
+        $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
+        list($fraction, $state)  = $question->grade_response(array("answer" => "SAVED_DATA"));
+        $this->assertEquals(0, $fraction, false);
+
+        //Student solution matching
+        $question = test_question_maker::make_question('logicgate');
+        $question->questiontype == "0";
+        $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
+        list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
+        $this->assertEquals(1, $fraction, "Failed on lecturer solution exactly same as student");
+    }
+
+    public function test_grade_response_sandbox()
+    {
+
     }
 
     //Test the same response function
