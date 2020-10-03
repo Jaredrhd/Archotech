@@ -16,7 +16,7 @@
         <FIELD NAME="norgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xnorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="curated_data" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="answer_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="buffergateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
         <FIELD NAME="notgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
         <FIELD NAME="andgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>

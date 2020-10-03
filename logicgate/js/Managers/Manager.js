@@ -13,6 +13,17 @@ class Manager
         {
             //Get the div
             let canvasDiv = scripts[i].previousElementSibling;
+            let saveField = canvasDiv.previousElementSibling;
+            let properties = saveField.previousElementSibling;
+
+            let saveFieldLecturer = document.getElementById("answer_id");
+
+            //If we have a lecturer "saveField", use that instead
+            if(saveFieldLecturer)
+            {
+                saveField = saveFieldLecturer;
+                properties.setAttribute("save", saveField.value);
+            }
 
             //Create canvas
             let canvas = document.createElement("canvas");
@@ -32,7 +43,7 @@ class Manager
             this.canvases.push(canvas);
 
             //Add the circuit to the list
-            this.circuits.push(new Main(canvas));
+            this.circuits.push(new Main(canvas, saveField, properties));
         }
 
         //Start the program

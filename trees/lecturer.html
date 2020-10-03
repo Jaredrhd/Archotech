@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tree</title>
 </head>
-<body oncontextmenu="return false;" onload="init()">
+<body onload="init()">
 
 <noscript>
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
@@ -27,17 +27,20 @@
     <div lecturer='true' qtype='' treestring='' bstvalues='' lastanswer='' lastanswernodeorders=''
         disablecanvas='false' displaytools='true'></div>
     <!--  -->
-    <div id="canvas:toolbar" class="toolbar">
+    <div id="canvas:toolbar" class="toolbar" style="font-weight: bold;">
         <div id="canvas:modify-tree-tools" class="modify-tree-tools" style="display: none;">
             <label for="canvas:node-value" class="no-margin">NODE VALUE</label>
             <input id="canvas:node-value" class="node-value input" type="number" min="0" max="99" autocomplete="off">
             <div id="canvas:random-node-value-tools">
                 <label for="canvas:random-node-value" style="margin-bottom: 5px;">RANDOM VALUE</label>
                 <input id="canvas:random-node-value" type="checkbox" class="input" autocomplete="off">
+                <label for="canvas:random-bst-value" style="margin-bottom: 5px;">RANDOM BST VALUE</label>
+                <input id="canvas:random-bst-value" type="checkbox" class="input" autocomplete="off">
             </div>
             <button type="button" id="canvas:add-root" class="modify-tree-tools add-root button button-primary no-select">ADD ROOT</button>
             <button type="button" id="canvas:remove-node" style="display: none;" class="modify-tree-tools remove-node button button-primary no-select">REMOVE</button>
             <button type="button" id="canvas:edit-node" style="display: none;" class="modify-tree-tools edit-node button button-secondary no-select">EDIT VALUE</button>
+            <button type="button" id="select-required-nodes-for-properties" style="display: none;" class="modify-tree-tools select-required-nodes-for-properties button button-secondary no-select">SELECT REQUIRED NODES</button>
             <button type="button" id="canvas:bst-undo" style="display: none;" class="modify-tree-tools bst-undo button button-secondary no-select">UNDO</button>
         </div>
         <div id="canvas:answer-question-tools" style="display: none;">
@@ -72,6 +75,7 @@
         loadScript("/question/type/trees/js/TraversalQuestion.js");
         loadScript("/question/type/trees/js/BSTQuestion.js");
         loadScript("/question/type/trees/js/PropertiesQuestion.js");
+        // loadScript("/question/type/trees/js/AVLQuestion.js");
         loadScript("/question/type/trees/js/QuestionSetup.js");
         loadScript("/question/type/trees/js/Main.js");
 

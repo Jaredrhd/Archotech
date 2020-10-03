@@ -5,7 +5,7 @@ class StartGate extends LogicGate
         //Force this from spawner to be 0.5
         scale = 0.5;
         super(pos, scale, origin);
-        this.outgoingNodes = new OutgoingNode(this.pos, circuit, this);
+        this.outgoingNodes = new OutgoingNode(this.position, circuit, this);
 
         this.charge = charge;
         this.updated = true;
@@ -41,7 +41,7 @@ class StartGate extends LogicGate
             this.outgoingNodes.SelectedUpdate(stillDragging, gateDroppedOn);
 
         //Since a startGate outgoingNode isn't drawn we need to make sure it's position is updated
-        this.outgoingNodes.UpdatePos();
+        this.outgoingNodes.UpdatePosition();
     }
 
     Correct()

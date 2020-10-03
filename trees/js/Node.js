@@ -11,13 +11,13 @@ class Node {
         this.parent = null;
         this.children = {leftChild: null, rightChild: null};
         this.orderPlaced;
-        this.properties = {hasAllProperties: false, height: false, depth: false, degree: false, correct: true};
+        this.properties = {required: false, hasAllProperties: false, correct: true};
     }
 
     /** Draws a node on the canvas */
     draw(parent, cellX, cellY) { 
         this.main.context.save();
-        
+
         this.main.context.lineWidth = this.main.nodeThickness;
         this.main.context.beginPath();
 
@@ -28,25 +28,41 @@ class Node {
 
         this.main.context.arc(this.boardCoords.x, this.boardCoords.y, this.nodeRadius, 0, 2*Math.PI); // Draw node circle
 
-        if(!this.main.databaseMisc.lecturer && this.main.databaseMisc.qtype === this.main.qTypes.PROPERTIES) {
-            if(this.main.databaseMisc.propertiescorrectness !== "") { // Showing the student whether they are correct or not
-                
+        if(!this.main.databaseMisc.lecturer) {
+            if(this.main.databaseMisc.qtype === this.main.qTypes.PROPERTIES && this.properties.required) {
                 this.main.context.save();
-                this.main.context.globalAlpha = 0.55;
 
-                if(this.properties.correct) {
-                    this.main.context.fillStyle = "#a0eca5";
+                if(this.main.databaseMisc.propertiescorrectness !== "") { // Showing the student whether they are correct or not
+                    if(this.properties.correct) {
+                        this.main.context.fillStyle = "#a0eca5";
+                    }
+                    else {
+                        this.main.context.fillStyle = "#f0afaa";
+                    }
+
+                    this.main.context.fill();
                 }
-                else {
-                    this.main.context.fillStyle = "#f0afaa";
+                else if(this.properties.hasAllProperties) { // During the attempt, if the student has entered values for all requested node properties for this node on a properties question
+                    this.main.context.globalAlpha = 0.55;
+                    this.main.context.fillStyle = "#4ccaf3";
+                    this.main.context.fill();
+                }
+                else { // Student hasn't entered values for all requested node properties for this required node
+                    this.main.context.fillStyle = "#fcdb73";
+                    this.main.context.fill();
                 }
 
-                this.main.context.fill();
                 this.main.context.restore();
             }
-            else if(this.properties.hasAllProperties) { // During the attempt, if the student has entered values for all requested node properties for this node on a properties question
-                this.main.context.globalAlpha = 0.5;
-                this.main.context.strokeStyle = "#2db1dc";
+        }
+        else {
+            if(this.main.setup && this.main.setup.currQuestion.PROPERTIES && this.properties.required) {
+                this.main.context.save();
+
+                this.main.context.fillStyle = "#fcdb73";
+    
+                this.main.context.fill();
+                this.main.context.restore();
             }
         }
 
@@ -135,11 +151,6 @@ class Node {
         /** Calculate the end points of the edge on the nodes' circumferences (x = cx + r*cos(angle), y = cy + r*sin(angle)) */
         this.main.context.moveTo(this.nodeRadius*Math.cos(angleParent) + parentBoardCoords.x, this.nodeRadius*Math.sin(angleParent) + parentBoardCoords.y);
         this.main.context.lineTo(this.nodeRadius*Math.cos(angleChild) + childBoardCoords.x, this.nodeRadius*Math.sin(angleChild) + childBoardCoords.y);
-
-        if(!this.main.databaseMisc.lecturer && this.properties.hasAllProperties && this.main.databaseMisc.propertiescorrectness === "") { // If the student has entered values for all requested node properties for this node on a properties question
-            this.main.context.globalAlpha = 0.5;
-            // this.main.context.strokeStyle = "green";
-        }
 
         this.main.context.stroke();
 

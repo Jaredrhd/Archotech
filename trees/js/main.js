@@ -7,10 +7,13 @@ class Main {
         this.modifyTreeTools = document.getElementById(canvas.id+":modify-tree-tools");
         this.answerQuestionTools = document.getElementById(canvas.id+":answer-question-tools");
         this.nodeValueInput = document.getElementById(canvas.id+":node-value");
+        this.qTypeHeader = document.querySelector('[aria-controls="id_q_type_header"]');
         this.navbar = document.querySelector('[aria-controls="nav-drawer"]');
+        this.createQuestionHeader = document.querySelector('[aria-controls="id_create_question_header"]');
         // this.nodeValueInputTool = document.getElementById("node-value-tool");
         this.randNodeValueCheckbox = document.getElementById(canvas.id+":random-node-value");
         this.randNodeValueTools = document.getElementById(canvas.id+":random-node-value-tools");
+        this.randBSTValueCheckbox = document.getElementById(canvas.id+":random-bst-value");
         this.addRootButton = document.getElementById(canvas.id+":add-root");
         this.removeNodeButton = document.getElementById(canvas.id+":remove-node");
         this.editNodeValueButton = document.getElementById(canvas.id+":edit-node");
@@ -19,7 +22,8 @@ class Main {
         this.bstTools = document.getElementById(canvas.id+":bst-tools");
         this.propertyTools = document.getElementById(canvas.id+":properties-tools");
         //#endregion
-        this.helpIcon = document.getElementById(canvas.id+":tooltip-text");
+        this.tooltipText = document.getElementById(canvas.id+":tooltip-text");
+        this.helpIcon = document.getElementById(canvas.id+":help");
 
         //#region BOARD MISC
         this.canvas = canvas;
@@ -35,6 +39,9 @@ class Main {
         /** DRAGGING */
         this.prevX = null;
         this.prevY = null;
+        this.xDirection = null;
+        this.yDirection = null;
+        this.hasTwoChildren = null;
         this.lastValidCellCoords = null;
         this.dragging = false;
         //#endregion
@@ -62,13 +69,17 @@ class Main {
         this.selectedNode = null;
         /** Boolean indicating whether a new node's value should be taken from user input or randomised */
         this.randNodeValue = false;
+        this.randBSTValue = false;
         this.MAX_NODE_VALUE = 99;
         this.MIN_NODE_VALUE = 1;
         //#endregion
 
         this.helpText = {
-            traversal:  '<p>Build up the traversal by clicking the nodes in the correct order.</p>' +
-                        '<p>Alternatively, you can type the solution directly in the box.</p>',
+            traversal:  '<p>Perform the required traversal by selecting the nodes in the correct order and/or typing the solution directly in the answer box.' +
+                        '<br>Deselecting a node will remove it from the traversal.</p>' +
+                        '<p>The format of your answer must be node values separated by a comma followed by a space.' + 
+                        '<br>i.e. [node_value][comma][space][node_value] etc.' +
+                        '<br>This format is automatically enforced when selecting nodes.</p>',
             bst:        '<p>This question requires you to build a binary search tree using the values displayed in the "BST Values" box. ' +
                         '<br>The value that you need to add at each step will be displayed in the "NODE VALUE" box.</p>' +
                         '<p>To begin, click on the "ADD ROOT" button. This will display the root of the tree on the canvas. ' +
@@ -78,7 +89,10 @@ class Main {
                         '<br>Note that you cannot add a child node directly below its parent node.</p>' +
                         '<p>If you would like to move a node, select the node and drag it to the desired cell. ' +
                         '<br>Note that you will only be allowed to move the node to a valid cell (i.e. a left child will always remain a left child etc.)</p>' +
-                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>'
+                        '<p>Click on the "UNDO" button in order to remove the last node that was added (this can be repeated any number of times).</p>',
+            properties: '<p>This question requires you to fill in the specified tree and/or node properties.</p>' +
+                        '<p>Fill in the node properties for all nodes highlighted in orange. Selecting these nodes will display the required properties.</p>' + 
+                        '<p>Once all the properties for a node have been entered, the node will turn blue.</p>'
         };
 
         if(this.databaseMisc.disablecanvas) {
@@ -92,8 +106,6 @@ class Main {
         this.board = new Board(this);
         this.board.drawGrid();
 
-        this.expandCanvas();
-
         this.initListeners();
 
         if(this.databaseMisc.lecturer) {
@@ -104,6 +116,7 @@ class Main {
             if(this.databaseMisc.lastanswer !== "") {
                 this.attempt.reconstructLastAnswer();
             }
+            this.expandCanvas();
         }
     }
 
@@ -126,6 +139,7 @@ class Main {
     }
 
     initListeners() {
+        
         window.addEventListener("resize", this.expandCanvas.bind(this));
         this.navbar.addEventListener("click", this.navbarClicked.bind(this));
         this.canvas.addEventListener("click", this.onBoardClick.bind(this));
@@ -139,9 +153,17 @@ class Main {
         document.addEventListener("mouseup", this.exitDrag.bind(this));
 
         this.randNodeValueCheckbox.addEventListener("change", this.randNodeValueChecked.bind(this, this.randNodeValueCheckbox)); // Bind Main class and actual checkbox element
+        this.randBSTValueCheckbox.addEventListener("change", this.randBSTValueChecked.bind(this, this.randBSTValueCheckbox)); // Bind Main class and actual checkbox element
         this.addRootButton.addEventListener("click", this.addRoot.bind(this));
         this.removeNodeButton.addEventListener("click", this.removeNodeAndChildren.bind(this));
         this.editNodeValueButton.addEventListener("click", this.editNodeValue.bind(this));
+
+        if(this.databaseMisc.lecturer) {
+            this.qTypeHeader.click();
+            this.createQuestionHeader.click();
+
+            this.expandCanvas();
+        }
     }
 
     expandCanvas() {
@@ -169,8 +191,23 @@ class Main {
 
     randNodeValueChecked(checkbox) {
         this.randNodeValue = checkbox.checked;
+        this.randBSTValueCheckbox.checked = false; // Uncheck random bst if random input is checked
+        this.randBSTValue = false;
 
         if(this.randNodeValue) { // If the random value checkbox is checked, disable user specified node values
+            this.nodeValueInput.disabled = true;
+        }
+        else {
+            this.nodeValueInput.disabled = false;
+        }
+    }
+
+    randBSTValueChecked(checkbox) {
+        this.randBSTValue = checkbox.checked;
+        this.randNodeValueCheckbox.checked = false; // Uncheck random input if random bst is checked
+        this.randNodeValue = false;
+
+        if(this.randBSTValue) { // If the random value checkbox is checked, disable user specified node values
             this.nodeValueInput.disabled = true;
         }
         else {
@@ -189,7 +226,7 @@ class Main {
             this.attempt.bstAttempt.bst.undoButton.style.display = "inline-block";
         }
         else {
-            newNodeValue = this.getNewNodeValue();
+            newNodeValue = this.getNewNodeValue(true);
         }
 
         if(!newNodeValue) return; // newNodeValue is null
@@ -235,24 +272,170 @@ class Main {
         }
     }
 
-    editNodeValue(){
-        let newNodeValue = this.getNewNodeValue();
+    editNodeValue() {
+        if(!this.selectedNode) return; // There is no node selected
+        
+        let newNodeValue = this.getNewNodeValue(this.selectedNode.isRoot, true);
 
         if(!newNodeValue) return; // newNodeValue is null
-        
-        if(!this.selectedNode) return; // There is no node selected
             
         this.selectedNode.value = newNodeValue;
 
         this.redrawCanvas();
     }
 
-    beginDrag(event){
+    beginDrag(event) {
         this.board.boardCoordsFromMouse(event);
         
         this.dragging = true;
         this.prevX = this.board.cellX;
         this.prevY = this.board.cellY;
+    }
+
+    rightDragging(node, xDirection, yDirection){
+        if(!node){
+            return;
+        }
+        if ((node.children.leftChild == null && node.children.rightChild == null)){
+            while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){ //if there will be a collision, either shorten the distance of translation or stay in place.
+                    if(this.xDirection>0) this.xDirection--;
+                    else if(this.xDirection<0) this.xDirection++;
+                    else if(this.yDirection<0) this.yDirection++;
+                    else if(this.yDirection>0) this.yDirection--;
+                    else break;
+            }
+            //for leaves
+            if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+                node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+                node.cellCoords.y = node.cellCoords.y + this.yDirection;
+                this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+                this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+                if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+                    if(this.board.canGrow()) {
+                        this.resizeBoard("grow");
+                    }
+                    else {
+                        this.redrawCanvas();
+                    }
+                }
+                else if(this.board.canShrink()) {
+                    while(this.board.canShrink()) {
+                        this.resizeBoard("shrink");
+                    }
+                }
+                else {
+                    this.redrawCanvas();
+                }
+            }
+            return;
+        }
+        this.rightDragging(node.children.rightChild, this.xDirection, this.yDirection);
+        while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){
+            if(this.xDirection>0) this.xDirection--;
+            else if(this.xDirection<0) this.xDirection++;
+            else if(this.yDirection<0) this.yDirection++;
+            else if(this.yDirection>0) this.yDirection--;
+            else break;
+        }
+        //for inner-nodes
+        if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+            node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+            node.cellCoords.y = node.cellCoords.y + this.yDirection;
+            this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+            this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+        }
+        if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+            if(this.board.canGrow()) {
+                this.resizeBoard("grow");
+            }
+            else {
+                this.redrawCanvas();
+            }
+        }
+        else if(this.board.canShrink()) {
+            while(this.board.canShrink()) {
+                this.resizeBoard("shrink");
+            }
+        }
+        else {
+            this.redrawCanvas();
+        }
+        this.rightDragging(node.children.leftChild, this.xDirection, this.yDirection);
+        this.redrawCanvas();
+        return;
+    }
+
+    leftDragging(node, xDirection, yDirection){
+        if(!node){
+            return;
+        }
+        if (node.children.leftChild == null && node.children.rightChild == null){
+            while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0) || (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){ //if there will be a collision, either shorten the distance of translation or stay in place.
+                    if(this.xDirection>0) this.xDirection--;
+                    else if(this.xDirection<0) this.xDirection++;
+                    else if(this.yDirection<0) this.yDirection++;
+                    else if(this.yDirection>0) this.yDirection--;
+                    else break;
+            }
+            //for leaves
+            if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+                node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+                node.cellCoords.y = node.cellCoords.y + this.yDirection;
+                this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+                this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+                if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+                    if(this.board.canGrow()) {
+                        this.resizeBoard("grow");
+                    }
+                    else {
+                        this.redrawCanvas();
+                    }
+                }
+                else if(this.board.canShrink()) {
+                    while(this.board.canShrink()) {
+                        this.resizeBoard("shrink");
+                    }
+                }
+                else {
+                    this.redrawCanvas();
+                }
+            }
+            return;
+        }
+        this.leftDragging(node.children.leftChild, this.xDirection, this.yDirection);
+        while(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] !== "undefined" || (this.xDirection == 0 && this.yDirection == 0)|| (node.cellCoords.x + this.xDirection >= this.COLS) || (node.cellCoords.x + this.xDirection < 0) || (node.cellCoords.y + this.yDirection >= this.ROWS)){
+            if(this.xDirection>0) this.xDirection--;                
+            else if(this.xDirection<0) this.xDirection++;
+            else if(this.yDirection<0) this.yDirection++;
+            else if(this.yDirection>0) this.yDirection--;
+            else break;
+        }
+        //for inner-nodes
+        if(typeof this.tree.nodes[node.cellCoords.y + this.yDirection][node.cellCoords.x + this.xDirection] === "undefined") { //if a cell is available
+            node.cellCoords.x = node.cellCoords.x + this.xDirection; // Set new coordinates after dragging
+            node.cellCoords.y = node.cellCoords.y + this.yDirection;
+            this.tree.nodes[node.cellCoords.y][node.cellCoords.x] = node; // Make the new transformed node selectable
+            this.tree.nodes[node.cellCoords.y - this.yDirection][node.cellCoords.x - this.xDirection] = undefined; // Set previous spot to say there is no node at that spot
+        }
+        if(node.cellCoords.x === 0 || node.cellCoords.x === this.COLS - 1 || node.cellCoords.y === this.ROWS - 1) {
+            if(this.board.canGrow()) {
+                this.resizeBoard("grow");
+            }
+            else {
+                this.redrawCanvas();
+            }
+        }
+        else if(this.board.canShrink()) {
+            while(this.board.canShrink()) {
+                this.resizeBoard("shrink");
+            }
+        }
+        else {
+            this.redrawCanvas();
+        }
+        this.leftDragging(node.children.rightChild, this.xDirection, this.yDirection);
+        this.redrawCanvas();
+        return;
     }
 
     onArrowClick(e){ // When using arrow keys
@@ -302,7 +485,15 @@ class Main {
 
         this.board.boardCoordsFromMouse(event); 
 
+        this.nodeValueInput.focus();
+
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node at the selected cell
+            if(this.databaseMisc.lecturer && this.setup.currQuestion.PROPERTIES && this.setup.propertiesQuestion.selectingRequiredNodes) {
+                this.setup.propertiesQuestion.selectRequiredNode(this.tree.nodes[this.board.cellY][this.board.cellX]);
+                return;
+            }
+            else if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return; // Cannot select nodes that are not required in a properties question
+
             if(this.tree.nodes[this.board.cellY][this.board.cellX].selected) { // If the current selected node is selected again
                 if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.TRAVERSAL) {
                     removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
@@ -344,6 +535,7 @@ class Main {
                 this.editNodeValueButton.style.display = "inline-block";
             }
             else {
+                removeEventListener("keydown", this.onArrowClick.bind(this)); // Student cannot use arrow keys in a traversal question
                 if(this.databaseMisc.qtype !== this.qTypes.BST) { // Student can't edit node values or remove nodes in BST question (can only undo)
                     this.removeNodeButton.style.display = "inline-block";
                     this.editNodeValueButton.style.display = "inline-block";
@@ -361,33 +553,16 @@ class Main {
             }
         }
         else if(this.board.cellX != this.prevX || this.board.cellY != this.prevY){ // If dragging
-            if(this.canDrag()) {
-                this.selectedNode.cellCoords.x = this.board.cellX; // Set new coordinates after dragging
-                this.selectedNode.cellCoords.y = this.board.cellY;
-                this.tree.nodes[this.board.cellY][this.board.cellX] = this.selectedNode; // Make the new transformed node selectable
-                this.tree.nodes[this.prevY][this.prevX] = undefined; // Set previous spot to say there is no node at that spot
-
-                if(this.board.cellX === 0 || this.board.cellX === this.COLS - 1 || this.board.cellY === this.ROWS - 1) {
-                    if(this.board.canGrow()) {
-                        this.resizeBoard("grow");
-                    }
-                    else {
-                        this.redrawCanvas();
-                    }
+            this.xDirection = this.board.cellX - this.prevX;
+            this.yDirection = this.board.cellY - this.prevY;
+            if (this.canDrag()){
+                if(this.xDirection>0){ //moving right
+                    this.rightDragging(this.selectedNode, this.xDirection, this.yDirection);
                 }
-                else if(this.board.canShrink()) {
-                    while(this.board.canShrink()) {
-                        this.resizeBoard("shrink");
-                    }
-                }
-                else {
-                    this.redrawCanvas();
+                else{
+                    this.leftDragging(this.selectedNode, this.xDirection, this.yDirection);
                 }
             }
-            else {
-                return;
-            }
-
             if(this.databaseMisc.lecturer) {
                 this.setup.handleEvent(this.events.DRAG);
             }
@@ -448,6 +623,7 @@ class Main {
         this.board.boardCoordsFromMouse(event);
 
         if(typeof this.tree.nodes[this.board.cellY][this.board.cellX] !== "undefined") { // There is a node in the hovered cell
+            if(!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.PROPERTIES && !this.tree.nodes[this.board.cellY][this.board.cellX].properties.required) return;
             document.body.style.cursor = "pointer";
         }
         else if(!this.databaseMisc.lecturer && (this.databaseMisc.qtype === this.qTypes.TRAVERSAL || this.databaseMisc.qtype === this.qTypes.PROPERTIES)) {
@@ -469,12 +645,12 @@ class Main {
                 }
             }
             else{
-                if(this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
+                if (this.board.cellX == this.selectedNode.cellCoords.x || this.board.cellY <= this.selectedNode.cellCoords.y ||
                     (this.board.cellX < this.selectedNode.cellCoords.x && this.selectedNode.hasLeftChild()) ||
-                        (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
-                        (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length)) { // Invalid cell to place new child
-
-                            document.body.style.cursor = "not-allowed";
+                    (this.board.cellX > this.selectedNode.cellCoords.x && this.selectedNode.hasRightChild()) ||
+                    (!this.databaseMisc.lecturer && this.databaseMisc.qtype === this.qTypes.BST && this.attempt.bstAttempt.bst.stack.length === this.attempt.bstAttempt.bst.values.length) || (this.databaseMisc.lecturer && !this.getNewNodeValue())) { // Invalid cell to place new child
+                    
+                        document.body.style.cursor = "not-allowed";
                 }
                 else {
                     document.body.style.cursor = "crosshair";
@@ -490,10 +666,10 @@ class Main {
         document.body.style.cursor = "default";
     }
 
-    getNewNodeValue() {
+    getNewNodeValue(root = false, edit = false) {
         let newNodeValue = null;
 
-        if(!this.randNodeValue) { // Set the node's value to the user specified input
+        if(!this.randNodeValue && !this.randBSTValue) { // Set the node's value to the user specified input
             newNodeValue = this.nodeValueInput.value;
 
             if(newNodeValue === "" || Number(newNodeValue) < this.MIN_NODE_VALUE || Number(newNodeValue) > this.MAX_NODE_VALUE || !Number.isInteger(Number(newNodeValue))) {
@@ -503,17 +679,110 @@ class Main {
             if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
                 return;
             }
+
+            this.nodeValueInput.value = "";
+            this.nodeValueInput.focus();
         }
-        else { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
+        else if(this.randNodeValue) { // Generate a random value for the node between MIN_NODE_VALUE and MAX_NODE_VALUE
             newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
 
-            if(this.tree) {
-                if(this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
-                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
+            /** Check if duplicate */
+            if(this.tree && this.databaseMisc.lecturer && this.setup.currQuestion.TRAVERSAL && this.tree.isDuplicateValue(Number(newNodeValue))) {
+                if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return;
 
-                    while(this.tree.isDuplicateValue(newNodeValue)) {
-                        newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                while(this.tree.isDuplicateValue(newNodeValue)) {
+                    newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+                }
+            }
+        }
+        else if(this.randBSTValue) { // Generate a random value for the node that enforces the BST property of the tree
+            let lowerBound = this.MIN_NODE_VALUE;
+            let upperBound = this.MAX_NODE_VALUE;
+            let currNode = this.selectedNode;
+
+            if(root) newNodeValue = Math.floor(Math.random() * (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + this.MIN_NODE_VALUE);
+
+            if(this.tree && this.selectedNode) {
+                if(this.databaseMisc.lecturer) {
+                    if(this.tree.numNodes === (this.MAX_NODE_VALUE - this.MIN_NODE_VALUE) + 1) return; 
+
+                    // Editing a node
+                    if(edit) {
+                        currNode = this.selectedNode;
+                        if(currNode.children.leftChild) { // Lower bound calculation
+                            currNode = currNode.children.leftChild;
+                            while(currNode.children.rightChild) {
+                                currNode = currNode.children.rightChild;
+                            }
+                            lowerBound = currNode.value + 1;
+                        }
+                        currNode = this.selectedNode;
+                        if(currNode.children.rightChild) { // Upper bound calculation
+                            currNode = currNode.children.rightChild;
+                            while(currNode.children.leftChild) {
+                                currNode = currNode.children.leftChild;
+                            }
+                            upperBound = currNode.value - 1;
+                        }
+                        if(!this.selectedNode.children.leftChild || !this.selectedNode.children.rightChild) { // Editing a leaf node
+                            if(this.selectedNode.childType() === "L") { // The selected node is a left child
+                                currNode = this.selectedNode;
+                                while(currNode.childType() === "L" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                    currNode = currNode.parent;
+                                }
+                                if(!(currNode.parent.isRoot && currNode.childType() === "L")) {
+                                    lowerBound = currNode.parent.value + 1;
+                                }
+                                upperBound = this.selectedNode.parent.value - 1;
+                            }
+                            else { // The selected node is a right child
+                                currNode = this.selectedNode;
+                                while(currNode.childType() === "R" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                    currNode = currNode.parent;
+                                }
+                                if(!(currNode.parent.isRoot && currNode.childType() === "R")) {
+                                    upperBound = currNode.parent.value - 1;
+                                }
+                                lowerBound = this.selectedNode.parent.value + 1;
+                            }
+                            if(this.selectedNode.value === 1 || this.selectedNode.value === 99) return;
+                        }
                     }
+                    else if(this.board.cellX < this.selectedNode.cellCoords.x) { // Adding a left child
+                        if(this.selectedNode.isRoot) {
+                            upperBound = this.selectedNode.value - 1;
+                        }
+                        else {
+                            currNode = this.selectedNode;
+                            while(currNode.childType() === "L" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                currNode = currNode.parent;
+                            }
+                            if(!(currNode.parent.isRoot && currNode.childType() === "L")) {
+                                lowerBound = currNode.parent.value + 1;
+                            }
+                            upperBound = this.selectedNode.value - 1;
+                        }
+                        if(this.selectedNode.value === 1) return;
+                    }
+                    else if(this.board.cellX > this.selectedNode.cellCoords.x){ // Adding a right child
+                        if(this.selectedNode.isRoot) {
+                            lowerBound = this.selectedNode.value + 1;
+                        }
+                        else {
+                            currNode = this.selectedNode;
+                            while(currNode.childType() === "R" && !currNode.parent.isRoot) { // Traverse back up the tree until the node is a right child
+                                currNode = currNode.parent;
+                            }
+                            if(!(currNode.parent.isRoot && currNode.childType() === "R")) {
+                                upperBound = currNode.parent.value - 1;
+                            }
+                            lowerBound = this.selectedNode.value + 1;
+                        }
+                        if(this.selectedNode.value === 99) return;
+                    }
+
+                    if(upperBound < lowerBound) return;
+                    newNodeValue = Math.floor(Math.random() * (upperBound - lowerBound) + lowerBound);
                 }
             }
         }
@@ -530,8 +799,8 @@ class Main {
         if(this.board.cellY <= this.selectedNode.parent.cellCoords.y || // Cannot be dragged in line or above parent
             (this.prevX < this.selectedNode.parent.cellCoords.x && this.board.cellX >= this.selectedNode.parent.cellCoords.x) || // Cannot be dragged across parent to become the opposing child
             (this.prevX > this.selectedNode.parent.cellCoords.x && this.board.cellX <= this.selectedNode.parent.cellCoords.x) ||
-            (this.selectedNode.children.leftChild != null && (this.selectedNode.children.leftChild.cellCoords.x >= this.board.cellX || this.selectedNode.children.leftChild.cellCoords.y <= this.board.cellY)) || // Keep its children to the left or right and below
-            (this.selectedNode.children.rightChild != null && (this.selectedNode.children.rightChild.cellCoords.x <= this.board.cellX || this.selectedNode.children.rightChild.cellCoords.y <= this.board.cellY)) ||
+            //(this.selectedNode.children.leftChild != null && (this.selectedNode.children.leftChild.cellCoords.x >= this.board.cellX || this.selectedNode.children.leftChild.cellCoords.y <= this.board.cellY)) || // Keep its children to the left or right and below
+            //(this.selectedNode.children.rightChild != null && (this.selectedNode.children.rightChild.cellCoords.x <= this.board.cellX || this.selectedNode.children.rightChild.cellCoords.y <= this.board.cellY)) ||
             (this.prevX != this.selectedNode.cellCoords.x || this.prevY != this.selectedNode.cellCoords.y)) return false; // If dragging doesn't start at a node
         
         return true;
@@ -612,5 +881,4 @@ class Main {
 
         this.redrawCanvas();
     }
-
 }

@@ -12,14 +12,24 @@
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
 </noscript>
 
+<!-- Question Properties -->
+<div 
+    spawners = "StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate" 
+    save = "SAVED_DATA"
+>
+</div>
+
+<!-- Save Field -->
+<input type="hidden" name="ANSWER_ID" value = "SAVED_DATA">
+
 <!-- Canvas Holder -->
 <div id = "canvasDiv_QUESTIONID" style="float:left; border: 2px solid black"></div>
-<!-- Don't add stuff here -->
+<!-- Don't add stuff here or above as we use previous element-->
 <script class="init">
     function init()
     {
         let manager;
-        let moodle = false;
+        let moodle = true;
         let moodleLink = moodle ? "/question/type/logicgate/js/" : "";
 
         addScript(moodleLink + "Gates/LogicGate.js");
