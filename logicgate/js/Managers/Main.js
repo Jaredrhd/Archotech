@@ -22,7 +22,7 @@ class Main
         this.sidebar = new Sidebar(this.coords, this.circuit, this.origin, properties.getAttribute("spawners"));
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, properties.getAttribute("restrictions"));
 
         this.timer = Date.now();
         this.timerUpdate = 250;
@@ -124,6 +124,9 @@ class Main
                 //Get binary number
                 let bin = (i >>> 0).toString(2).padStart(startNodes.length,"0");
 
+                //Reverse the binary number so when there a multiple useless start gates it doesn't effect answer
+                bin = bin.split("").reverse().join("");
+
                 for(let j = 0; j < startNodes.length; j++)
                     startNodes[j].charge = bin[j] == "1";
 
@@ -201,7 +204,7 @@ class Main
         for(let i = 0; i < this.circuit.length; ++i)
         {
             if(!this.circuit[i].spawner && this.circuit[i] instanceof EndGate)
-            endNodes.push(this.circuit[i]);
+                endNodes.push(this.circuit[i]);
         }
         //Sort by y position
         endNodes.sort(function(a,b){return b.position.y - a.position.y});
@@ -275,9 +278,9 @@ class Main
 
         for(let i = 0; i < this.circuit.length; i++)
         {
-            //Skip Wires or nodes
+            //Skip Wires or nodes or non-visted gates
             if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
-                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner || !this.circuit[i].visited)) 
                 continue;
 
             //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection

@@ -57,6 +57,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         $input = str_replace("QUESTIONID", str_replace(":","_", $inputname) , $input);
         $input = str_replace("ANSWER_ID", $inputname , $input);
         $input = str_replace("SAVED_DATA", $currentanswer , $input);
+        $input = $this->change_spawners($question, $input);
 
         //Displays the red x or tick
         $feedbackimg = '';
@@ -87,6 +88,31 @@ class qtype_logicgate_renderer extends qtype_renderer
 
         //return result
         return $result;
+    }
+
+    public function change_spawners($question, $input) 
+    {
+        if($question->questiontype == "1")
+            return $input;
+
+        $startGate = $question->startgate == "on" || $question->startgate == "1" ? "StartGate" : "null";
+        $endGate = $question->endgate == "on" || $question->endgate == "1" ? "EndGate" : "null";
+        $bufferGate = $question->buffergate == "on" || $question->buffergate == "1" ? "BufferGate" : "null";
+        $notGate = $question->notgate == "on" || $question->notgate == "1" ? "NotGate" : "null";
+        $andGate = $question->andgate == "on" || $question->andgate == "1" ? "AndGate" : "null";
+        $nandGate = $question->nandgate == "on" || $question->nandgate == "1" ? "NandGate" : "null";
+        $orGate = $question->orgate == "on" || $question->orgate == "1" ? "OrGate" : "null";
+        $norGate = $question->notgate == "on" || $question->notgate == "1" ? "NorGate" : "null";
+        $xorGate = $question->xorgate == "on" || $question->xorgate == "1" ? "XorGate" : "null";
+        $xnorGate = $question->xnorgate == "on" || $question->xnorgate == "1" ? "XnorGate" : "null";
+
+        $format = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
+        $gates = sprintf($format, $startGate, $endGate, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
+        $input = str_replace("StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate", $gates , $input);
+
+        $format = 'restrictions = %s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
+        $restrictions = sprintf($format, $question->startgateamount, $question->endgateamount, $question->buffergateamount, $question->notgateamount, $question->andgateamount, $question->nandgateamount, $question->orgateamount, $question->norgateamount, $question->xorgateamount, $question->xnorgateamount);
+        return str_replace('restrictions = "0,0,0,0,0,0,0,0,0,0"', $restrictions , $input);
     }
 
     // TODO.

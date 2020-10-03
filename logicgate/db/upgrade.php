@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  * Upgrade code for the essay question type.
  * @param int $oldversion the version we are upgrading from.
  */
-function xmldb_qtype_logicgate_upgrade($oldversion) {
+function xmldb_qtype_logicgate_upgrade($oldversion) 
+{
+    // global $DB;
+    // $dbman = $DB->get_manager();
+
+
+
     return true;
 }

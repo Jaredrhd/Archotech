@@ -43,10 +43,11 @@ class qtype_logicgate extends question_type {
 
     public function extra_question_fields() {
         return array('qtype_logicgate_options', 
-        'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
-         'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount',
-         'nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount',
-         'answer_id','questiontype');
+        'startgate','endgate','buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
+         'norgate','xorgate','xnorgate', 'startgateamount','endgateamount', 'buffergateamount',
+         'notgateamount','andgateamount','nandgateamount','orgateamount',
+         'norgateamount','xorgateamount','xnorgateamount',
+         'answer_id','markcharge','markcircuit','questiontype');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -60,8 +61,6 @@ class qtype_logicgate extends question_type {
 
     public function save_question_options($question) {
         parent::save_question_options($question);
-        $this->save_question_answers($question);
-        //$this->save_hints($question);
     }
 
     //Transfer all the data from lectures setup to the question

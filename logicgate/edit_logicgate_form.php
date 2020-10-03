@@ -44,6 +44,14 @@ class qtype_logicgate_edit_form extends question_edit_form {
         //Set question mode
         $mform->addElement('radio', 'questiontype', '', 'Question Mode', 0, array());
         $mform->addElement('radio', 'questiontype', '', 'Sandbox Mode', 1, array());
+        
+        //How should we mark the circuit
+        $mform->addElement('advcheckbox', 'markcharge', 'Mark the circuit based on charge', 'Mark Charge', array('group' => 0), array(1, 0));
+        $mform->addElement('advcheckbox', 'markcircuit', 'Mark the circuit based on connections', 'Mark Circuit', array('group' => 0), array(1, 0));
+
+        //Hide if sandbox mode
+        $mform->hideIf('markcharge','questiontype', 'eq', 1);
+        $mform->hideIf('markcircuit','questiontype', 'eq', 1);
 
         //Add break to separate boxes
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');

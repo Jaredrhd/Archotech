@@ -8,6 +8,8 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
+        <FIELD NAME="startgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
+        <FIELD NAME="endgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="buffergate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="notgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="andgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
@@ -16,7 +18,11 @@
         <FIELD NAME="norgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="xnorgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
+        <FIELD NAME="markcharge" TYPE="binary" NOTNULL="false" SEQUENCE="false" COMMENT="Mark the circuit based on charge."/>
+        <FIELD NAME="markcircuit" TYPE="binary" NOTNULL="false" SEQUENCE="false" COMMENT="Mark the circuit based on connections."/>
         <FIELD NAME="answer_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="startgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
+        <FIELD NAME="endgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
         <FIELD NAME="buffergateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
         <FIELD NAME="notgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
         <FIELD NAME="andgateamount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Limit this specific gate to the amount listed here"/>
