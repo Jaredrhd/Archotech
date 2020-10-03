@@ -22,7 +22,7 @@ class Main
         this.sidebar = new Sidebar(this.coords, this.circuit, this.origin, properties.getAttribute("spawners"));
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin);
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, properties.getAttribute("restrictions"));
 
         this.timer = Date.now();
         this.timerUpdate = 250;

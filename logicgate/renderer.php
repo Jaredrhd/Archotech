@@ -94,7 +94,7 @@ class qtype_logicgate_renderer extends qtype_renderer
     {
         if($question->questiontype == "1")
             return $input;
-            
+
         $startGate = $question->startgate == "on" || $question->startgate == "1" ? "StartGate" : "null";
         $endGate = $question->endgate == "on" || $question->endgate == "1" ? "EndGate" : "null";
         $bufferGate = $question->buffergate == "on" || $question->buffergate == "1" ? "BufferGate" : "null";
@@ -108,7 +108,11 @@ class qtype_logicgate_renderer extends qtype_renderer
 
         $format = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
         $gates = sprintf($format, $startGate, $endGate, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
-        return str_replace("StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate", $gates , $input);
+        $input = str_replace("StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate", $gates , $input);
+
+        $format = 'restrictions = %s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
+        $restrictions = sprintf($format, $question->startgateamount, $question->endgateamount, $question->buffergateamount, $question->notgateamount, $question->andgateamount, $question->nandgateamount, $question->orgateamount, $question->norgateamount, $question->xorgateamount, $question->xnorgateamount);
+        return str_replace('restrictions = "0,0,0,0,0,0,0,0,0,0"', $restrictions , $input);
     }
 
     // TODO.

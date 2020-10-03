@@ -14,7 +14,8 @@
 
 <!-- Question Properties -->
 <div 
-    spawners = "StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate" 
+    spawners = "StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate"
+    restrictions = "0,0,0,0,0,0,0,0,0,0"
     save = "SAVED_DATA"
 >
 </div>
@@ -29,7 +30,7 @@
     function init()
     {
         let manager;
-        let moodle = false;
+        let moodle = true;
         let moodleLink = moodle ? "/question/type/logicgate/js/" : "";
 
         addScript(moodleLink + "Gates/LogicGate.js");

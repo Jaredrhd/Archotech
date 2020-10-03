@@ -44,8 +44,9 @@ class qtype_logicgate extends question_type {
     public function extra_question_fields() {
         return array('qtype_logicgate_options', 
         'startgate','endgate','buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
-         'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount',
-         'nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount',
+         'norgate','xorgate','xnorgate', 'startgateamount','endgateamount', 'buffergateamount',
+         'notgateamount','andgateamount','nandgateamount','orgateamount',
+         'norgateamount','xorgateamount','xnorgateamount',
          'answer_id','markcharge','markcircuit','questiontype');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {

@@ -11,6 +11,7 @@ class OutgoingNode extends LogicGate
         this.parent = parent;
 
         this.dragWire = new Wire(this.pos, this);
+        this.spawnedWire = false;
         this.circuit.push(this.dragWire);
     }
 
@@ -21,8 +22,11 @@ class OutgoingNode extends LogicGate
         this.dragWire.mousePos = null;
 
         if(gateDroppedOn && gateDroppedOn.parent && gateDroppedOn.parent.spawner)
+        {
+            //Hack, if we dropped on a spawner, there is technically still a wire, so set it to true and return so that selection manager handles this correctly
+            this.spawnedWire = true;
             return;
-
+        }
         //If we clicked on an outgoing node that is a spawners node, return it
         else if(this.parent.spawner)
             return this.parent;
@@ -30,6 +34,8 @@ class OutgoingNode extends LogicGate
         //Used for creating wire
         if(stillDragging)
         {
+            //Create wire to mouse
+            this.spawnedWire = true;
             this.dragWire.mousePos = Input.GetMousePos();
         }
         else if(!stillDragging && gateDroppedOn != null)
