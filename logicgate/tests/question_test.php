@@ -30,28 +30,28 @@ class qtype_logicgate_question_test extends advanced_testcase
     {
         //Lecturer no solution
         $question = test_question_maker::make_question('logicgate');
-        $question->questiontype == "0"; //Question mode
+        $question->questiontype = "0"; //Question mode
         $question->answer_id = "";
         list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
         $this->assertEquals(0, $fraction, false);
 
         //Student no solution
         $question = test_question_maker::make_question('logicgate');
-        $question->questiontype == "0";
+        $question->questiontype = "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
         list($fraction, $state)  = $question->grade_response(array("answer" => ""));
         $this->assertEquals(0, $fraction, false);
 
         //Student no solution 2
         $question = test_question_maker::make_question('logicgate');
-        $question->questiontype == "0";
+        $question->questiontype = "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
         list($fraction, $state)  = $question->grade_response(array("answer" => "SAVED_DATA"));
         $this->assertEquals(0, $fraction, false);
 
         //Student solution matching
         $question = test_question_maker::make_question('logicgate');
-        $question->questiontype == "0";
+        $question->questiontype = "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
         list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
         $this->assertEquals(1, $fraction, "Failed on lecturer solution exactly same as student");
