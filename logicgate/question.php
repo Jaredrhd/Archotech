@@ -98,10 +98,6 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         $studentAnswer = $response["answer"];
         $lecturerAnswer = $this->answer_id;
 
-        $studentAnswer = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
-        $lecturerAnswer = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
-
-
         //If there is no lecturer or student answer, return 0 since you can't pass
         if(($lecturerAnswer == "" || $studentAnswer == "" || $studentAnswer == "SAVED_DATA") && $this->questiontype != "1")
             return array(0, question_state::graded_state_for_fraction(0));

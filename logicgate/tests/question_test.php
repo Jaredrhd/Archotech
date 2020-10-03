@@ -33,21 +33,21 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question->questiontype = "0"; //Question mode
         $question->answer_id = "";
         list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
-        $this->assertEquals(0, $fraction, false);
+        $this->assertEquals(0, $fraction, "Failed on lecturer answer is empty");
 
         //Student no solution
         $question = test_question_maker::make_question('logicgate');
         $question->questiontype = "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
         list($fraction, $state)  = $question->grade_response(array("answer" => ""));
-        $this->assertEquals(0, $fraction, false);
+        $this->assertEquals(0, $fraction, "Failed on student answer is empty");
 
         //Student no solution 2
         $question = test_question_maker::make_question('logicgate');
         $question->questiontype = "0";
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
         list($fraction, $state)  = $question->grade_response(array("answer" => "SAVED_DATA"));
-        $this->assertEquals(0, $fraction, false);
+        $this->assertEquals(0, $fraction, "Failed on student answer is set to default");
 
         //Student solution matching
         $question = test_question_maker::make_question('logicgate');
