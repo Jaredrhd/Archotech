@@ -27,6 +27,8 @@ class Main
         this.timer = Date.now();
         this.timerUpdate = 250;
 
+        this.scale = 0.8;
+
         //Set up the previous save
         this.LoadCircuit(properties.getAttribute("save").split(";")[0]);
     }
@@ -35,6 +37,7 @@ class Main
     {
         //Save
         this.graphics.save();
+
         this.graphics.lineWidth = this.pixelSize;
 
         //Set color
@@ -43,6 +46,7 @@ class Main
 
         //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics);
+
         
         let time = this.timer - Date.now();
         //First Update the the charges
@@ -56,6 +60,10 @@ class Main
         //Draw Sidebar and update the gates on it
         this.sidebar.Draw(this.graphics);
         this.sidebar.Update();
+
+        // this.scale -= Input.GetAxis("mouse scrollwheel") * 0.1;
+        // this.scale = Math.max(this.scale,0.3);
+        // this.graphics.scale(this.scale,this.scale);
 
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)

@@ -1,2 +1,0 @@
-Mark circuit.
-Restriction on the amount of gates they can spawn.

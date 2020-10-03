@@ -98,7 +98,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         $studentAnswer = $response["answer"];
         $lecturerAnswer = $this->answer_id;
 
-        //If there is no lecturer answer, return 0 since you can't pass
+        //If there is no lecturer or student answer, return 0 since you can't pass
         if(($lecturerAnswer == "" || $studentAnswer == "" || $studentAnswer == "SAVED_DATA") && $this->questiontype != "1")
             return array(0, question_state::graded_state_for_fraction(0));
         
@@ -106,6 +106,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         if($this->questiontype == "1")
             return array(1, question_state::graded_state_for_fraction(1));
 
+        //Get the fraction of computing the question
         $fraction = $this->compute_grade($studentAnswer,$lecturerAnswer, true, true);
 
         //return answer
@@ -120,7 +121,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
 
     public function compute_grade($studentAnswer, $lecturerAnswer, $compareCharges, $compareCircuit)
     {
-        //Get array, remove last element since it's blank: ""
+        //Get the answer
         $studentAnswer = explode(";", $studentAnswer);
         $lecturerAnswer = explode(";", $lecturerAnswer);
 
@@ -131,17 +132,20 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
                 return 0;
         }
 
+        //If comparing exact circuit
         if($compareCircuit)
         {
             if($this->compare_circuit($studentAnswer, $lecturerAnswer) == 0)
                 return 0;
         }
 
+        //If we get here give 100%
         return 1;
     }
 
     public function compare_charge($studentAnswer, $lecturerAnswer)
     {
+        //Get the count of the gates
         $studentGatesCount = explode(",", $studentAnswer[1]);
         $lecturerGatesCount = explode(",", $lecturerAnswer[1]);
 
@@ -149,7 +153,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         if($studentGatesCount[1] != $lecturerGatesCount[1])
             return 0;
 
-        //Loop over endgates and compare
+        //Loop over endgates and compare it
         for($i = 2; $i < pow(2, (int)$studentGatesCount[0]) + 2; $i++)
         {
             if($studentAnswer[$i] != $lecturerAnswer[$i])
@@ -161,15 +165,19 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
 
     public function compare_circuit($studentAnswer, $lecturerAnswer)
     {
+        //Create a matrix for both lecturer and student
         $studentMatrix = $this->create_matrix(10);
         $lecturerMatrix = $this->create_matrix(10);
 
+        //Split their answer by gates
         $studentAnswer = explode("|", $studentAnswer[0]);
         $lecturerAnswer = explode("|", $lecturerAnswer[0]);
 
+        //Create the matrices of their connections
         $studentMatrix = $this->make_matrix($studentMatrix, $studentAnswer);
         $lecturerMatrix = $this->make_matrix($lecturerMatrix, $lecturerAnswer);
 
+        //Compare the 2 matrices
         for ($i=0; $i < count($lecturerMatrix); $i++) 
         { 
             for ($j=0; $j < count($lecturerMatrix); $j++) 
@@ -179,16 +187,19 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             }
         }
  
+        //If we get here return 100%
         return 1;
     }
 
     public function make_matrix($matrix, $fullData)
     {
+        //Loop over different gates
         for ($i=0; $i < count($fullData); $i++) 
         { 
+            //Get the gate properties
             $data = explode(",", $fullData[$i]);
 
-            //Extract the gate
+            //Extract the specific gate
             $rowIndex = $this->get_gate_index($data[1]);
 
             //Get the outgoing connections
@@ -196,20 +207,25 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             $outgoingConnection = substr($outgoingConnection, 1, strlen($outgoingConnection)-2);
             $outgoingConnection = explode("/", $outgoingConnection);
 
+            //If we don't have outgoing connections, skip
             if(count($outgoingConnection) == 1 && $outgoingConnection[0] == "")
                 continue;
             
+            //Looper over all outgoing connections
             for ($k=0; $k < count($outgoingConnection); $k++) 
             { 
+                //get the col index
                 $colIndex = explode(":",$outgoingConnection[$k])[2];
                 $colIndex = $this->get_gate_index($colIndex);
                 $matrix[$rowIndex][$colIndex] += 1;
             }
         }
 
+        //Return the calculation
         return $matrix;
     }
 
+    //Return Gate Index
     public function get_gate_index($gate)
     {
         $index = -1;
@@ -250,6 +266,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         return $index;
     }
 
+    //Creates a matrix
     public function create_matrix($n)
     {
         $matrix = array();

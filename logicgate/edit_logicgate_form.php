@@ -49,16 +49,16 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');
 
         //Adds checkboxes for logic gates
-        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'nandgate', 'Include Nand Gates', 'Nand Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'orgate', 'Include Or Gates', 'Or Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'norgate', 'Include Nor Gates', 'Nor Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'xorgate', 'Include Xor Gates', 'Xor Gate',  array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'nandgate', 'Include Nand Gates', 'Nand Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'orgate', 'Include Or Gates', 'Or Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'norgate', 'Include Nor Gates', 'Nor Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'xorgate', 'Include Xor Gates', 'Xor Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(1, 0));
 
         //Hide checkboxes if not question mode
         $mform->hideIf('startgate','questiontype', 'eq', 1);
