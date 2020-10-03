@@ -29,6 +29,7 @@ class qtype_logicgate_question_test extends advanced_testcase
     public function test_grade_response()
     {
         $question = test_question_maker::make_question('logicgate');
+        $question->answer_id = "";
         list($fraction, $state)  = $question->grade_response(array("answer" => "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;"));
         $this->assertEquals(0, $fraction, false);
 
@@ -40,7 +41,7 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question->answer_id = "42,StartGate,-1.18,1.39,false,[46:0:BufferGate]|46,BufferGate,0.40,1.37,false,[47:0:EndGate]|47,EndGate,2.01,1.51,false,[];1,1;false;true;";
 
         //Grade and assert
-        list($fraction, $state)  = $question->grade_response($studentResponse, $lecturerResponse);
+        list($fraction, $state)  = $question->grade_response($studentResponse);
         $this->assertEquals(1, $fraction, "Fraction was expected to be the same since the circuits are exact");
     }
 
