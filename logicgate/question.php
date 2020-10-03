@@ -107,7 +107,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             return array(1, question_state::graded_state_for_fraction(1));
 
         //Get the fraction of computing the question
-        $fraction = $this->compute_grade($studentAnswer,$lecturerAnswer, true, true);
+        $fraction = $this->compute_grade($studentAnswer,$lecturerAnswer, $this->markcharge, $this->markcircuit);
 
         //return answer
         return array($fraction, question_state::graded_state_for_fraction($fraction));
@@ -126,14 +126,14 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         $lecturerAnswer = explode(";", $lecturerAnswer);
 
         //If comparing charges
-        if($compareCharges)
+        if($compareCharges == "on")
         {
             if($this->compare_charge($studentAnswer, $lecturerAnswer) == 0)
                 return 0;
         }
 
         //If comparing exact circuit
-        if($compareCircuit)
+        if($compareCircuit == "on")
         {
             if($this->compare_circuit($studentAnswer, $lecturerAnswer) == 0)
                 return 0;
@@ -154,7 +154,7 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             return 0;
 
         //Loop over endgates and compare it
-        for($i = 2; $i < pow(2, (int)$studentGatesCount[0]) + 2; $i++)
+        for($i = 2; $i < pow(2, (int)$lecturerGatesCount[0]) + 2; $i++)
         {
             if($studentAnswer[$i] != $lecturerAnswer[$i])
                 return 0;

@@ -57,6 +57,7 @@ class qtype_logicgate_renderer extends qtype_renderer
         $input = str_replace("QUESTIONID", str_replace(":","_", $inputname) , $input);
         $input = str_replace("ANSWER_ID", $inputname , $input);
         $input = str_replace("SAVED_DATA", $currentanswer , $input);
+        $input = $this->change_spawners($question, $input);
 
         //Displays the red x or tick
         $feedbackimg = '';
@@ -87,6 +88,24 @@ class qtype_logicgate_renderer extends qtype_renderer
 
         //return result
         return $result;
+    }
+
+    public function change_spawners($question, $input) 
+    {
+        $startGate = $question->startgate == "on" ? "StartGate" : "null";
+        $endGate = $question->endgate == "on" ? "EndGate" : "null";
+        $bufferGate = $question->buffergate == "on" ? "BufferGate" : "null";
+        $notGate = $question->notgate == "on" ? "NotGate" : "null";
+        $andGate = $question->andgate == "on" ? "AndGate" : "null";
+        $nandGate = $question->nandgate == "on" ? "NandGate" : "null";
+        $orGate = $question->orgate == "on" ? "OrGate" : "null";
+        $norGate = $question->notgate == "on" ? "NorGate" : "null";
+        $xorGate = $question->xorgate == "on" ? "XorGate" : "null";
+        $xnorGate = $question->xnorgate == "on" ? "XnorGate" : "null";
+
+        $format = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
+        $gates = sprintf($format, $startGate, $endGate, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
+        return str_replace("StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate", $gates , $input);
     }
 
     // TODO.

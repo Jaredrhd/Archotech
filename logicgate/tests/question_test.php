@@ -128,54 +128,5 @@ class qtype_logicgate_question_test extends advanced_testcase
         $this->assertEquals(true, $question->is_complete_response($response), false);
         $this->assertEquals(false, $question->is_complete_response(array('not answer' => "the reponse")), false);
     }
-
-    // public function test_compareCircuits()
-    // {
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:bufferGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:bufferGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:notGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:notGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:andGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:andGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:nandGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:nandGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:orGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:orGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:norGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:xorGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:xorGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:xnorGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:xnorGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(true, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-
-    //     $question = test_question_maker::make_question('logicgate');
-    //     $studentResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:xnorGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $lecturerResponse = "0:norGate:3:-2.5|2:node:-2:-1|4:node:2:1:-1:2:1:none:none:false|2:node:-2:1|4:node:2:-1:5:2:-1:0.8375:-1.01:true|1:orGate:-0.1:-1.01:-1:-1.0375:-0.76:none:none:1:-1.0375:-1.26:-2:-1";
-    //     $this->assertEquals(false, $question->compareCircuits($studentResponse, $lecturerResponse), false);
-    // }
 }
 ?>
