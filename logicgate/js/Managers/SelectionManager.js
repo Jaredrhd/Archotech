@@ -70,15 +70,19 @@ class SelectionManager
             //Find the nearest gate to where we dropped
             let gate = this.GetNearestGate();
 
-            //Don't return the same gate to itself      TODO Maybe connect to itself in future
-            if(gate != null && (gate === this.selected || gate.spawner))
+            //Don't return the same gate to itself
+            let skip = false;
+            if(gate != null && (gate === this.selected || (gate.spawner || (gate.parent && gate.parent.spawner))))
+            {
+                skip = true;
                 gate = null;
+            }
 
             //Update the selected gate
             this.selected.SelectedUpdate(false, gate);
 
             //Don't delete if it is an outgoing node since its a wire, or the start gate wire
-            let shouldDeleteGate = !(this.selected instanceof OutgoingNode || (this.selected instanceof StartGate && this.selected.outgoingNodes.spawnedWire));
+            let shouldDeleteGate = !(this.selected instanceof OutgoingNode || (this.selected instanceof StartGate && skip));
             if(shouldDeleteGate && Input.GetMousePos().x - (this.coords.xleft + 1.5) < 0)
                 this.selected.DeleteGate(this.circuit);
             

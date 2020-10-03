@@ -126,14 +126,14 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         $lecturerAnswer = explode(";", $lecturerAnswer);
 
         //If comparing charges
-        if($compareCharges == "on")
+        if($compareCharges == "on" || $compareCharges == "1")
         {
             if($this->compare_charge($studentAnswer, $lecturerAnswer) == 0)
                 return 0;
         }
 
         //If comparing exact circuit
-        if($compareCircuit == "on")
+        if($compareCircuit == "on" || $compareCircuit == "1")
         {
             if($this->compare_circuit($studentAnswer, $lecturerAnswer) == 0)
                 return 0;

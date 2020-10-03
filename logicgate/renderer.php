@@ -92,16 +92,19 @@ class qtype_logicgate_renderer extends qtype_renderer
 
     public function change_spawners($question, $input) 
     {
-        $startGate = $question->startgate == "on" ? "StartGate" : "null";
-        $endGate = $question->endgate == "on" ? "EndGate" : "null";
-        $bufferGate = $question->buffergate == "on" ? "BufferGate" : "null";
-        $notGate = $question->notgate == "on" ? "NotGate" : "null";
-        $andGate = $question->andgate == "on" ? "AndGate" : "null";
-        $nandGate = $question->nandgate == "on" ? "NandGate" : "null";
-        $orGate = $question->orgate == "on" ? "OrGate" : "null";
-        $norGate = $question->notgate == "on" ? "NorGate" : "null";
-        $xorGate = $question->xorgate == "on" ? "XorGate" : "null";
-        $xnorGate = $question->xnorgate == "on" ? "XnorGate" : "null";
+        if($question->questiontype == "1")
+            return $input;
+            
+        $startGate = $question->startgate == "on" || $question->startgate == "1" ? "StartGate" : "null";
+        $endGate = $question->endgate == "on" || $question->endgate == "1" ? "EndGate" : "null";
+        $bufferGate = $question->buffergate == "on" || $question->buffergate == "1" ? "BufferGate" : "null";
+        $notGate = $question->notgate == "on" || $question->notgate == "1" ? "NotGate" : "null";
+        $andGate = $question->andgate == "on" || $question->andgate == "1" ? "AndGate" : "null";
+        $nandGate = $question->nandgate == "on" || $question->nandgate == "1" ? "NandGate" : "null";
+        $orGate = $question->orgate == "on" || $question->orgate == "1" ? "OrGate" : "null";
+        $norGate = $question->notgate == "on" || $question->notgate == "1" ? "NorGate" : "null";
+        $xorGate = $question->xorgate == "on" || $question->xorgate == "1" ? "XorGate" : "null";
+        $xnorGate = $question->xnorgate == "on" || $question->xnorgate == "1" ? "XnorGate" : "null";
 
         $format = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
         $gates = sprintf($format, $startGate, $endGate, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
