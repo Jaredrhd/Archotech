@@ -46,8 +46,10 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('radio', 'questiontype', '', 'Sandbox Mode', 1, array());
         
         //How should we mark the circuit
-        $mform->addElement('advcheckbox', 'markcharge', 'Mark the circuit based on charge', 'Mark Charge', array('group' => 0), array(1, 0));
-        $mform->addElement('advcheckbox', 'markcircuit', 'Mark the circuit based on connections', 'Mark Circuit', array('group' => 0), array(1, 0));
+        $mform->addElement('advcheckbox', 'markcharge', 'Mark the circuit based on charge', 'Mark Charge', array('group' => 0), array(0, 1));
+        $mform->addElement('advcheckbox', 'markcircuit', 'Mark the circuit based on connections', 'Mark Circuit', array('group' => 0), array(0, 1));
+        $mform->setDefault('markcharge', 1);
+        $mform->setDefault('markcircuit', 1);
 
         //Hide if sandbox mode
         $mform->hideIf('markcharge','questiontype', 'eq', 1);
@@ -57,16 +59,28 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');
 
         //Adds checkboxes for logic gates
-        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'nandgate', 'Include Nand Gates', 'Nand Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'orgate', 'Include Or Gates', 'Or Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'norgate', 'Include Nor Gates', 'Nor Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'xorgate', 'Include Xor Gates', 'Xor Gate',  array('group' => 1), array(1, 0));
-        $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(1, 0));
+        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'nandgate', 'Include Nand Gates', 'Nand Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'orgate', 'Include Or Gates', 'Or Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'norgate', 'Include Nor Gates', 'Nor Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xorgate', 'Include Xor Gates', 'Xor Gate',  array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(0, 1));
+
+        //Turned on by default
+        $mform->setDefault('startgate', 1);
+        $mform->setDefault('endgate', 1);
+        $mform->setDefault('buffergate', 1);
+        $mform->setDefault('notgate', 1);
+        $mform->setDefault('andgate', 1);
+        $mform->setDefault('nandgate', 1);
+        $mform->setDefault('orgate', 1);
+        $mform->setDefault('norgate', 1);
+        $mform->setDefault('xorgate', 1);
+        $mform->setDefault('xnorgate', 1);
 
         //Hide checkboxes if not question mode
         $mform->hideIf('startgate','questiontype', 'eq', 1);

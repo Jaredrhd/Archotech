@@ -200,7 +200,7 @@ class Main
         //Find all start nodes
         for(let i = 0; i < this.circuit.length; ++i)
         {
-            if(!this.circuit[i].spawner && this.circuit[i] instanceof EndGate)
+            if(!this.circuit[i].spawner && this.circuit[i] instanceof EndGate && this.circuit[i].visited)
                 endNodes.push(this.circuit[i]);
         }
         //Sort by y position
