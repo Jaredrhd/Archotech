@@ -156,8 +156,27 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
         //Loop over endgates and compare it
         for($i = 2; $i < pow(2, (int)$lecturerGatesCount[0]) + 2; $i++)
         {
-            if($studentAnswer[$i] != $lecturerAnswer[$i])
-                return 0;
+            $lecturerCharges = explode(",", $lecturerAnswer[$i]);
+            $studentCharges = explode(",", $studentAnswer[$i]);
+            
+            //True then false
+            $lecturerChargesCount = array(0,0);
+            $studentChargesCount = array(0,0);
+
+            for ($j=0; $j < count($lecturerCharges); $j++) 
+            { 
+                $index = $lecturerCharges[$j] == "true" ? 0 : 1;
+                $lecturerChargesCount[$index]++;
+
+                $index = $studentCharges[$j] == "true" ? 0 : 1;
+                $studentChargesCount[$index]++;
+            }
+
+            for ($j=0; $j < 2; $j++) 
+            {
+                if($lecturerChargesCount[$j] != $studentChargesCount[$j])
+                    return 0;
+            }
         }
 
         return 1;
