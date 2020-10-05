@@ -59,8 +59,6 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('html', '<hr style="border:none;border-bottom:1px solid #d9d9d9;">');
 
         //Adds checkboxes for logic gates
-        $mform->addElement('advcheckbox', 'startgate', 'Include Start Gates', 'Start Gate', array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'endgate', 'Include End Gates', 'End Gate', array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'buffergate', 'Include Buffer Gates', 'Buffer Gate', array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'notgate', 'Include Not Gates', 'Not Gate',  array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'andgate', 'Include And Gates', 'And Gate',  array('group' => 1), array(0, 1));
@@ -71,8 +69,6 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'xnorgate', 'Include Xnor Gates', 'Xnor Gate',  array('group' => 1), array(0, 1));
 
         //Turned on by default
-        $mform->setDefault('startgate', 1);
-        $mform->setDefault('endgate', 1);
         $mform->setDefault('buffergate', 1);
         $mform->setDefault('notgate', 1);
         $mform->setDefault('andgate', 1);
@@ -83,8 +79,6 @@ class qtype_logicgate_edit_form extends question_edit_form {
         $mform->setDefault('xnorgate', 1);
 
         //Hide checkboxes if not question mode
-        $mform->hideIf('startgate','questiontype', 'eq', 1);
-        $mform->hideIf('endgate','questiontype', 'eq', 1);
         $mform->hideIf('buffergate','questiontype', 'eq', 1);
         $mform->hideIf('notgate','questiontype', 'eq', 1);
         $mform->hideIf('andgate','questiontype', 'eq', 1);

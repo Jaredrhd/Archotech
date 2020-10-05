@@ -43,7 +43,7 @@ class qtype_logicgate extends question_type {
 
     public function extra_question_fields() {
         return array('qtype_logicgate_options', 
-        'startgate','endgate','buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
+         'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
          'norgate','xorgate','xnorgate', 'startgateamount','endgateamount', 'buffergateamount',
          'notgateamount','andgateamount','nandgateamount','orgateamount',
          'norgateamount','xorgateamount','xnorgateamount',

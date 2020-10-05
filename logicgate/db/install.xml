@@ -8,8 +8,6 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
-        <FIELD NAME="startgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
-        <FIELD NAME="endgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="buffergate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="notgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>
         <FIELD NAME="andgate" TYPE="binary" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this gate should be active."/>

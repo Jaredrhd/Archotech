@@ -95,8 +95,6 @@ class qtype_logicgate_renderer extends qtype_renderer
         if($question->questiontype == "1")
             return $input;
 
-        $startGate = $question->startgate == "on" || $question->startgate == "1" ? "StartGate" : "null";
-        $endGate = $question->endgate == "on" || $question->endgate == "1" ? "EndGate" : "null";
         $bufferGate = $question->buffergate == "on" || $question->buffergate == "1" ? "BufferGate" : "null";
         $notGate = $question->notgate == "on" || $question->notgate == "1" ? "NotGate" : "null";
         $andGate = $question->andgate == "on" || $question->andgate == "1" ? "AndGate" : "null";
@@ -106,8 +104,8 @@ class qtype_logicgate_renderer extends qtype_renderer
         $xorGate = $question->xorgate == "on" || $question->xorgate == "1" ? "XorGate" : "null";
         $xnorGate = $question->xnorgate == "on" || $question->xnorgate == "1" ? "XnorGate" : "null";
 
-        $format = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
-        $gates = sprintf($format, $startGate, $endGate, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
+        $format = 'StartGate,EndGate,%s,%s,%s,%s,%s,%s,%s,%s';
+        $gates = sprintf($format, $bufferGate, $notGate, $andGate, $nandGate, $orGate, $norGate, $xorGate, $xnorGate);
         $input = str_replace("StartGate,EndGate,BufferGate,NotGate,AndGate,NandGate,OrGate,NorGate,XorGate,XnorGate", $gates , $input);
 
         $format = 'restrictions = %s,%s,%s,%s,%s,%s,%s,%s,%s,%s';
@@ -115,21 +113,13 @@ class qtype_logicgate_renderer extends qtype_renderer
         return str_replace('restrictions = "0,0,0,0,0,0,0,0,0,0"', $restrictions , $input);
     }
 
-    // TODO.
-    public function specific_feedback(question_attempt $qa) {
+    public function specific_feedback(question_attempt $qa) 
+    {
         return '';
     }
 
     public function correct_response(question_attempt $qa) 
     {
-        //$question = $qa->get_question();
-        
-        //Get the file to display as the answer
-        //$result = file_get_contents(new moodle_url('/question/type/logicgate/Drag/SceneGraphcopy.html'));
-        
-        //$result = $this->restrictedGates($question, $result);
-        
-        //TODO inject lecturer code of logic gate save
         return '';
     }
 }

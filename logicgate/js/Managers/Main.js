@@ -174,6 +174,7 @@ class Main
         let endNodes = this.GetEndNodes();
 
         //Update all
+        this.ResetCircuit();
         if(startNodes.length > 0)
             this.saveField.value += ";" + startNodes.length + "," + endNodes.length + ";" + this.UpdateCircuitCharge(startNodes, endNodes);
     }

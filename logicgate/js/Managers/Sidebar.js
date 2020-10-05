@@ -14,6 +14,14 @@ class Sidebar
         this.AddSpawners();
     }
 
+    DeleteSpawners()
+    {
+        for(let i = 0; i < this.spawners.length;i++)
+            this.spawners[i].DeleteGate(this.circuit);
+
+        this.spawners = Array();
+    }
+
     AddSpawners()
     {
         for (let i = 0; i < this.enabledSpawners.length; i++) 
@@ -29,12 +37,14 @@ class Sidebar
         }
     }
 
-    DeleteSpawners()
+    DeleteCanvasGates()
     {
-        for(let i = 0; i < this.spawners.length;i++)
-            this.spawners[i].DeleteGate(this.circuit);
-
-        this.spawners = Array();
+        for(let i = 0; i < this.circuit.length;i++)
+        {
+            let index = this.GetGateIndex(this.circuit[i].constructor.name);
+            if(index != -1 && this.enabledSpawners[index] == "null")
+                this.circuit[i--].DeleteGate(this.circuit);
+        }
     }
 
     ChangeSpawners(enabledSpawners)
@@ -42,6 +52,66 @@ class Sidebar
         this.enabledSpawners = enabledSpawners.split(",");
         this.DeleteSpawners();
         this.AddSpawners();
+        this.DeleteCanvasGates();
+    }
+
+    CheckSpawnersCheckBoxes()
+    {
+        if(document.getElementById("id_buffergate") == null)
+            return;
+
+        let bufferGate = document.getElementById("id_buffergate").checked ? "BufferGate" : "null";
+        let notGate = document.getElementById("id_notgate").checked ? "NotGate" : "null";
+        let andGate = document.getElementById("id_andgate").checked ? "AndGate" : "null";
+        let nandGate = document.getElementById("id_nandgate").checked ? "NandGate" : "null";
+        let orGate = document.getElementById("id_orgate").checked ? "OrGate" : "null";
+        let norGate = document.getElementById("id_norgate").checked ? "NorGate" : "null";
+        let xorGate = document.getElementById("id_xorgate").checked ? "XorGate" : "null";
+        let xnorGate = document.getElementById("id_xnorgate").checked ? "XnorGate" : "null";
+
+        let enabledSpawners = `StartGate,EndGate,${bufferGate},${notGate},${andGate},${nandGate},${orGate},${norGate},${xorGate},${xnorGate}`;
+
+        if(this.enabledSpawners != enabledSpawners)
+            this.ChangeSpawners(enabledSpawners);
+    }
+
+    GetGateIndex(gate)
+    {
+        let index = -1;
+        switch (gate) 
+        {
+            case 'StartGate':
+                index = 0;
+                break;
+            case 'EndGate':
+                index = 1;
+                break;
+            case 'BufferGate':
+                index = 2;
+                break;
+            case 'NotGate':
+                index = 3;
+                break;
+            case 'AndGate':
+                index = 4;
+                break;
+            case 'NandGate':
+                index = 5;
+                break;
+            case 'OrGate':
+                index = 6;
+                break;
+            case 'NorGate':
+                index = 7;
+                break;
+            case 'XorGate':
+                index = 8;
+                break;
+            case 'XnorGate':
+                index = 9;
+                break;
+        }
+        return index;
     }
 
     Draw(graphics)
@@ -84,28 +154,6 @@ class Sidebar
         graphics.fill();
 
         graphics.restore();
-    }
-
-    CheckSpawnersCheckBoxes()
-    {
-        if(document.getElementById("id_buffergate") == null)
-            return;
-
-        let startGate = document.getElementById("id_startgate").checked ? "StartGate" : "null";
-        let endGate = document.getElementById("id_endgate").checked ? "EndGate" : "null";
-        let bufferGate = document.getElementById("id_buffergate").checked ? "BufferGate" : "null";
-        let notGate = document.getElementById("id_notgate").checked ? "NotGate" : "null";
-        let andGate = document.getElementById("id_andgate").checked ? "AndGate" : "null";
-        let nandGate = document.getElementById("id_nandgate").checked ? "NandGate" : "null";
-        let orGate = document.getElementById("id_orgate").checked ? "OrGate" : "null";
-        let norGate = document.getElementById("id_norgate").checked ? "NorGate" : "null";
-        let xorGate = document.getElementById("id_xorgate").checked ? "XorGate" : "null";
-        let xnorGate = document.getElementById("id_xnorgate").checked ? "XnorGate" : "null";
-
-        let enabledSpawners = `${startGate},${endGate},${bufferGate},${notGate},${andGate},${nandGate},${orGate},${norGate},${xorGate},${xnorGate}`;
-
-        if(this.enabledSpawners != enabledSpawners)
-            this.ChangeSpawners(enabledSpawners);
     }
 
     Update()
