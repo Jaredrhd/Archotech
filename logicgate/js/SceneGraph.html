@@ -87,5 +87,43 @@
 
 
 </script>
+
+<style>
+    /* hint container */
+    .hint {
+        position: relative;
+        display: inline-block;
+        width: 120px;
+
+    }
+
+    /* Tooltip text */
+    .hint .hinttext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #ced4da;
+        color: black;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        
+        /* Position the hint text*/
+        position: absolute;
+        z-index: 1;
+    }
+
+    /* Show the hint text when you mouse over the hint container */
+    .hint:hover .hinttext {
+        font-weight: bold;
+        visibility: visible;
+    }
+
+</style>
+
+<div class="hint">
+    <i class="fa fa-question-circle text-info" id=""></i>
+    <span class="hinttext">Drag and drop the logic gates onto the canvas and connect them up via wires.</span>
+</div>
+
 </body>
 </html>
