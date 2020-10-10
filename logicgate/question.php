@@ -218,11 +218,14 @@ class qtype_logicgate_question extends question_graded_automatically_with_countb
             //Get the gate properties
             $data = explode(",", $fullData[$i]);
 
+            if($data[1] == "0")
+                continue;
+
             //Extract the specific gate
-            $rowIndex = $this->get_gate_index($data[1]);
+            $rowIndex = $this->get_gate_index($data[2]);
 
             //Get the outgoing connections
-            $outgoingConnection = $data[5];
+            $outgoingConnection = $data[6];
             $outgoingConnection = substr($outgoingConnection, 1, strlen($outgoingConnection)-2);
             $outgoingConnection = explode("/", $outgoingConnection);
 

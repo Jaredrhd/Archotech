@@ -248,11 +248,11 @@ class LogicGateMain
             let data = save[i].split(",");
             
             //Spawn gate
-            let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, undefined, this.scale, this.circuit, this.origin)`;
+            let gateToSpawn = `new ${data[2]}({x:${data[3]},y:${data[4]}}, undefined, this.scale, this.circuit, this.origin)`;
             let gate = eval(gateToSpawn);
 
             //Set charge and push to circuit
-            gate.charge = data[4] == "true";
+            gate.charge = data[5] == "true";
             this.circuit.push(gate);
 
             //For mapping previous saves ID to the new Save ID
@@ -269,7 +269,7 @@ class LogicGateMain
                 continue;
             
             //Get the outgoing connections
-            let data = fullData[5];
+            let data = fullData[6];
             data = data.substring(1,data.length-1);
             data = data.split("/");
 
@@ -301,12 +301,13 @@ class LogicGateMain
         {
             //Skip Wires or nodes or non-visted gates
             if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
-                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner || !this.circuit[i].visited)) 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
                 continue;
 
+            let visited = this.circuit[i].visited == true ? "1" : "0";
             //[outputConnections] = [idx:0 , idy:1, idz,0] where idx is id of gate and :0 is first input connection
-            //id,Gate,x,y,charge,[outputConnections]|...
-            save += i + "," + this.circuit[i].constructor.name + "," + 
+            //id,visited,Gate,x,y,charge,[outputConnections]|...
+            save += i + "," + visited + "," + this.circuit[i].constructor.name + "," + 
                 this.circuit[i].pos.x.toFixed(2) + "," + this.circuit[i].pos.y.toFixed(2) + "," + this.circuit[i].charge + ",[";
 
             //Check that this has a outgoing node (EndGate the exception)
