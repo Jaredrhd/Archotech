@@ -88,7 +88,7 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question->markcircuit = "1";
         $question->markcharge = "1";
         $question->answer_id = "42,1,StartGate,-2.11,2.64,true,[47:0:BufferGate]|43,1,EndGate,2.92,-2.45,true,[]|47,1,BufferGate,-0.51,2.72,true,[51:0:NotGate]|51,1,NotGate,2.12,2.73,false,[56:0:AndGate/56:1:AndGate]|56,1,AndGate,0.18,2.00,false,[61:0:NandGate/61:1:NandGate]|61,1,NandGate,0.21,1.23,true,[66:0:OrGate/66:1:OrGate]|66,1,OrGate,0.22,0.44,true,[71:0:NorGate/71:1:NorGate]|71,1,NorGate,0.24,-0.35,false,[76:0:XorGate/76:1:XorGate]|76,1,XorGate,0.27,-1.19,false,[81:0:XnorGate/81:1:XnorGate]|81,1,XnorGate,0.19,-1.92,true,[43:0:EndGate];1,1;true;true;";
-        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[51:0:AndGate/46:0:NotGate]|46,1,NotGate,-0.38,0.96,true,[51:1:AndGate]|51,1,AndGate,-0.26,2.08,false,[52:0:EndGate]|52,1,EndGate,1.35,1.60,false,[];1,1;false;false;"));
+        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[46:0:NotGate/53:0:NandGate]|46,1,NotGate,-0.38,0.96,true,[53:1:NandGate]|47,1,EndGate,1.35,1.60,true,[]|53,1,NandGate,0.31,1.86,true,[47:0:EndGate];1,1;true;true;"));
         $this->assertEquals(0, $fraction, "Failed on lecturer solution exactly same as student complex non exact, should return 0, but got 1 instead.");
 
         //Student solution not Matching lecturer but charge is the same, so should return true based on just charge
@@ -97,8 +97,8 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question->markcircuit = "0";
         $question->markcharge = "1";
         $question->answer_id = "42,1,StartGate,-2.11,2.64,true,[47:0:BufferGate]|43,1,EndGate,2.92,-2.45,true,[]|47,1,BufferGate,-0.51,2.72,true,[51:0:NotGate]|51,1,NotGate,2.12,2.73,false,[56:0:AndGate/56:1:AndGate]|56,1,AndGate,0.18,2.00,false,[61:0:NandGate/61:1:NandGate]|61,1,NandGate,0.21,1.23,true,[66:0:OrGate/66:1:OrGate]|66,1,OrGate,0.22,0.44,true,[71:0:NorGate/71:1:NorGate]|71,1,NorGate,0.24,-0.35,false,[76:0:XorGate/76:1:XorGate]|76,1,XorGate,0.27,-1.19,false,[81:0:XnorGate/81:1:XnorGate]|81,1,XnorGate,0.19,-1.92,true,[43:0:EndGate];1,1;true;true;";
-        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[51:0:AndGate/46:0:NotGate]|46,1,NotGate,-0.38,0.96,true,[51:1:AndGate]|51,1,AndGate,-0.26,2.08,false,[52:0:EndGate]|52,1,EndGate,1.35,1.60,false,[];1,1;false;false;"));
-        $this->assertEquals(1, $fraction, "Failed on lecturer solution exactly same as student complex non exact, should return 0, but got 1 instead.");
+        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[46:0:NotGate/53:0:NandGate]|46,1,NotGate,-0.38,0.96,true,[53:1:NandGate]|47,1,EndGate,1.35,1.60,true,[]|53,1,NandGate,0.31,1.86,true,[47:0:EndGate];1,1;true;true;"));
+        $this->assertEquals(1, $fraction, "Failed on lecturer solution exactly same as student complex non exact, should return 1, but got 0 instead.");
 
         //Student solution Matching lecturer but student solution is flipped
         $question = test_question_maker::make_question('logicgate');
@@ -106,7 +106,7 @@ class qtype_logicgate_question_test extends advanced_testcase
         $question->markcircuit = "1";
         $question->markcharge = "1";
         $question->answer_id = "42,1,StartGate,-2.11,2.64,true,[47:0:BufferGate]|43,1,EndGate,2.92,-2.45,true,[]|47,1,BufferGate,-0.51,2.72,true,[51:0:NotGate]|51,1,NotGate,2.12,2.73,false,[56:0:AndGate/56:1:AndGate]|56,1,AndGate,0.18,2.00,false,[61:0:NandGate/61:1:NandGate]|61,1,NandGate,0.21,1.23,true,[66:0:OrGate/66:1:OrGate]|66,1,OrGate,0.22,0.44,true,[71:0:NorGate/71:1:NorGate]|71,1,NorGate,0.24,-0.35,false,[76:0:XorGate/76:1:XorGate]|76,1,XorGate,0.27,-1.19,false,[81:0:XnorGate/81:1:XnorGate]|81,1,XnorGate,0.19,-1.92,true,[43:0:EndGate];1,1;true;true;";
-        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[51:0:AndGate/46:0:NotGate]|46,1,NotGate,-0.38,0.96,true,[51:1:AndGate]|51,1,AndGate,-0.26,2.08,false,[52:0:EndGate]|52,1,EndGate,1.35,1.60,false,[];1,1;false;false;"));
+        list($fraction, $state)  = $question->grade_response(array("answer" => "42,1,StartGate,-1.38,1.79,false,[46:0:NotGate/53:0:NandGate]|46,1,NotGate,-0.38,0.96,true,[53:1:NandGate]|47,1,EndGate,1.35,1.60,true,[]|53,1,NandGate,0.31,1.86,true,[47:0:EndGate];1,1;true;true;"));
         $this->assertEquals(0, $fraction, "Failed on lecturer solution exactly same as student complex non exact, should return 0, but got 1 instead.");
     }
 
