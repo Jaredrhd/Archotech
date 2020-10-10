@@ -1,8 +1,8 @@
 class NorGate extends LogicGate
 {
-    constructor(pos = {x:0, y:0}, scale = 0.8, circuit, origin, charge = false)
+    constructor(pos = {x:0, y:0}, scale = 0.8, globalScale, circuit, origin, charge = false)
     {
-        super(pos, scale, origin);
+        super(pos, scale, globalScale, origin);
 
         this.incomingNodes = [new IncomingNode({x:0,y:0}, circuit, this, {x:-0.85,y:0.25}), new IncomingNode({x:0,y:0},circuit, this, {x:-0.85,y:-0.25})];
         this.outgoingNodes = new OutgoingNode({x:0,y:0}, circuit, this, {x:1,y:0});

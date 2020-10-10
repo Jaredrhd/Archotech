@@ -2,7 +2,7 @@ class LogicGateManager
 {
     constructor()
     {
-        //If init exists (for trees)
+        //If init function exists (for trees)
         if(window["init"])
             window["init"]();
 
@@ -70,7 +70,6 @@ class LogicGateManager
                 this.canvases[i].width = 800;
                 this.canvases[i].height = 600;
             }
-            //this.canvases[i].height = window.innerHeight < 600 ? window.innerHeight * 0.8: 600; //TODO get height working with scaling too
         }
 
         //Render each circuit

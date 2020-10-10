@@ -5,7 +5,7 @@ class LogicGate
      * @param {scale} int scale of the logic gate
      * 
      */
-    constructor(position = {x:0, y:0}, scale = 1, origin = {x : 0, y : 0, offsetX : 0, offsetY : 0})
+    constructor(position = {x:0, y:0}, scale = 1, globalScale = {scale:1}, origin = {x : 0, y : 0, offsetX : 0, offsetY : 0})
     {
         this.charge = false;
         this.incomingNodes = Array();
@@ -19,6 +19,8 @@ class LogicGate
         this.position = position;
         
         this.scale = scale;
+        this.globalScale = globalScale;
+
 
         this.radius = 0.55;
         this.selectable = true;
@@ -249,7 +251,7 @@ class LogicGate
         graphics.save();
         this.UpdatePosition();
         graphics.translate(this.position.x,this.position.y);
-        graphics.scale(this.scale,this.scale);
+        graphics.scale(this.globalScale.scale * this.scale, this.globalScale.scale * this.scale);
 
         if(this.charge)
             graphics.fillStyle = "green";

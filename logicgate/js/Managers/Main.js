@@ -23,8 +23,11 @@ class LogicGateMain
         this.sidebar = new Sidebar(this.coords, this.circuit, this.origin, properties.getAttribute("spawners"));
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, this.restrictions);
-
+        this.scale = {scale:1};
+        
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, this.scale, this.restrictions);
+        
+        //Timer
         this.timer = Date.now();
         this.timerUpdate = 250;
 
@@ -34,6 +37,12 @@ class LogicGateMain
 
     Render()
     {
+        if(this.canvasFocused && Input.GetAxis("mouse scrollwheel") != 0)
+        {
+            this.scale.scale -= Input.GetAxis("mouse scrollwheel") * 0.01;
+            this.scale.scale = Math.max(0.1, Math.min(2, this.scale.scale));
+        }
+
         //Save
         this.graphics.save();
         this.graphics.lineWidth = this.pixelSize;
@@ -229,8 +238,6 @@ class LogicGateMain
         if(save=="SAVED_DATA" || save=="")
             return;
 
-        //Set Scale
-        let scale = 0.7;
         let newIDs = Object();
         save = save.split("|")
 
@@ -241,7 +248,7 @@ class LogicGateMain
             let data = save[i].split(",");
             
             //Spawn gate
-            let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, ${scale}, this.circuit, this.origin)`;
+            let gateToSpawn = `new ${data[1]}({x:${data[2]},y:${data[3]}}, undefined, this.scale, this.circuit, this.origin)`;
             let gate = eval(gateToSpawn);
 
             //Set charge and push to circuit
@@ -364,12 +371,22 @@ class LogicGateMain
     //For unfocusing canvas
     OnCanvasLeave()
     {
+        //Re-enable scrolling
+        window.onscroll=function(){};
+
+        //Unfocus canvas
         this.canvasFocused = false;
     }
 
     //For focusing canvas
     OnCanvasEnter()
     {
+        //Prevent scrolling when hovering on canvas
+        var x=window.scrollX;
+        var y=window.scrollY;
+        window.onscroll=function(){window.scrollTo(x, y);};
+
+        //Set focused
         this.canvasFocused = true;
     }
 

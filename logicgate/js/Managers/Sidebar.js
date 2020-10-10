@@ -33,7 +33,7 @@ class Sidebar
             if(this.enabledSpawners[i] != "null")
             {
                 //Spawn the gate and set some properties
-                let gate = eval(`new ${this.enabledSpawners[i]}(undefined, ${scale}, this.circuit, this.origin)`);
+                let gate = eval(`new ${this.enabledSpawners[i]}(undefined, ${scale}, undefined, this.circuit, this.origin)`);
                 gate.spawner = true;
                 this.spawners.push(gate);
                 this.circuit.push(gate);

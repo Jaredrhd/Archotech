@@ -1,6 +1,6 @@
 class SelectionManager
 {
-    constructor(circuit, coords, origin, restrictions)
+    constructor(circuit, coords, origin, scale, restrictions)
     {
         this.restrictions = restrictions;
         for(var i=0; i<this.restrictions.length;i++) this.restrictions[i] = +this.restrictions[i];
@@ -8,6 +8,7 @@ class SelectionManager
         this.selected = null;
         this.justSpawned = false;
 
+        this.scale = scale;
         this.coords = coords;
         this.origin = origin;
     }
@@ -117,7 +118,8 @@ class SelectionManager
             return;
         }
 
-        this.selected = new spawnerClass(undefined, 0.7, this.circuit, this.origin);
+        //Create the new spawner
+        this.selected = new spawnerClass(undefined, undefined, this.scale, this.circuit, this.origin);
         
         //Set the position
         this.selected.pos.x = Input.GetMousePos().x - this.origin.x;
