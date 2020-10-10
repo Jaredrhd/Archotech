@@ -6,7 +6,7 @@
     <title>Logic Gate</title>
 </head>
 
-<body onload = "init()">
+<body onload = "initiate()">
 
 <noscript>
     <p><b style="color:red">Error: This page requires JavaScript, but it is not available.</b></p>
@@ -27,7 +27,7 @@
 <div id = "canvasDiv_QUESTIONID" style="float:left; border: 2px solid black"></div>
 <!-- Don't add stuff here or above as we use previous element-->
 <script class="init">
-    function init()
+    function initiate()
     {
         let manager;
         let moodle = true;
@@ -59,7 +59,7 @@
             //Make sure a manager is loaded
             manager.onload = function()
             {
-                let manager = new Manager();
+                let manager = new LogicGateManager();
             }
         }
 
@@ -93,14 +93,13 @@
     .hint {
         position: relative;
         display: inline-block;
-        width: 120px;
-
+        width: 150px;
     }
 
     /* Tooltip text */
     .hint .hinttext {
         visibility: hidden;
-        width: 120px;
+        width: 200px;
         background-color: #ced4da;
         color: black;
         text-align: center;
@@ -118,11 +117,28 @@
         visibility: visible;
     }
 
+    .hint .hinttext::after {
+    content: " ";
+    position: absolute;
+    top: 15px;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #ced4da transparent transparent;
+  }
+
 </style>
 
 <div class="hint">
     <i class="fa fa-question-circle text-info" id=""></i>
-    <span class="hinttext">Drag and drop the logic gates onto the canvas and connect them up via wires.</span>
+    <span class="hinttext">
+        Drag and drop the logic gates onto the canvas and connect them up via wires.
+        <br /><br />
+        The Start Gate and End Gate are always provided and are located at the top left of the canvas in that order.
+        <br /><br />
+        Note that a gate is classified as incorrect if it is not connected to the Start Gate and will be stripped from the save when changing questions.
+    </span>
 </div>
 
 </body>

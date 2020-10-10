@@ -1,7 +1,11 @@
-class Manager
+class LogicGateManager
 {
     constructor()
     {
+        //If init exists (for trees)
+        if(window["init"])
+            window["init"]();
+
         //Make an array of the circuits (mains)
         this.circuits = new Array();
         this.canvases = new Array();
@@ -43,7 +47,7 @@ class Manager
             this.canvases.push(canvas);
 
             //Add the circuit to the list
-            this.circuits.push(new Main(canvas, saveField, properties));
+            this.circuits.push(new LogicGateMain(canvas, saveField, properties));
         }
 
         //Start the program

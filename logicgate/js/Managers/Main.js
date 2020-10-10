@@ -1,9 +1,10 @@
-class Main
+class LogicGateMain
 {
     constructor(canvas, saveField, properties)
     {
         this.saveField = saveField;
         this.properties = properties;
+        this.restrictions = properties.getAttribute("restrictions").split(",");
         //Canvas coordinates
         this.coords = {xleft : -4, xright : 4, ybottom : -3, ytop : 3};
         this.origin = {x : 0, y : 0, offsetX : 0, offsetY : 0};
@@ -22,12 +23,10 @@ class Main
         this.sidebar = new Sidebar(this.coords, this.circuit, this.origin, properties.getAttribute("spawners"));
 
         //Selection manager for clicking and dragging
-        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, properties.getAttribute("restrictions"));
+        this.selectionManager = new SelectionManager(this.circuit, this.coords, this.origin, this.restrictions);
 
         this.timer = Date.now();
         this.timerUpdate = 250;
-
-        this.scale = 0.8;
 
         //Set up the previous save
         this.LoadCircuit(properties.getAttribute("save").split(";")[0]);
@@ -37,7 +36,6 @@ class Main
     {
         //Save
         this.graphics.save();
-
         this.graphics.lineWidth = this.pixelSize;
 
         //Set color
@@ -46,13 +44,12 @@ class Main
 
         //Apply limits to canvas, graphics
         this.ApplyLimits(this.graphics);
-
         
         let time = this.timer - Date.now();
         //First Update the the charges
         if(time < 0)
         {
-            this.ResetCircuit(); //Then Reset
+            this.ResetCircuit();
             this.UpdateCircuitCharge();
             this.timer = Date.now() + this.timerUpdate;
         }
@@ -60,10 +57,6 @@ class Main
         //Draw Sidebar and update the gates on it
         this.sidebar.Draw(this.graphics);
         this.sidebar.Update();
-
-        // this.scale -= Input.GetAxis("mouse scrollwheel") * 0.1;
-        // this.scale = Math.max(this.scale,0.3);
-        // this.graphics.scale(this.scale,this.scale);
 
         //Draw Wires first and update circuit
         for(let i = 0; i < this.circuit.length; ++i)
@@ -93,6 +86,27 @@ class Main
 
         //restore
         this.graphics.restore();
+    }
+
+    CheckRestrictions()
+    {
+        //Make a count of all the gates
+        let count = Array(10).fill(0);
+        for (let i = 0; i < this.circuit.length; i++) 
+        {
+            //Skip non gates
+            if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
+                this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
+                continue;
+            
+            //Get index, if we are at max, don't spawn
+            let gateIndex = this.circuit[i].GetGateIndex();
+            if(this.restrictions[gateIndex] != 0 && count[gateIndex] < this.restrictions[gateIndex])
+                ++count[gateIndex];
+            else if(this.restrictions[gateIndex] != 0)
+                this.circuit[i--].DeleteGate(this.circuit);
+        }
+
     }
 
     UpdateCircuitCharge(startNodes, endNodes)
@@ -268,6 +282,8 @@ class Main
                 this.circuit[newID].outgoingNodes.AddSpecificConnections(this.circuit[newConnectionID], parseInt(keyValue[1]));
             }
         }
+
+        this.CheckRestrictions();
     }
 
     BuildCircuit()

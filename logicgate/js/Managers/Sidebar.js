@@ -16,6 +16,7 @@ class Sidebar
 
     DeleteSpawners()
     {
+        //Delete the gates
         for(let i = 0; i < this.spawners.length;i++)
             this.spawners[i].DeleteGate(this.circuit);
 
@@ -24,11 +25,14 @@ class Sidebar
 
     AddSpawners()
     {
+        //Loop over enabled spawners
         for (let i = 0; i < this.enabledSpawners.length; i++) 
         {
+            //Set a scale for now
             let scale = (i == 0 || i == 1) ? 0.5 : 0.6;
             if(this.enabledSpawners[i] != "null")
             {
+                //Spawn the gate and set some properties
                 let gate = eval(`new ${this.enabledSpawners[i]}(undefined, ${scale}, this.circuit, this.origin)`);
                 gate.spawner = true;
                 this.spawners.push(gate);
@@ -41,7 +45,7 @@ class Sidebar
     {
         for(let i = 0; i < this.circuit.length;i++)
         {
-            let index = this.GetGateIndex(this.circuit[i].constructor.name);
+            let index = this.circuit[i].GetGateIndex();
             if(index != -1 && this.enabledSpawners[index] == "null")
                 this.circuit[i--].DeleteGate(this.circuit);
         }
@@ -49,6 +53,7 @@ class Sidebar
 
     ChangeSpawners(enabledSpawners)
     {
+        //Make the new string an array and add/remove the gates as needed
         this.enabledSpawners = enabledSpawners.split(",");
         this.DeleteSpawners();
         this.AddSpawners();
@@ -57,6 +62,7 @@ class Sidebar
 
     CheckSpawnersCheckBoxes()
     {
+        //Check if there is the buffer gate id, we will use this to determine what gates should be shown or not if it exists
         if(document.getElementById("id_buffergate") == null)
             return;
 
@@ -73,45 +79,6 @@ class Sidebar
 
         if(this.enabledSpawners != enabledSpawners)
             this.ChangeSpawners(enabledSpawners);
-    }
-
-    GetGateIndex(gate)
-    {
-        let index = -1;
-        switch (gate) 
-        {
-            case 'StartGate':
-                index = 0;
-                break;
-            case 'EndGate':
-                index = 1;
-                break;
-            case 'BufferGate':
-                index = 2;
-                break;
-            case 'NotGate':
-                index = 3;
-                break;
-            case 'AndGate':
-                index = 4;
-                break;
-            case 'NandGate':
-                index = 5;
-                break;
-            case 'OrGate':
-                index = 6;
-                break;
-            case 'NorGate':
-                index = 7;
-                break;
-            case 'XorGate':
-                index = 8;
-                break;
-            case 'XnorGate':
-                index = 9;
-                break;
-        }
-        return index;
     }
 
     Draw(graphics)

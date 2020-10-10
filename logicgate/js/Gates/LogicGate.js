@@ -201,6 +201,46 @@ class LogicGate
         }
     }
 
+    GetGateIndex()
+    {
+        let gate = this.constructor.name;
+        let index = -1;
+        switch (gate) 
+        {
+            case 'StartGate':
+                index = 0;
+                break;
+            case 'EndGate':
+                index = 1;
+                break;
+            case 'BufferGate':
+                index = 2;
+                break;
+            case 'NotGate':
+                index = 3;
+                break;
+            case 'AndGate':
+                index = 4;
+                break;
+            case 'NandGate':
+                index = 5;
+                break;
+            case 'OrGate':
+                index = 6;
+                break;
+            case 'NorGate':
+                index = 7;
+                break;
+            case 'XorGate':
+                index = 8;
+                break;
+            case 'XnorGate':
+                index = 9;
+                break;
+        }
+        return index;
+    }
+
     /**
      * The function to draw a gate
      */

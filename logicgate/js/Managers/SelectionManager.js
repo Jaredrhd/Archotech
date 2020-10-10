@@ -2,7 +2,7 @@ class SelectionManager
 {
     constructor(circuit, coords, origin, restrictions)
     {
-        this.restrictions = restrictions.split(",");
+        this.restrictions = restrictions;
         for(var i=0; i<this.restrictions.length;i++) this.restrictions[i] = +this.restrictions[i];
         this.circuit = circuit;
         this.selected = null;
@@ -23,12 +23,15 @@ class SelectionManager
             {
                 //If the selected is a spawner
                 if(this.selected.spawner)
-                {
                     this.SpawnGate();
+                    
+                //Spawner might remove this.selected so double check
+                if(this.selected)
+                {
+                    this.selected.offset = Object.assign({}, Input.GetMousePos());
+                    this.selected.offset.x -= this.selected.pos.x;
+                    this.selected.offset.y -= this.selected.pos.y;
                 }
-                this.selected.offset = Object.assign({}, Input.GetMousePos());
-                this.selected.offset.x -= this.selected.pos.x;
-                this.selected.offset.y -= this.selected.pos.y;
             }
             else
             {
@@ -93,19 +96,26 @@ class SelectionManager
         //Get a the spawner constructor and spawn it
         let spawnerClass = this.selected.constructor;
 
+        //Make a count of all the gates
         let count = Array(10).fill(0);
         for (let i = 0; i < this.circuit.length; i++) 
         {
+            //Skip non gates
             if((this.circuit[i] instanceof Wire || this.circuit[i] instanceof IncomingNode || 
                 this.circuit[i] instanceof OutgoingNode || this.circuit[i].spawner)) 
                 continue;
             
-            ++count[this.GetGateIndex(this.circuit[i].constructor.name)];
+            //count
+            ++count[this.circuit[i].GetGateIndex()];
         }
 
-        let gateIndex = this.GetGateIndex(spawnerClass.name);
+        //Get index, if we are at max, don't spawn
+        let gateIndex = this.selected.GetGateIndex();
         if(this.restrictions[gateIndex] != 0 && count[gateIndex] >= this.restrictions[gateIndex])
+        {
+            this.selected = null;
             return;
+        }
 
         this.selected = new spawnerClass(undefined, 0.7, this.circuit, this.origin);
         
@@ -116,45 +126,6 @@ class SelectionManager
         //Add it to the circuit
         this.circuit.push(this.selected);
         this.justSpawned = true;
-    }
-
-    GetGateIndex(gate)
-    {
-        let index = -1;
-        switch (gate) 
-        {
-            case 'StartGate':
-                index = 0;
-                break;
-            case 'EndGate':
-                index = 1;
-                break;
-            case 'BufferGate':
-                index = 2;
-                break;
-            case 'NotGate':
-                index = 3;
-                break;
-            case 'AndGate':
-                index = 4;
-                break;
-            case 'NandGate':
-                index = 5;
-                break;
-            case 'OrGate':
-                index = 6;
-                break;
-            case 'NorGate':
-                index = 7;
-                break;
-            case 'XorGate':
-                index = 8;
-                break;
-            case 'XnorGate':
-                index = 9;
-                break;
-        }
-        return index;
     }
 
     GetNearestGate()
