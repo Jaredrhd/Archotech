@@ -42,7 +42,6 @@ class IncomingNode extends LogicGate
     Draw(graphics)
     {
         this.UpdatePosition();
-
         graphics.save();
         graphics.fillStyle = "white";
         

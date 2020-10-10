@@ -124,4 +124,3 @@ class qtype_logicgate_renderer extends qtype_renderer
     }
 }
 ?>
-
