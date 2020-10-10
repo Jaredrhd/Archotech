@@ -43,10 +43,11 @@ class qtype_logicgate extends question_type {
 
     public function extra_question_fields() {
         return array('qtype_logicgate_options', 
-        'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
-         'norgate','xorgate','xnorgate', 'buffergateamount','notgateamount','andgateamount',
-         'nandgateamount','orgateamount','norgateamount','xorgateamount','xnorgateamount',
-         'curated_data','questiontype');
+         'buffergate', 'notgate', 'andgate', 'nandgate', 'orgate',
+         'norgate','xorgate','xnorgate', 'startgateamount','endgateamount', 'buffergateamount',
+         'notgateamount','andgateamount','nandgateamount','orgateamount',
+         'norgateamount','xorgateamount','xnorgateamount',
+         'answer_id','markcharge','markcircuit','questiontype');
     }
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -60,43 +61,11 @@ class qtype_logicgate extends question_type {
 
     public function save_question_options($question) {
         parent::save_question_options($question);
-        $this->save_question_answers($question);
-        //$this->save_hints($question);
     }
 
+    //Transfer all the data from lectures setup to the question
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-
-        //Set question mode (0-question, 1-sandbox)
-        $question->questiontype  = $questiondata->options->questiontype; 
-        
-        //Pass curated data
-        $question->curated_data = $questiondata->options->curated_data;
-
-        //Set up the data for renderer.php
-        $question->bufferGate = ($question->questiontype == '1') ? 1 : $questiondata->options->buffergate;
-        $question->notGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->notgate;
-        $question->andGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->andgate;
-        $question->nandGate = ($question->questiontype == '1') ? 1 : $questiondata->options->nandgate;
-        $question->orGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->orgate;
-        $question->norGate =  ($question->questiontype == '1') ? 1 :$questiondata->options->norgate;
-        $question->xorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xorgate;
-        $question->xnorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xnorgate;
-        $question->xnorGate =  ($question->questiontype == "1") ? 1 :$questiondata->options->xnorgate;
-
-        //Set value amounts, unless it's sandbox, then set to 1000
-        $question->bufferGateAmount =  ($questiondata->options->buffergateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->buffergateamount;
-        $question->notGateAmount =  ($questiondata->options->notgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->notgateamount;
-        $question->andGateAmount =  ($questiondata->options->andgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->andgateamount;
-        $question->nandGateAmount =  ($questiondata->options->nandgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->nandgateamount;
-        $question->orGateamount =  ($questiondata->options->orgateamount == 0 || $question->questiontype == "1") ? 1000 :  $questiondata->options->orgateamount;
-        $question->norGateAmount =  ($questiondata->options->norgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->norgateamount;
-        $question->xorGateAmount =  ($questiondata->options->xorgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->xorgateamount;
-        $question->xnorGateAmount =  ($questiondata->options->xnorgateamount == 0 || $question->questiontype == "1") ? 1000 : $questiondata->options->xnorgateamount;
-        
-        //Set the answer
-        $this->initialise_question_answers($question, $questiondata);
-        $question->answersFromLecturer = $questiondata->options->answers;
     }
 
     //It is not possible to guess a score of a logic gate since it is too complex
