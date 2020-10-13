@@ -39,7 +39,7 @@ class LogicGateMain
     {
         if(this.canvasFocused && Input.GetAxis("mouse scrollwheel") != 0)
         {
-            this.scale.scale -= Input.GetAxis("mouse scrollwheel") * 0.01;
+            this.scale.scale -= Input.GetAxis("mouse scrollwheel") * 0.1;
             this.scale.scale = Math.max(0.1, Math.min(2, this.scale.scale));
         }
 
